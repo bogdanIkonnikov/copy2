@@ -12,6 +12,26 @@ java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(17)
     }
+
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['backend/src/main/java']
+        }
+        resources {
+            srcDirs = ['backend/src/main/resources']
+        }
+    }
+    test {
+        java {
+            srcDirs = ['backend/src/test/java']
+        }
+        resources {
+            srcDirs = ['backend/src/test/resources']
+        }
+    }
 }
 
 configurations {
@@ -33,6 +53,8 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'com.h2database:h2'
+    testRuntimeOnly 'com.h2database:h2'
 }
 
 tasks.named('test') {
