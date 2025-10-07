@@ -1,0 +1,3 @@
+rootProject.name = 'copy2'
+include("backend")
+include("frontend")
