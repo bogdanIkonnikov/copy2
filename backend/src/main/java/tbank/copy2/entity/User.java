@@ -21,10 +21,7 @@ public class User {
     private String email;
 
     @Column(nullable = false)
-    private String password;
-
-    @Column
-    private String avatar_url;
+    private String password_hash;
 
     @Column
     private LocalDate created_at;
@@ -32,9 +29,8 @@ public class User {
     @Column
     private LocalDate updated_at;
 
-    public User(String avatar_url, String password, String email, String username) {
-        this.avatar_url = avatar_url;
-        this.password = password;
+    public User(String password_hash, String email, String username) {
+        this.password_hash = password_hash;
         this.email = email;
         this.username = username;
     }
