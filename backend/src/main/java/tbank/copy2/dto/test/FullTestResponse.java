@@ -27,6 +27,6 @@ public class FullTestResponse {
     private int progress;
 
     @Schema(description = "Cписок вопросов")
-    private List<QuestionResponse> questions;
+    private List<QuestionResponse> questions = new ArrayList<>();
 }
 

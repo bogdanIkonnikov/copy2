@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import tbank.copy2.entity.Answer;
 import tbank.copy2.enums.Type;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -22,5 +23,5 @@ public class QuestionResponse {
     private Type type;
 
     @Schema(description = "Список ответов на вопрос")
-    private List<AnswerResponse> answers;
+    private List<AnswerResponse> answers = new ArrayList<>();
 }

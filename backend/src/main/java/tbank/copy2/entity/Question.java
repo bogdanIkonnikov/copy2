@@ -33,6 +33,7 @@ public class Question {
     @Column
     private String content;
 
+    @Enumerated(EnumType.STRING)
     @Column
     private Type type;
 
