@@ -5,10 +5,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @Entity
 @NoArgsConstructor
+@Table(name = "users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,10 +26,10 @@ public class User {
     private String password_hash;
 
     @Column
-    private LocalDate created_at;
+    private LocalDateTime created_at;
 
     @Column
-    private LocalDate updated_at;
+    private LocalDateTime updated_at;
 
     public User(String password_hash, String email, String username) {
         this.password_hash = password_hash;

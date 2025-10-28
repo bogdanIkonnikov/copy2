@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import tbank.copy2.enums.Type;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -14,34 +15,30 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "tests")
-public class Test {
+@Table(name = "questions")
+public class Question {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String name;
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "test_id")
+    private Test test;
+
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Answer> answers = new ArrayList<>();
+
 
     @Column
-    private String description;
+    private String content;
 
-    @OneToMany(mappedBy = "test", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Question> questions = new ArrayList<>();
+    @Column
+    private Type type;
 
     @Column
     private LocalDateTime created_at;
 
     @Column
     private LocalDateTime updated_at;
-
-    public Test(String name, User user, String description) {
-        this.name = name;
-        this.user = user;
-        this.description = description;
-    }
 }
