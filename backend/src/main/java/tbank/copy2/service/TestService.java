@@ -39,10 +39,12 @@ public class TestService {
         List<QuestionResponse> questionResponses = new ArrayList<>();
         for (Question question : test.getQuestions()) {
             QuestionResponse response = new QuestionResponse();
+            response.setId(question.getId());
             response.setContent(question.getContent());
             response.setType(question.getType());
             for (Answer answer : question.getAnswers()) {
                 AnswerResponse answerResponse = new AnswerResponse();
+                answerResponse.setId(answer.getId());
                 answerResponse.setContent(answer.getContent());
                 answerResponse.setIsCorrect(answer.getIsCorrect());
                 response.getAnswers().add(answerResponse);
@@ -50,6 +52,7 @@ public class TestService {
             questionResponses.add(response);
         }
         FullTestResponse fullTestResponse = new FullTestResponse();
+        fullTestResponse.setId(test.getId());
         fullTestResponse.setQuestions(questionResponses);
         fullTestResponse.setDescription(test.getDescription());
         fullTestResponse.setName(test.getName());

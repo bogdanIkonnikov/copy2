@@ -15,6 +15,8 @@ import java.util.List;
 @NoArgsConstructor
 @Schema(description = "Вопрос с вариантами ответов")
 public class QuestionResponse {
+    @Schema(description = "Id вопроса", example = "1")
+    private Long id;
 
     @Schema(description = "Текст вопроса", example = "Какой цвет неба?")
     private String content;

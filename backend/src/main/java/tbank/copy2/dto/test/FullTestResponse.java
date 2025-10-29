@@ -13,6 +13,8 @@ import java.util.List;
 @NoArgsConstructor
 @Schema(description = "Ответ с информацией о тесте и вопросах в нем")
 public class FullTestResponse {
+    @Schema(description = "Id теста", example = "1")
+    private Long id;
 
     @Schema(description = "Название теста", example = "test1")
     private String name;

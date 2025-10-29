@@ -8,6 +8,8 @@ import tbank.copy2.entity.Test;
 @AllArgsConstructor
 @Schema(description = "Ответ с информацией о тесте")
 public class TestResponse {
+    @Schema(description = "Id теста", example = "1")
+    private Long id;
 
     @Schema(description = "Название теста", example = "test1")
     private String name;

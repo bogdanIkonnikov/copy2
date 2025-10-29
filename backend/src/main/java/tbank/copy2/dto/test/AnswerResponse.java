@@ -11,6 +11,9 @@ import lombok.NoArgsConstructor;
 @Schema(description = "Ответ на вопрос")
 public class AnswerResponse {
 
+    @Schema(description = "Id ответа", example = "1")
+    private Long id;
+
     @Schema(description = "Текст ответа", example = "Ответ 1")
     private String content;
 
