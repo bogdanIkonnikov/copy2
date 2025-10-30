@@ -20,7 +20,7 @@ public class Test {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column( name = "test_name", nullable = false)
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -34,7 +34,7 @@ public class Question {
     private String content;
 
     @Enumerated(EnumType.STRING)
-    @Column
+    @Column(name = "question_type")
     private Type type;
 
     @Column

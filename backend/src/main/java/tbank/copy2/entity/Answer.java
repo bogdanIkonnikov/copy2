@@ -25,7 +25,7 @@ import java.time.LocalDateTime;
         @Column
         private String content;
 
-        @Column
+        @Column(name = "is_correct")
         private Boolean isCorrect;
 
         @Column
