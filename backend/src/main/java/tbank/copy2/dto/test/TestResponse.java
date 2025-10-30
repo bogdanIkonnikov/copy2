@@ -24,6 +24,7 @@ public class TestResponse {
     private int progress;
 
     public TestResponse(Test test) {
+        this.id = test.getId();
         this.name = test.getName();
         this.description = test.getDescription();
         this.questionsCount = test.getQuestions().size();
