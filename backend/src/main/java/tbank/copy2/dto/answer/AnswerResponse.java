@@ -1,4 +1,4 @@
-package tbank.copy2.dto.test;
+package tbank.copy2.dto.answer;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
