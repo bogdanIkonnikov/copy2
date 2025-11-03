@@ -3,14 +3,14 @@ VALUES ('vasya', 'vasya@mail.ru', '$2a$10$hashedpass', NOW(), NOW())
 ON CONFLICT (username) DO NOTHING;
 
 -- Тесты
-INSERT INTO tests (id, name, user_id, description, created_at, updated_at)
+INSERT INTO tests (id, test_name, user_id, description, created_at, updated_at)
 VALUES (1, 'Математика', 1, 'Тест по математике', NOW(), NOW()),
        (2, 'Русский язык', 1, 'Тест по русскому языку', NOW(), NOW()),
        (3, 'Физика', 1, 'Тест по физике', NOW(), NOW())
 ON CONFLICT (id) DO NOTHING;
 
 -- Вопросы Математика (10)
-INSERT INTO questions (id, test_id, content, type, created_at, updated_at)
+INSERT INTO questions (id, test_id, content, question_type, created_at, updated_at)
 VALUES (1, 1, 'Вопрос 1 Математика', 'CHOICE', NOW(), NOW()),
        (2, 1, 'Вопрос 2 Математика', 'CHOICE', NOW(), NOW()),
        (3, 1, 'Вопрос 3 Математика', 'INPUT', NOW(), NOW()),
@@ -24,7 +24,7 @@ VALUES (1, 1, 'Вопрос 1 Математика', 'CHOICE', NOW(), NOW()),
 ON CONFLICT (id) DO NOTHING;
 
 -- Вопросы Русский язык (5)
-INSERT INTO questions (id, test_id, content, type, created_at, updated_at)
+INSERT INTO questions (id, test_id, content, question_type, created_at, updated_at)
 VALUES (11, 2, 'Вопрос 1 Русский язык', 'CHOICE', NOW(), NOW()),
        (12, 2, 'Вопрос 2 Русский язык', 'INPUT', NOW(), NOW()),
        (13, 2, 'Вопрос 3 Русский язык', 'CHOICE', NOW(), NOW()),
@@ -33,7 +33,7 @@ VALUES (11, 2, 'Вопрос 1 Русский язык', 'CHOICE', NOW(), NOW())
 ON CONFLICT (id) DO NOTHING;
 
 -- Вопросы Физика (3)
-INSERT INTO questions (id, test_id, content, type, created_at, updated_at)
+INSERT INTO questions (id, test_id, content, question_type, created_at, updated_at)
 VALUES (16, 3, 'Вопрос 1 Физика', 'CHOICE', NOW(), NOW()),
        (17, 3, 'Вопрос 2 Физика', 'INPUT', NOW(), NOW()),
        (18, 3, 'Вопрос 3 Физика', 'CHOICE', NOW(), NOW())
