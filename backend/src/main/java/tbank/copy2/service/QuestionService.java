@@ -31,5 +31,16 @@ public class QuestionService {
         return questionResponseList;
     }
 
-
+    public QuestionResponse addQuestion(AddQuestionRequest addQuestionRequest) {
+        Question question = new Question();
+        question.setType(addQuestionRequest.getType());
+        question.setContent(addQuestionRequest.getContent());
+        question.setTest(testRepository.findById(addQuestionRequest.getTestId()).orElse(null));
+        question = questionRepository.save(question);
+        QuestionResponse questionResponse = new QuestionResponse();
+        questionResponse.setId(question.getId());
+        questionResponse.setType(question.getType());
+        questionResponse.setContent(question.getContent());
+        return questionResponse;
+    }
 }
