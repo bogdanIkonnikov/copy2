@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import tbank.copy2.dto.answer.AnswerResponse;
 import tbank.copy2.dto.question.AddQuestionRequest;
 import tbank.copy2.dto.question.QuestionResponse;
+import tbank.copy2.dto.question.QuestionLightResponse;
 import tbank.copy2.dto.question.QuestionWithAnswersResponse;
 import tbank.copy2.entity.Answer;
 import tbank.copy2.entity.Question;
@@ -55,6 +56,36 @@ public class QuestionService {
         questionResponse.setId(question.getId());
         questionResponse.setType(question.getType());
         questionResponse.setContent(question.getContent());
+        return questionResponse;
+    }
+
+    public List<QuestionLightResponse> getLightQuestionsByTestId(Long testId) {
+        List<Question> questions = questionRepository.findAllByTestId(testId);
+        List<QuestionLightResponse> questionResponseList = new ArrayList<>();
+        for (Question question : questions) {
+            QuestionLightResponse questionResponse = new QuestionLightResponse();
+            questionResponse.setId(question.getId());
+            questionResponse.setContent(question.getContent());
+            questionResponseList.add(questionResponse);
+        }
+        return questionResponseList;
+    }
+
+    public QuestionWithAnswersResponse getQuestionById(Long questionId) {
+        Question question = questionRepository.findById(questionId).orElse(null);
+        QuestionWithAnswersResponse questionResponse = new QuestionWithAnswersResponse();
+        questionResponse.setId(question.getId());
+        questionResponse.setType(question.getType());
+        questionResponse.setContent(question.getContent());
+        List<AnswerResponse> answerResponses = new ArrayList<>();
+        for (Answer answer : question.getAnswers()) {
+            AnswerResponse answerResponse = new AnswerResponse();
+            answerResponse.setId(answer.getId());
+            answerResponse.setContent(answer.getContent());
+            answerResponse.setIsCorrect(answer.getIsCorrect());
+            answerResponses.add(answerResponse);
+        }
+        questionResponse.setAnswers(answerResponses);
         return questionResponse;
     }
 }
