@@ -1,4 +1,4 @@
-FROM openjdk:17-jdk-slim-buster
+FROM openjdk:26-ea-jdk-trixie
 WORKDIR /app
 COPY /build/libs/copy2-0.0.1-SNAPSHOT.jar /app/copy2.jar
 
