@@ -3,27 +3,30 @@ package tbank.copy2.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tbank.copy2.dto.test.*;
-import tbank.copy2.entity.Answer;
-import tbank.copy2.entity.Question;
 import tbank.copy2.entity.Test;
 import tbank.copy2.repository.TestRepository;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class TestService {
     @Autowired
     private TestRepository testRepository;
 
-    public List<Long> getTestsId() {
+    public List<TestResponse> getTests() {
         List<Test> tests = testRepository.findAll();
-        List<Long> testsId= new ArrayList<>();
+        List<TestResponse> testResponses= new ArrayList<>();
         for (Test test : tests) {
-            testsId.add(test.getId());
+            TestResponse testResponse = new TestResponse();
+            testResponse.setId(test.getId());
+            testResponse.setName(test.getName());
+            testResponse.setDescription(test.getDescription());
+            testResponse.setProgress(14); //заменить логикой
+            testResponse.setLastUse("10.10.2025");
+            testResponse.setQuestionsCount(test.getQuestions().size());
+            testResponses.add(testResponse);
         }
-        return testsId;
+        return testResponses;
     }
 
     public TestResponse addTest(AddTestRequest request) {
@@ -48,6 +51,7 @@ public class TestService {
         testResponse.setName(test.getName());
         testResponse.setProgress(14);
         testResponse.setLastUse("10.10.2025");
+        testResponse.setQuestionsCount(test.getQuestions().size());
         return testResponse;
     }
 }
