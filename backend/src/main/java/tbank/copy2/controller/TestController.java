@@ -4,10 +4,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import tbank.copy2.dto.question.QuestionLightResponse;
 import tbank.copy2.dto.question.QuestionWithAnswersResponse;
 import tbank.copy2.dto.test.AddTestRequest;
 import tbank.copy2.dto.test.TestResponse;
@@ -53,14 +55,41 @@ public class TestController {
         return testService.getTestById(id);
     }
 
-    @Operation(summary = "Получить список вопросов по id теста")
+    @Operation(
+            summary = "Получить список вопросов по id теста",
+            description = "Возвращает список вопросов в зависимости от параметра light",
+            responses = {
+                    @ApiResponse(
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(
+                                            oneOf = {
+                                                    QuestionLightResponse.class,
+                                                    QuestionWithAnswersResponse.class
+                                            }
+                                    )
+                            )
+                    )
+            }
+    )
     @GetMapping("/{id}/questions")
-    public Map<String,List<QuestionWithAnswersResponse>> getQuestionsByTestId(
+    public Object getQuestionsByTestIdLight(
             @Parameter(description = "Идентификатор теста", example = "1")
-            @PathVariable Long id) {
-        Map<String, List<QuestionWithAnswersResponse>> response = new HashMap<>();
-        response.put("questions", questionService.getQuestionsByTestId(id));
-        return response;
+            @PathVariable Long id,
+            @Parameter(description = "Сжатая версия вопросов",
+                    example = "true",
+                    required = false)
+            @RequestParam(name = "light", required = false, defaultValue = "false") boolean light) {
+        if (light) {
+            Map<String, List<QuestionLightResponse>> response = new HashMap<>();
+            response.put("questions", questionService.getLightQuestionsByTestId(id));
+            return response;
+        }
+        else {
+            Map<String, List<QuestionWithAnswersResponse>> response = new HashMap<>();
+            response.put("questions", questionService.getQuestionsByTestId(id));
+            return response;
+        }
     }
 
 }
