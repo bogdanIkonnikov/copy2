@@ -23,6 +23,14 @@ services:
       - "8080:8080"
     depends_on:
       - postgres
+  frontend:
+    image: my-frontend-node-app:latest
+    ports:
+      - "3000:80"
+    networks:
+      - app-network
+networks:
+  app-network:
 
 volumes:
   postgres_data:
