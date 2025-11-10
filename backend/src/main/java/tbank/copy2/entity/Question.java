@@ -5,8 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import tbank.copy2.enums.Type;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,17 +27,16 @@ public class Question {
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Answer> answers = new ArrayList<>();
 
-
-    @Column
+    @Column(nullable = false)
     private String content;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "question_type")
     private Type type;
 
-    @Column
+    @Column(nullable = false)
     private LocalDateTime created_at;
 
-    @Column
+    @Column(nullable = false)
     private LocalDateTime updated_at;
 }

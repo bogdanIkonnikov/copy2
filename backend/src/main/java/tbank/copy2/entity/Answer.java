@@ -3,8 +3,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import tbank.copy2.enums.Type;
-
 import java.time.LocalDateTime;
 
     @Entity
@@ -22,15 +20,15 @@ import java.time.LocalDateTime;
         @JoinColumn(name = "question_id")
         private Question question;
 
-        @Column
+        @Column(nullable = false)
         private String content;
 
-        @Column(name = "is_correct")
+        @Column(name = "is_correct", nullable = false)
         private Boolean isCorrect;
 
-        @Column
+        @Column(nullable = false)
         private LocalDateTime created_at;
 
-        @Column
+        @Column(nullable = false)
         private LocalDateTime updated_at;
     }
