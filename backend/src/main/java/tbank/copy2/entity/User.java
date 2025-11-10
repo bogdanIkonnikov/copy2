@@ -3,8 +3,6 @@ package tbank.copy2.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -25,17 +23,9 @@ public class User {
     @Column(nullable = false)
     private String password_hash;
 
-    @Column
+    @Column(nullable = false)
     private LocalDateTime created_at;
 
-    @Column
+    @Column(nullable = false)
     private LocalDateTime updated_at;
-
-    public User(String password_hash, String email, String username) {
-        this.password_hash = password_hash;
-        this.email = email;
-        this.username = username;
-    }
-
-
 }
