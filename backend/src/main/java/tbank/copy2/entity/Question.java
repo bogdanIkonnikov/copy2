@@ -27,6 +27,10 @@ public class Question {
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Answer> answers = new ArrayList<>();
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "test_session_id")
+    private TestSession test_session;
+
     @Column(nullable = false)
     private String content;
 
