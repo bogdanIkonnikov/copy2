@@ -3,12 +3,12 @@ package tbank.copy2.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @Entity
 @NoArgsConstructor
+@Table(name = "users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,23 +21,11 @@ public class User {
     private String email;
 
     @Column(nullable = false)
-    private String password;
+    private String password_hash;
 
-    @Column
-    private String avatar_url;
+    @Column(nullable = false)
+    private LocalDateTime created_at;
 
-    @Column
-    private LocalDate created_at;
-
-    @Column
-    private LocalDate updated_at;
-
-    public User(String avatar_url, String password, String email, String username) {
-        this.avatar_url = avatar_url;
-        this.password = password;
-        this.email = email;
-        this.username = username;
-    }
-
-
+    @Column(nullable = false)
+    private LocalDateTime updated_at;
 }
