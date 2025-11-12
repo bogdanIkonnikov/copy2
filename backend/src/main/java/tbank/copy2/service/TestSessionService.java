@@ -27,17 +27,16 @@ public class TestSessionService {
     public TestSessionResponse startSession(AddTestSessionRequest request) {
         TestSession testSession = new TestSession();
         testSession.setTest(testRepository.findById(request.getTestId()).orElse(null));
-        testSession.setUser(userRepository.findById(request.getUserId()).orElse(null));
+        testSession.setUser(userRepository.findById(1L).orElse(null)); //ZAGLUSHKA
         testSession.setCorrectCount(0L);
         testSession.setTotalCount((long) testSession.getTest().getQuestions().size());
-        testSession.setQuestions(testSession.getTest().getQuestions());
         testSession.setStarted_at(LocalDateTime.now());
         testSessionRepository.save(testSession);
         TestSessionResponse testSessionResponse = new TestSessionResponse();
         testSessionResponse.setSessionId(testSession.getId());
         testSessionResponse.setTestId(testSession.getTest().getId());
         testSessionResponse.setTestName(testSession.getTest().getName());
-        testSessionResponse.setStarted_at(testSessionResponse.getStarted_at());
+        testSessionResponse.setStarted_at(String.valueOf(testSession.getStarted_at()));
         return testSessionResponse;
     }
 
