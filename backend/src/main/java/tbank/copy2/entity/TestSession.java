@@ -6,8 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Data
@@ -27,9 +25,6 @@ public class TestSession {
     @JoinColumn(name = "test_id")
     private Test test;
 
-    @OneToMany(mappedBy = "test_session", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Question> questions = new ArrayList<>();
-
     @Column(nullable = false)
     private Long correctCount;
 
@@ -39,6 +34,6 @@ public class TestSession {
     @Column(nullable = false)
     private LocalDateTime started_at;
 
-    @Column(nullable = false)
+    @Column()
     private LocalDateTime finished_at;
 }
