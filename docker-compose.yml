@@ -9,24 +9,34 @@ services:
 
     volumes:
         - postgres_data:/var/lib/postgresql/data
-        - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+        - ./backend/src/main/resources/db/migration:/docker-entrypoint-initdb.d/
     ports:
       - "127.0.0.1:5433:5432"
-  app:
-    build: .
+    networks:
+      - app-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/copy2
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
     ports:
-      - "8080:8080"
+        - "8080:8080"
     depends_on:
       - postgres
+    networks:
+      - app-network
+
   frontend:
-    image: frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
     ports:
-      - "3000:80"
+        - "3000:80"
     networks:
       - app-network
 networks:
