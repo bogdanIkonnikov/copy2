@@ -1,3 +1,55 @@
+CREATE TABLE users (
+                       id SERIAL PRIMARY KEY,
+                       username VARCHAR(255) UNIQUE NOT NULL,
+                       email VARCHAR(255) UNIQUE NOT NULL,
+                       password_hash VARCHAR(255) NOT NULL,
+                       created_at TIMESTAMP NOT NULL,
+                       updated_at TIMESTAMP NOT NULL
+);
+
+CREATE TABLE tests (
+                       id SERIAL PRIMARY KEY,
+                       test_name VARCHAR(255) NOT NULL,
+                       user_id INTEGER,
+                       description TEXT,
+                       created_at TIMESTAMP NOT NULL,
+                       updated_at TIMESTAMP NOT NULL,
+                       CONSTRAINT fk_tests_user FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE SET NULL
+);
+
+CREATE TABLE questions (
+                           id SERIAL PRIMARY KEY,
+                           test_id INTEGER,
+                           content TEXT NOT NULL,
+                           question_type VARCHAR(255),
+                           created_at TIMESTAMP NOT NULL,
+                           updated_at TIMESTAMP NOT NULL,
+                           CONSTRAINT fk_questions_test FOREIGN KEY(test_id) REFERENCES tests(id) ON DELETE CASCADE
+);
+
+CREATE TABLE answers (
+                         id SERIAL PRIMARY KEY,
+                         question_id INTEGER,
+                         content TEXT NOT NULL,
+                         is_correct BOOLEAN NOT NULL,
+                         created_at TIMESTAMP NOT NULL,
+                         updated_at TIMESTAMP NOT NULL,
+                         CONSTRAINT fk_answers_question FOREIGN KEY(question_id) REFERENCES questions(id) ON DELETE CASCADE
+);
+
+CREATE TABLE test_sessions (
+                               id SERIAL PRIMARY KEY,
+                               user_id INTEGER,
+                               test_id INTEGER,
+                               correctcount BIGINT NOT NULL,
+                               totalcount BIGINT NOT NULL,
+                               started_at TIMESTAMP NOT NULL,
+                               finished_at TIMESTAMP,
+                               CONSTRAINT fk_test_sessions_user FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE SET NULL,
+                               CONSTRAINT fk_test_sessions_test FOREIGN KEY(test_id) REFERENCES tests(id) ON DELETE SET NULL
+);
+
+
 INSERT INTO users (username, email, password_hash, created_at, updated_at)
 VALUES ('vasya', 'vasya@mail.ru', '$2a$10$hashedpass', NOW(), NOW())
 ON CONFLICT (username) DO NOTHING;
