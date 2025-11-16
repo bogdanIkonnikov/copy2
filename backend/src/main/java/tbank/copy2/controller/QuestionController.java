@@ -33,7 +33,7 @@ public class QuestionController {
     }
 
     @Operation(summary = "Получить вопрос")
-    @PostMapping("/{questionId}")
+    @GetMapping ("/{questionId}")
     public QuestionWithAnswersResponse getQuestion(
             @Parameter(description = "Идентификатор теста", example = "1")
             @PathVariable Long questionId) {
