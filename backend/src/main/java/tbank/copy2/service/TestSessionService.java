@@ -41,7 +41,7 @@ public class TestSessionService {
     }
 
     public AnswerSessionResponse answerSession(AnswerSessionRequest request, Long sessionId) {
-        Boolean saved = false;
+        Boolean saved;
         Boolean isCorrect = false;
         List<Object> correctAnswer = new ArrayList<>();
         TestSession session =  testSessionRepository.getTestSessionById(sessionId);
@@ -55,25 +55,24 @@ public class TestSessionService {
                                     .toList());
             if (trueAnswers.equals(userAnswers)) {
                 isCorrect = true;
-                correctAnswer = request.getUserAnswer();
                 session.setCorrectCount(session.getCorrectCount() + 1);
                 //добавить ответ в UserAnswers
                 testSessionRepository.save(session);
-                saved = true;
             }
+            correctAnswer = Collections.singletonList(trueAnswers);
         }
         if (questionRepository.getQuestionById(request.getQuestionId()).getType() == INPUT){
             String trueAnswer = answerRepository.findAllByQuestionId(request.getQuestionId()).get(0).getContent();
             String userAnswer = request.getUserAnswer().get(0).toString();
             if (trueAnswer.equals(userAnswer)) {
                 isCorrect = true;
-                correctAnswer = request.getUserAnswer();
                 session.setCorrectCount(session.getCorrectCount() + 1);
                 //добавить ответ в UserAnswers
                 testSessionRepository.save(session);
-                saved = true;
             }
+            correctAnswer.add(trueAnswer);
         }
+        saved = true;
         AnswerSessionResponse answerSessionResponse = new AnswerSessionResponse();
         answerSessionResponse.setCorrectAnswer(correctAnswer);
         answerSessionResponse.setSaved(saved);
