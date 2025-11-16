@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import tbank.copy2.dto.testSession.*;
@@ -25,6 +26,7 @@ public class TestSessionController {
                     required = true,
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = AddTestSessionRequest.class))
             )
+            @Valid
             @RequestBody AddTestSessionRequest addTestSessionRequest) {
         return testSessionService.startSession(addTestSessionRequest);
     }
@@ -37,6 +39,7 @@ public class TestSessionController {
                     required = true,
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = AnswerSessionRequest.class))
             )
+            @Valid
             @RequestBody AnswerSessionRequest request,
             @Parameter(description = "Идентификатор сессии")
             @PathVariable Long sessionId) {
