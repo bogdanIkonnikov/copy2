@@ -18,8 +18,8 @@ public class AnswerService {
     @Autowired
     private QuestionRepository questionRepository;
 
-    public List<AnswerResponse> getAnswersByQuestionId(Long testId) {
-        List<Answer> answers = answerRepository.findAllByQuestionId(testId);
+    public List<AnswerResponse> getAnswersByQuestionId(Long questionId) {
+        List<Answer> answers = answerRepository.findAllByQuestionId(questionId);
         List<AnswerResponse> answerResponses = new ArrayList<>();
         for (Answer answer : answers) {
             AnswerResponse answerResponse = new AnswerResponse();
