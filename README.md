@@ -4,7 +4,7 @@
 1. Скопируйте репозиторий выполнив в терминале
 	`git clone https://github.com/bogdanIkonnikov/copy2.git`
 	`git submodule update --init --recursive`
-2. Перейдите к ветке main `git switch git switch create-test`
+2. Перейдите к ветке main `git switch create-test`
 3. Для запуска в Docker:
 	1. Убедитесь, что на компьютере установлены Docker и docker-compose: 
 		1. Проверить версию Docker: `docker --version` 
