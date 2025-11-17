@@ -8,6 +8,7 @@ import tbank.copy2.repository.*;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static tbank.copy2.enums.Type.*;
 
@@ -50,9 +51,9 @@ public class TestSessionService {
                     answerRepository.findAllByQuestionId(request.getQuestionId())
                                     .stream().map(answer -> answer.getId())
                                     .toList());
-            Set<Long> userAnswers = new HashSet<>(request.getUserAnswer()
-                                    .stream().map(o -> (Long) o)
-                                    .toList());
+            Set<Long> userAnswers = request.getUserAnswer().stream()
+                    .map(o -> ((Number) o).longValue())
+                    .collect(Collectors.toSet());
             if (trueAnswers.equals(userAnswers)) {
                 isCorrect = true;
                 session.setCorrectCount(session.getCorrectCount() + 1);
