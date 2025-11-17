@@ -41,14 +41,15 @@ CREATE TABLE test_sessions (
                                id SERIAL PRIMARY KEY,
                                user_id INTEGER,
                                test_id INTEGER,
-                               correctcount BIGINT NOT NULL,
-                               totalcount BIGINT NOT NULL,
+                               correct_count BIGINT NOT NULL,
+                               total_count BIGINT NOT NULL,
                                started_at TIMESTAMP NOT NULL,
                                finished_at TIMESTAMP,
                                CONSTRAINT fk_test_sessions_user FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE SET NULL,
                                CONSTRAINT fk_test_sessions_test FOREIGN KEY(test_id) REFERENCES tests(id) ON DELETE SET NULL
 );
-
+ALTER TABLE test_sessions ALTER COLUMN correct_count SET DEFAULT 0;
+ALTER TABLE test_sessions ALTER COLUMN total_count SET DEFAULT 0;
 
 INSERT INTO users (username, email, password_hash, created_at, updated_at)
 VALUES ('vasya', 'vasya@mail.ru', '$2a$10$hashedpass', NOW(), NOW())

@@ -25,11 +25,11 @@ public class TestSession {
     @JoinColumn(name = "test_id")
     private Test test;
 
-    @Column(nullable = false)
-    private Long correctCount;
+    @Column(nullable = false, name = "correct_count")
+    private long correctCount;
 
-    @Column(nullable = false)
-    private Long totalCount;
+    @Column(nullable = false, name = "total_count")
+    private long totalCount;
 
     @Column(nullable = false)
     private LocalDateTime started_at;

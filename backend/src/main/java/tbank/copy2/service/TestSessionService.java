@@ -29,8 +29,8 @@ public class TestSessionService {
         TestSession testSession = new TestSession();
         testSession.setTest(testRepository.findById(request.getTestId()).orElse(null));
         testSession.setUser(userRepository.findById(1L).orElse(null)); //ZAGLUSHKA
-        testSession.setCorrectCount(0L);
-        testSession.setTotalCount((long) testSession.getTest().getQuestions().size());
+        testSession.setCorrectCount(0);
+        testSession.setTotalCount(testSession.getTest().getQuestions().size());
         testSession.setStarted_at(LocalDateTime.now());
         testSessionRepository.save(testSession);
         TestSessionResponse testSessionResponse = new TestSessionResponse();
@@ -46,13 +46,16 @@ public class TestSessionService {
         Boolean isCorrect = false;
         List<Object> correctAnswer = new ArrayList<>();
         TestSession session =  testSessionRepository.getTestSessionById(sessionId);
-        if (questionRepository.getQuestionById(request.getQuestionId()).getType() == CHOICE){
-            Set<Long> trueAnswers = new HashSet<>(
+        if (questionRepository.getQuestionById(request.getQuestionId()).getType().equals(CHOICE)){
+            Set<Long> trueAnswers =
                     answerRepository.findAllByQuestionId(request.getQuestionId())
-                                    .stream().map(answer -> answer.getId())
-                                    .toList());
-            Set<Long> userAnswers = request.getUserAnswer().stream()
-                    .map(o -> ((Number) o).longValue())
+                            .stream()
+                            .filter(answer -> Boolean.TRUE.equals(answer.getIsCorrect()))
+                            .map(answer -> answer.getId())
+                            .collect(Collectors.toSet());
+            Set<Long> userAnswers = request.getUserAnswer()
+                    .stream()
+                    .map(o -> Long.parseLong(String.valueOf(o)))
                     .collect(Collectors.toSet());
             if (trueAnswers.equals(userAnswers)) {
                 isCorrect = true;
@@ -62,7 +65,7 @@ public class TestSessionService {
             }
             correctAnswer = Collections.singletonList(trueAnswers);
         }
-        if (questionRepository.getQuestionById(request.getQuestionId()).getType() == INPUT){
+        if (questionRepository.getQuestionById(request.getQuestionId()).getType().equals(INPUT)){
             String trueAnswer = answerRepository.findAllByQuestionId(request.getQuestionId()).get(0).getContent();
             String userAnswer = request.getUserAnswer().get(0).toString();
             if (trueAnswer.equals(userAnswer)) {
