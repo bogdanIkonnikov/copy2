@@ -1,5 +1,6 @@
 package tbank.copy2.dto.test;
 
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,7 +16,7 @@ import jakarta.validation.constraints.NotNull;
 public class AddTestRequest {
 
     @Schema(description = "Название теста", example = "test1")
-    @NotBlank
+    @NotBlank(message = "name is required")
     @Size(min = 1, max =30)
     private String name;
 
@@ -23,6 +24,7 @@ public class AddTestRequest {
     private String description;
 
     @Schema(description = "ID пользователя-владельца", example = "1")
-    @NotNull
+    @NotNull(message = "userId cannot be null")
+    @Positive(message = "userId must be positive")
     private Long userId;
 }

@@ -3,7 +3,7 @@ package tbank.copy2.dto.testSession;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Positive;
 import lombok.Data;
 
 import java.util.List;
@@ -13,12 +13,12 @@ import java.util.List;
 public class AnswerSessionRequest {
 
     @Schema(description = "Идентификатор вопроса", example = "1")
-    @NotNull
-    @PositiveOrZero
+    @NotNull(message = "questionId cannot be null")
+    @Positive(message = "questionId must be positive")
     private Long questionId;
 
     @Schema(description = "Ответ пользователя в виде списка значений",
             type = "array", implementation = Object.class)
-    @NotEmpty
+    @NotEmpty(message = "userAnswer is required")
     private List<Object> userAnswer;
 }
