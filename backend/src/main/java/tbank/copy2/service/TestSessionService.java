@@ -63,7 +63,7 @@ public class TestSessionService {
                 //добавить ответ в UserAnswers
                 testSessionRepository.save(session);
             }
-            correctAnswer = Collections.singletonList(trueAnswers);
+            correctAnswer.addAll(trueAnswers);
         }
         if (questionRepository.getQuestionById(request.getQuestionId()).getType().equals(INPUT)){
             String trueAnswer = answerRepository.findAllByQuestionId(request.getQuestionId()).get(0).getContent();
