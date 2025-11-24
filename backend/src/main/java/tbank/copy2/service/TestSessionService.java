@@ -95,4 +95,17 @@ public class TestSessionService {
         testSessionStatusResponse.setSessionId(testSession.getId());
         return testSessionStatusResponse;
     }
+
+    public TestSessionStatusResponse finishSession(Long sessionId) {
+        TestSession testSession = testSessionRepository.getTestSessionById(sessionId);
+        testSession.setFinished_at(LocalDateTime.now());
+        TestSessionStatusResponse testSessionStatusResponse = new TestSessionStatusResponse();
+        testSessionStatusResponse.setTestId(testSession.getTest().getId());
+        testSessionStatusResponse.setProgress(testSession.getCorrectCount());
+        testSessionStatusResponse.setQuestionsCount(testSession.getTotalCount());
+        testSessionStatusResponse.setFinished_at(testSession.getFinished_at().toString());
+        testSessionStatusResponse.setUserId(testSession.getUser().getId());
+        testSessionStatusResponse.setSessionId(testSession.getId());
+        return testSessionStatusResponse;
+    }
 }

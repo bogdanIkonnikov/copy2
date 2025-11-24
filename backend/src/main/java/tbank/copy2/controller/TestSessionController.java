@@ -54,4 +54,12 @@ public class TestSessionController {
         return testSessionService.getTestSessionStatus(sessionId);
     }
 
+    @Operation(summary = "Получить статус сессии")
+    @GetMapping("/{sessionId}/finish")
+    public TestSessionStatusResponse finishSession(
+            @Parameter(description = "Идентификатор сессии")
+            @PathVariable Long sessionId) {
+        return testSessionService.finishSession(sessionId);
+    }
+
 }
