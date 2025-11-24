@@ -55,7 +55,7 @@ public class TestSessionController {
     }
 
     @Operation(summary = "Получить статус сессии")
-    @GetMapping("/{sessionId}/finish")
+    @PostMapping("/{sessionId}/finish")
     public TestSessionStatusResponse finishSession(
             @Parameter(description = "Идентификатор сессии")
             @PathVariable Long sessionId) {
