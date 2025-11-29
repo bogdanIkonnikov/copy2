@@ -1,3 +1,4 @@
 [submodule "frontend"]
 	path = frontend
 	url = https://github.com/vkorniushina/tprep_frontend.git
+	branch = layout-test-page

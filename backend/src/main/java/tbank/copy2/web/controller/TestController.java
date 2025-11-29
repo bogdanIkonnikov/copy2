@@ -15,6 +15,7 @@ import tbank.copy2.web.dto.test.AddTestRequest;
 import tbank.copy2.web.dto.test.TestResponse;
 import tbank.copy2.service.service.QuestionService;
 import tbank.copy2.service.service.TestService;
+import tbank.copy2.web.dto.test.UpdateTestRequest;
 
 import java.util.HashMap;
 import java.util.List;
@@ -89,6 +90,11 @@ public class TestController {
             response.put("questions", questionService.getQuestionsByTestId(id));
             return response;
         }
+    }
+
+    @PutMapping("/{id}")
+    public boolean updateTestById(@PathVariable Long id, @RequestBody @Valid UpdateTestRequest request) {
+        return testService.updateTest(request, id);
     }
 
 }
