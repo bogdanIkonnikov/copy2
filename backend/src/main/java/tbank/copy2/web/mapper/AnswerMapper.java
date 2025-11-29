@@ -5,6 +5,7 @@ import tbank.copy2.web.dto.answer.AddAnswerRequest;
 import tbank.copy2.web.dto.answer.AnswerResponse;
 import tbank.copy2.repository.entity.Answer;
 import tbank.copy2.repository.entity.Question;
+import tbank.copy2.web.dto.answer.UpdateAnswerRequest;
 
 @Component
 public class AnswerMapper {
@@ -16,6 +17,14 @@ public class AnswerMapper {
         return answerResponse;
     }
     public Answer toEntity(AddAnswerRequest request, Question question) {
+        Answer answer = new Answer();
+        answer.setQuestion(question);
+        answer.setIsCorrect(request.getIsCorrect());
+        answer.setContent(request.getContent());
+        return answer;
+    }
+
+    public Answer toEntity(UpdateAnswerRequest request, Question question) {
         Answer answer = new Answer();
         answer.setQuestion(question);
         answer.setIsCorrect(request.getIsCorrect());

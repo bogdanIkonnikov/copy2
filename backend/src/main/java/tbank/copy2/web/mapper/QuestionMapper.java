@@ -2,10 +2,7 @@ package tbank.copy2.web.mapper;
 
 import org.springframework.stereotype.Component;
 import tbank.copy2.web.dto.answer.AnswerResponse;
-import tbank.copy2.web.dto.question.AddQuestionRequest;
-import tbank.copy2.web.dto.question.QuestionLightResponse;
-import tbank.copy2.web.dto.question.QuestionResponse;
-import tbank.copy2.web.dto.question.QuestionWithAnswersResponse;
+import tbank.copy2.web.dto.question.*;
 import tbank.copy2.repository.entity.Question;
 import tbank.copy2.repository.entity.Test;
 
@@ -28,6 +25,15 @@ public class QuestionMapper {
         question.setTest(test);
         return question;
     }
+
+    public Question toQuestion(UpdateQuestionRequest updateQuestionRequest, Test test) {
+        Question question = new Question();
+        question.setType(updateQuestionRequest.getType());
+        question.setContent(updateQuestionRequest.getContent());
+        question.setTest(test);
+        return question;
+    }
+
     public QuestionResponse toResponse(Question question) {
         QuestionResponse questionResponse = new QuestionResponse();
         questionResponse.setId(question.getId());
