@@ -14,15 +14,15 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Schema(description = "Запрос для добавления ответа на вопрос")
 public class AddAnswerRequest {
     @Schema(description = "id вопроса, к которому добавляется ответ", example = "1")
-    @NotNull
-    @Positive
+    @NotNull(message = "Id сannot be null")
+    @Positive(message = "Id must be positive")
     private Long questionId;
 
     @Schema(description = "Содержимое ответа", example = "Это красный шарик")
-    @NotEmpty
+    @NotEmpty(message = "Answer is required")
     private String content;
 
     @Schema(description = "Признак правильности ответа", example = "true")
-    @NotNull
+    @NotNull(message = "isCorrect cannot be null")
     private Boolean isCorrect;
 }
