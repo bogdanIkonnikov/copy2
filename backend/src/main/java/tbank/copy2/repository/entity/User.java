@@ -3,6 +3,9 @@ package tbank.copy2.repository.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import java.time.LocalDateTime;
 
 @Data
@@ -23,9 +26,11 @@ public class User {
     @Column(nullable = false)
     private String password_hash;
 
+    @CreationTimestamp
     @Column(nullable = false)
     private LocalDateTime created_at;
 
+    @UpdateTimestamp
     @Column(nullable = false)
     private LocalDateTime updated_at;
 }

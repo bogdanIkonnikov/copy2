@@ -1,5 +1,6 @@
 package tbank.copy2.service.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,8 +24,6 @@ import java.util.List;
 
 @Service
 public class TestService {
-    @Autowired
-    private AnswerMapper answerMapper;
     @Autowired
     private AnswerRepository answerRepository;
     @Autowired
@@ -54,33 +53,74 @@ public class TestService {
         Test test = testRepository.findById(id).orElse(null);
         return testMapper.toTestResponse(test);
     }
+
     private void setNewAnswers(Question question, List<UpdateAnswerRequest> answers){
-        List<Answer> answerList = new ArrayList<>();
-        for (UpdateAnswerRequest uAnswer : answers) {
-            Answer answer = answerMapper.toEntity(uAnswer, question);
-            if (uAnswer.getAnswerId() != null) {
-                answer.setId(uAnswer.getAnswerId());
-            }
-            answerRepository.save(answer);
-            answerList.add(answer);
+        // Сохраняем вопрос если он новый
+        if (question.getId() == null) {
+            question = questionRepository.save(question);
+            questionRepository.flush(); // Форсируем сохранение
         }
-        question.setAnswers(answerList);
+
+        // Теперь безопасно создаем ответы
+        for (UpdateAnswerRequest uAnswer : answers) {
+            Answer currentAnswer;
+            boolean isNewAnswer = uAnswer.getAnswerId() == null;
+
+            if (!isNewAnswer) {
+                currentAnswer = answerRepository.findById(uAnswer.getAnswerId())
+                        .orElseThrow(() -> new EntityNotFoundException("Answer not found"));
+                currentAnswer.setContent(uAnswer.getContent());
+                currentAnswer.setIsCorrect(uAnswer.getIsCorrect());
+            } else {
+                currentAnswer = new Answer(); // Создаем вручную без маппера
+                currentAnswer.setContent(uAnswer.getContent());
+                currentAnswer.setIsCorrect(uAnswer.getIsCorrect());
+                currentAnswer.setQuestion(question); // Question уже сохранен
+            }
+
+            answerRepository.save(currentAnswer);
+        }
+
+        // НЕ трогаем question.getAnswers() - пусть Hibernate сам управляет
     }
 
     @Transactional
     public boolean updateTest(UpdateTestRequest request, Long testId) {
-        Test test = testRepository.findById(testId).orElse(null);
-        List<Question> newQuestions = new ArrayList<>();
+        Test test = testRepository.findById(testId)
+                .orElseThrow(() -> new EntityNotFoundException("Test not found"));
+
+        test.setName(request.getName());
+        test.setDescription(request.getDescription());
+
+        List<Question> questionsFromRequest = new ArrayList<>();
+
         for (UpdateQuestionRequest uQuestion : request.getQuestions()) {
-            Question newQuestion = questionMapper.toQuestion(uQuestion, test);
-            if (uQuestion.getQuestionId() != null){
-                newQuestion.setId(uQuestion.getQuestionId());
+            Question currentQuestion;
+            boolean isExistingQuestion = uQuestion.getQuestionId() != null && uQuestion.getQuestionId() > 0;
+
+            if (isExistingQuestion) {
+                currentQuestion = questionRepository.findById(uQuestion.getQuestionId())
+                        .orElseThrow(() -> new EntityNotFoundException("Question not found"));
+
+                currentQuestion.setContent(uQuestion.getContent());
+                currentQuestion.setType(uQuestion.getType());
+            } else {
+                currentQuestion = questionMapper.toQuestion(uQuestion, test);
+                currentQuestion.setTest(test);
+                currentQuestion =  questionRepository.save(currentQuestion);
+                questionRepository.flush();
+                currentQuestion = questionRepository.findById(currentQuestion.getId()).get();
             }
-            setNewAnswers(newQuestion, uQuestion.getAnswers());
-            questionRepository.save(newQuestion);
-            newQuestions.add(newQuestion);
+            setNewAnswers(currentQuestion, uQuestion.getAnswers());
+
+            questionRepository.save(currentQuestion);
+            questionsFromRequest.add(currentQuestion);
         }
-        test.setQuestions(newQuestions);
+        if (test.getQuestions() != null) {
+            test.getQuestions().clear();
+        }
+        test.getQuestions().addAll(questionsFromRequest);
+
         testRepository.save(test);
         return true;
     }

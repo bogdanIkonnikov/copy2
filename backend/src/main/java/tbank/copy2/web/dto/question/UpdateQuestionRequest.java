@@ -3,7 +3,6 @@ package tbank.copy2.web.dto.question;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,7 +18,6 @@ import java.util.List;
 @Schema(description = "Запрос для добавления нового вопроса")
 public class UpdateQuestionRequest {
     @Schema(description = "id вопроса, который изменяет пользователь (null если добавляем вопрос)", example = "1")
-    @Positive
     private Long questionId;
 
     @Schema(description = "Текст вопроса", example = "Что такое компьютер?")
