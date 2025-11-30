@@ -3,6 +3,9 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import java.time.LocalDateTime;
 
     @Entity
@@ -26,9 +29,11 @@ import java.time.LocalDateTime;
         @Column(name = "is_correct", nullable = false)
         private Boolean isCorrect;
 
+        @CreationTimestamp
         @Column(nullable = false)
         private LocalDateTime created_at;
 
+        @UpdateTimestamp
         @Column(nullable = false)
         private LocalDateTime updated_at;
     }

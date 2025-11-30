@@ -26,10 +26,10 @@ public class QuestionMapper {
         return question;
     }
 
-    public Question toQuestion(UpdateQuestionRequest updateQuestionRequest, Test test) {
+    public Question toQuestion(UpdateQuestionRequest addQuestionRequest, Test test) {
         Question question = new Question();
-        question.setType(updateQuestionRequest.getType());
-        question.setContent(updateQuestionRequest.getContent());
+        question.setType(addQuestionRequest.getType());
+        question.setContent(addQuestionRequest.getContent());
         question.setTest(test);
         return question;
     }

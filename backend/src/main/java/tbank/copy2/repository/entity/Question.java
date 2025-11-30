@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import tbank.copy2.common.enums.Type;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -24,7 +26,7 @@ public class Question {
     @JoinColumn(name = "test_id")
     private Test test;
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Answer> answers = new ArrayList<>();
 
     @Column(nullable = false)
@@ -34,9 +36,11 @@ public class Question {
     @Column(name = "question_type")
     private Type type;
 
+    @CreationTimestamp
     @Column(nullable = false)
     private LocalDateTime created_at;
 
+    @UpdateTimestamp
     @Column(nullable = false)
     private LocalDateTime updated_at;
 }

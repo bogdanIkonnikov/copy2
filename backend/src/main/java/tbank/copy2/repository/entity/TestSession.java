@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -31,9 +33,11 @@ public class TestSession {
     @Column(nullable = false, name = "total_count")
     private long totalCount;
 
+    @CreationTimestamp
     @Column(nullable = false)
     private LocalDateTime started_at;
 
+    @UpdateTimestamp
     @Column()
     private LocalDateTime finished_at;
 }

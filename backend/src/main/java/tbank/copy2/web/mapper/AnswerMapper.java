@@ -23,12 +23,4 @@ public class AnswerMapper {
         answer.setContent(request.getContent());
         return answer;
     }
-
-    public Answer toEntity(UpdateAnswerRequest request, Question question) {
-        Answer answer = new Answer();
-        answer.setQuestion(question);
-        answer.setIsCorrect(request.getIsCorrect());
-        answer.setContent(request.getContent());
-        return answer;
-    }
 }
