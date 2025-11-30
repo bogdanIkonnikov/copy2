@@ -13,7 +13,7 @@ public class AddTestSessionRequest {
     private Long testId;
 
     @Schema(description = "Идентификатор пользователя", example = "1")
-    @NotNull
+   // @NotNull
     private Long userId;
 
 }

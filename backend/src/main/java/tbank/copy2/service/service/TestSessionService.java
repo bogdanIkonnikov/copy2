@@ -20,17 +20,13 @@ public class TestSessionService {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private QuestionRepository questionRepository;
-    @Autowired
-    private AnswerRepository answerRepository;
-    @Autowired
     private TestSessionMapper testSessionMapper;
     @Autowired
     private AnswerTypeChecker answerTypeChecker;
 
     public TestSessionResponse startSession(AddTestSessionRequest request) {
         Test test = testRepository.findById(request.getTestId()).orElse(null);
-        User user = userRepository.findById(request.getUserId()).orElse(null);
+        User user = userRepository.findById(1L).orElse(null); // заглушка
         TestSession testSession = testSessionMapper.toTestSession(request, test, user);
         testSessionRepository.save(testSession);
         return testSessionMapper.toSessionResponse(testSession);
