@@ -20,10 +20,6 @@ public class TestSessionService {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private QuestionRepository questionRepository;
-    @Autowired
-    private AnswerRepository answerRepository;
-    @Autowired
     private TestSessionMapper testSessionMapper;
     @Autowired
     private AnswerTypeChecker answerTypeChecker;
