@@ -1,5 +1,5 @@
 package tbank.copy2.service.service;
-import jakarta.annotation.PostConstruct;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import tbank.copy2.common.enums.Type;
@@ -8,21 +8,18 @@ import tbank.copy2.repository.repository.QuestionRepository;
 import java.util.Map;
 
 @Component
+@NoArgsConstructor
 public class AnswerTypeChecker {
+    private Map<Type, AnswerChecker> checkers;
     @Autowired
     private QuestionRepository questionRepository;
-    @Autowired
-    private ChoiceAnswerChecker ChoiceAnswerChecker;
-    @Autowired
-    private InputAnswerChecker InputAnswerChecker;
 
-    private Map<Type, AnswerChecker> checkers;
-
-    @PostConstruct
-    public void init() {
+    @Autowired
+    public AnswerTypeChecker(ChoiceAnswerChecker choiceAnswerChecker,
+                             InputAnswerChecker inputAnswerChecker) {
         this.checkers = Map.of(
-                Type.CHOICE, ChoiceAnswerChecker,
-                Type.INPUT, InputAnswerChecker
+                Type.CHOICE, choiceAnswerChecker,
+                Type.INPUT, inputAnswerChecker
         );
     }
 

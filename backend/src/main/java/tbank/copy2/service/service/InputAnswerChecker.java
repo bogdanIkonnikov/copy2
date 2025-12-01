@@ -1,5 +1,6 @@
 package tbank.copy2.service.service;
 
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import tbank.copy2.repository.repository.AnswerRepository;
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
+@NoArgsConstructor
 public class InputAnswerChecker implements AnswerChecker {
     @Autowired
     private AnswerRepository answerRepository;
