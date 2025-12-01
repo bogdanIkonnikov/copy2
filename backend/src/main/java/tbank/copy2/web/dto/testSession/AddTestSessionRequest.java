@@ -2,6 +2,7 @@ package tbank.copy2.web.dto.testSession;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.Data;
 
 @Data
@@ -9,11 +10,13 @@ import lombok.Data;
 public class AddTestSessionRequest {
 
     @Schema(description = "Идентификатор теста", example = "1")
-    @NotNull
+    @NotNull(message = "testId cannot be null")
+    @Positive(message = "testId must be positive")
     private Long testId;
 
     @Schema(description = "Идентификатор пользователя", example = "1")
-    @NotNull
+    @NotNull(message = "userId cannot be null")
+    @Positive(message = "userId must be positive")
     private Long userId;
 
 }
