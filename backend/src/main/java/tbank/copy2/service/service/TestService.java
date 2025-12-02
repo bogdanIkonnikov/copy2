@@ -12,7 +12,6 @@ import tbank.copy2.repository.repository.QuestionRepository;
 import tbank.copy2.web.dto.answer.UpdateAnswerRequest;
 import tbank.copy2.web.dto.question.UpdateQuestionRequest;
 import tbank.copy2.web.dto.test.UpdateTestRequest;
-import tbank.copy2.web.mapper.AnswerMapper;
 import tbank.copy2.web.mapper.QuestionMapper;
 import tbank.copy2.web.mapper.TestMapper;
 import tbank.copy2.repository.repository.TestRepository;
@@ -54,14 +53,16 @@ public class TestService {
         return testMapper.toTestResponse(test);
     }
 
-    private void setNewAnswers(Question question, List<UpdateAnswerRequest> answers){
-        // Сохраняем вопрос если он новый
+    @Transactional
+    protected void setNewAnswers(Question question, List<UpdateAnswerRequest> answers){
         if (question.getId() == null) {
             question = questionRepository.save(question);
-            questionRepository.flush(); // Форсируем сохранение
+            questionRepository.flush();
         }
 
-        // Теперь безопасно создаем ответы
+        answerRepository.deleteByQuestionId(question.getId());
+        answerRepository.flush();
+
         for (UpdateAnswerRequest uAnswer : answers) {
             Answer currentAnswer;
             boolean isNewAnswer = uAnswer.getAnswerId() == null;
@@ -72,16 +73,14 @@ public class TestService {
                 currentAnswer.setContent(uAnswer.getContent());
                 currentAnswer.setIsCorrect(uAnswer.getIsCorrect());
             } else {
-                currentAnswer = new Answer(); // Создаем вручную без маппера
+                currentAnswer = new Answer();
                 currentAnswer.setContent(uAnswer.getContent());
                 currentAnswer.setIsCorrect(uAnswer.getIsCorrect());
-                currentAnswer.setQuestion(question); // Question уже сохранен
             }
 
             answerRepository.save(currentAnswer);
         }
 
-        // НЕ трогаем question.getAnswers() - пусть Hibernate сам управляет
     }
 
     @Transactional
