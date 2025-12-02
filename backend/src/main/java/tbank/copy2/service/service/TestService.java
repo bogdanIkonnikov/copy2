@@ -89,6 +89,7 @@ public class TestService {
                 currentAnswer = new Answer();
                 currentAnswer.setContent(uAnswer.getContent());
                 currentAnswer.setIsCorrect(uAnswer.getIsCorrect());
+                currentAnswer.setQuestion(question);
             }
 
             answerRepository.save(currentAnswer);
@@ -121,7 +122,6 @@ public class TestService {
                 currentQuestion.setTest(test);
                 currentQuestion =  questionRepository.save(currentQuestion);
                 questionRepository.flush();
-                currentQuestion = questionRepository.findById(currentQuestion.getId()).get();
             }
             setNewAnswers(currentQuestion, uQuestion.getAnswers());
 
