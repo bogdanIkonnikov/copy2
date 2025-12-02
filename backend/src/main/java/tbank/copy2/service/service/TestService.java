@@ -60,7 +60,20 @@ public class TestService {
             questionRepository.flush();
         }
 
-        answerRepository.deleteByQuestionId(question.getId());
+        List<Long> answerIdsFromRequest = new ArrayList<>();
+        for (UpdateAnswerRequest uAnswer : answers) {
+            if (uAnswer.getAnswerId() != null) {
+                answerIdsFromRequest.add(uAnswer.getAnswerId());
+            }
+        }
+
+        List<Answer> allAnswersOfQuestion = answerRepository.findAllByQuestionId(question.getId());
+
+        for (Answer existingAnswer : allAnswersOfQuestion) {
+            if (!answerIdsFromRequest.contains(existingAnswer.getId())) {
+                answerRepository.delete(existingAnswer);
+            }
+        }
         answerRepository.flush();
 
         for (UpdateAnswerRequest uAnswer : answers) {
