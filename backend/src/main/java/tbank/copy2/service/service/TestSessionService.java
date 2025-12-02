@@ -10,6 +10,8 @@ import tbank.copy2.web.dto.answer.CheckedAnswer;
 import tbank.copy2.web.mapper.TestSessionMapper;
 import tbank.copy2.web.dto.testSession.*;
 
+import java.time.LocalDateTime;
+
 
 @Service
 public class TestSessionService {
@@ -54,6 +56,12 @@ public class TestSessionService {
 
     public TestSessionStatusResponse getTestSessionStatus(Long sessionId) {
         TestSession testSession = testSessionRepository.getTestSessionById(sessionId);
+        return testSessionMapper.toSessionStatusResponse(testSession);
+    }
+
+    public TestSessionStatusResponse finishSession(Long sessionId) {
+        TestSession testSession = testSessionRepository.getTestSessionById(sessionId);
+        testSession.setFinished_at(LocalDateTime.now());
         return testSessionMapper.toSessionStatusResponse(testSession);
     }
 }
