@@ -53,7 +53,6 @@ public class TestService {
         return testMapper.toTestResponse(test);
     }
 
-    @Transactional
     protected void setNewAnswers(Question question, List<UpdateAnswerRequest> answers){
         if (question.getId() == null) {
             question = questionRepository.save(question);
@@ -66,14 +65,11 @@ public class TestService {
                 answerIdsFromRequest.add(uAnswer.getAnswerId());
             }
         }
+        System.out.println("Айдишники ответов из реквеста: " + answerIdsFromRequest);
 
-        List<Answer> allAnswersOfQuestion = answerRepository.findAllByQuestionId(question.getId());
-
-        for (Answer existingAnswer : allAnswersOfQuestion) {
-            if (!answerIdsFromRequest.contains(existingAnswer.getId())) {
-                answerRepository.delete(existingAnswer);
-            }
-        }
+        question.getAnswers().removeIf(answer ->
+                !answerIdsFromRequest.contains(answer.getId())
+        );
         answerRepository.flush();
 
         for (UpdateAnswerRequest uAnswer : answers) {
