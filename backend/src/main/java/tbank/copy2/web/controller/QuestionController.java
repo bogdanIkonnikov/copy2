@@ -8,17 +8,22 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import tbank.copy2.service.model.QuestionModel;
 import tbank.copy2.web.dto.question.AddQuestionRequest;
 import tbank.copy2.web.dto.question.QuestionResponse;
 import tbank.copy2.web.dto.question.QuestionWithAnswersResponse;
 import tbank.copy2.service.service.QuestionService;
+import tbank.copy2.web.mapper.QuestionMapper;
+
 
 @RestController
 @RequestMapping("/api/questions")
 @Tag(name = "Вопросы", description = "Операции, связанные с вопросами")
 public class QuestionController {
     @Autowired
-    private QuestionService questionService;
+    private QuestionService service;
+    @Autowired
+    private QuestionMapper mapper;
 
     @Operation(summary = "Добавить новый вопрос")
     @PostMapping("/add")
@@ -29,7 +34,8 @@ public class QuestionController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = AddQuestionRequest.class))
             )
             @RequestBody @Valid AddQuestionRequest addQuestionRequest) {
-        return questionService.addQuestion(addQuestionRequest);
+        QuestionModel model = mapper.toModel(addQuestionRequest);
+        return mapper.toResponse(service.addQuestion(model));
     }
 
     @Operation(summary = "Получить вопрос")
@@ -37,7 +43,8 @@ public class QuestionController {
     public QuestionWithAnswersResponse getQuestion(
             @Parameter(description = "Идентификатор теста", example = "1")
             @PathVariable Long questionId) {
-        return questionService.getQuestionById(questionId);
+        QuestionModel model = service.getQuestionById(questionId);
+        return mapper.toResponseWithAnswers(model);
     }
 
 }
