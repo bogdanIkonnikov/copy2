@@ -9,6 +9,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import tbank.copy2.service.model.QuestionModel;
+import tbank.copy2.service.model.TestModel;
 import tbank.copy2.web.dto.question.QuestionLightResponse;
 import tbank.copy2.web.dto.question.QuestionWithAnswersResponse;
 import tbank.copy2.web.dto.test.AddTestRequest;
@@ -16,6 +18,8 @@ import tbank.copy2.web.dto.test.TestResponse;
 import tbank.copy2.service.service.QuestionService;
 import tbank.copy2.service.service.TestService;
 import tbank.copy2.web.dto.test.UpdateTestRequest;
+import tbank.copy2.web.mapper.QuestionMapper;
+import tbank.copy2.web.mapper.TestMapper;
 
 import java.util.HashMap;
 import java.util.List;
@@ -30,12 +34,16 @@ public class TestController {
     private TestService testService;
     @Autowired
     private QuestionService questionService;
+    @Autowired
+    private QuestionMapper questionMapper;
+    @Autowired
+    private TestMapper mapper;
 
 
     @Operation(summary = "Получить список тестов")
     @GetMapping("")
     public List<TestResponse> getTests() {
-        return testService.getTests();
+        return testService.getTests().stream().map(t -> mapper.toTestResponse(t)).toList();
     }
 
     @Operation(summary = "Добавить новый тест")
@@ -47,13 +55,13 @@ public class TestController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = AddTestRequest.class))
             )
             @RequestBody @Valid AddTestRequest request) {
-        testService.addTest(request);
+        testService.addTest(mapper.toModel(request));
     }
 
     @Operation(summary = "Получить тест по его id")
     @GetMapping("/{id}")
     public TestResponse getTestById(@Parameter(description = "Идентификатор теста", example = "1") @PathVariable Long id) {
-        return testService.getTestById(id);
+        return mapper.toTestResponse(testService.getTestById(id));
     }
 
     @Operation(
@@ -80,21 +88,25 @@ public class TestController {
             @Parameter(description = "Сжатая версия вопросов",
                     example = "true")
             @RequestParam(name = "light", required = false, defaultValue = "false") boolean light) {
+        List<QuestionModel> models = questionService.getQuestionsByTestId(id);
         if (light) {
             Map<String, List<QuestionLightResponse>> response = new HashMap<>();
-            response.put("questions", questionService.getLightQuestionsByTestId(id));
+            List<QuestionLightResponse> lightResponses = models.stream().map(m -> questionMapper.toLightResponse(m)).toList();
+            response.put("questions", lightResponses);
             return response;
         }
         else {
             Map<String, List<QuestionWithAnswersResponse>> response = new HashMap<>();
-            response.put("questions", questionService.getQuestionsByTestId(id));
+            List<QuestionWithAnswersResponse> bigResponses = models.stream().map(m -> questionMapper.toResponseWithAnswers(m)).toList();
+            response.put("questions", bigResponses);
             return response;
         }
     }
 
     @PutMapping("/{id}")
     public boolean updateTestById(@PathVariable Long id, @RequestBody @Valid UpdateTestRequest request) {
-        return testService.updateTest(request, id);
+        TestModel model = mapper.toModel(request, id);
+        return testService.updateTest(model, id);
     }
 
 }

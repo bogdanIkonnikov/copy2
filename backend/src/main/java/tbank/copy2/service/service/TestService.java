@@ -1,22 +1,14 @@
 package tbank.copy2.service.service;
 
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import tbank.copy2.repository.entity.Answer;
-import tbank.copy2.repository.entity.Question;
-import tbank.copy2.repository.entity.Test;
-import tbank.copy2.repository.repository.AnswerRepository;
-import tbank.copy2.repository.repository.QuestionRepository;
-import tbank.copy2.web.dto.answer.UpdateAnswerRequest;
-import tbank.copy2.web.dto.question.UpdateQuestionRequest;
-import tbank.copy2.web.dto.test.UpdateTestRequest;
-import tbank.copy2.web.mapper.QuestionMapper;
-import tbank.copy2.web.mapper.TestMapper;
-import tbank.copy2.repository.repository.TestRepository;
-import tbank.copy2.web.dto.test.AddTestRequest;
-import tbank.copy2.web.dto.test.TestResponse;
+import tbank.copy2.DAO.repository.AnswerModelRepository;
+import tbank.copy2.DAO.repository.QuestionModelRepository;
+import tbank.copy2.DAO.repository.TestModelRepository;
+import tbank.copy2.service.model.AnswerModel;
+import tbank.copy2.service.model.QuestionModel;
+import tbank.copy2.service.model.TestModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,68 +16,56 @@ import java.util.List;
 @Service
 public class TestService {
     @Autowired
-    private AnswerRepository answerRepository;
+    private AnswerModelRepository answerRepository;
     @Autowired
-    private TestRepository testRepository;
+    private TestModelRepository repository;
     @Autowired
-    private TestMapper testMapper;
-    @Autowired
-    private QuestionMapper questionMapper;
-    @Autowired
-    private QuestionRepository questionRepository;
+    private QuestionModelRepository questionRepository;
 
-    public List<TestResponse> getTests() {
-        List<Test> tests = testRepository.findAll();
-        List<TestResponse> testResponses= new ArrayList<>();
-        for (Test test : tests) {
-            testResponses.add(testMapper.toTestResponse(test));
-        }
-        return testResponses;
+    public List<TestModel> getTests() {
+        return repository.findAll();
     }
 
-    public TestResponse addTest(AddTestRequest request) {
-        Test savedTest = testRepository.save(testMapper.toEntity(request));
-        return testMapper.toTestResponse(savedTest);
+    public TestModel addTest(TestModel model) {
+        return repository.save(model);
     }
 
-    public TestResponse getTestById(Long id) {
-        Test test = testRepository.findById(id).orElse(null);
-        return testMapper.toTestResponse(test);
+    public TestModel getTestById(Long id) {
+        return repository.findById(id);
     }
 
-    protected void setNewAnswers(Question question, List<UpdateAnswerRequest> answers){
+    protected void setNewAnswers(QuestionModel question, List<AnswerModel> answers){
         if (question.getId() == null) {
             question = questionRepository.save(question);
             questionRepository.flush();
         }
 
         List<Long> answerIdsFromRequest = new ArrayList<>();
-        for (UpdateAnswerRequest uAnswer : answers) {
-            if (uAnswer.getAnswerId() != null) {
-                answerIdsFromRequest.add(uAnswer.getAnswerId());
+        for (AnswerModel uAnswer : answers) {
+            if (uAnswer.getId() != null) {
+                answerIdsFromRequest.add(uAnswer.getId());
             }
         }
         System.out.println("Айдишники ответов из реквеста: " + answerIdsFromRequest);
 
-        question.getAnswers().removeIf(answer ->
-                !answerIdsFromRequest.contains(answer.getId())
+        question.getAnswerModels().removeIf(model ->
+                !answerIdsFromRequest.contains(model.getId())
         );
         answerRepository.flush();
 
-        for (UpdateAnswerRequest uAnswer : answers) {
-            Answer currentAnswer;
-            boolean isNewAnswer = uAnswer.getAnswerId() == null;
+        for (AnswerModel uAnswer : answers) {
+            AnswerModel currentAnswer;
+            boolean isNewAnswer = uAnswer.getId() == null;
 
             if (!isNewAnswer) {
-                currentAnswer = answerRepository.findById(uAnswer.getAnswerId())
-                        .orElseThrow(() -> new EntityNotFoundException("Answer not found"));
+                currentAnswer = answerRepository.findById(uAnswer.getId());
                 currentAnswer.setContent(uAnswer.getContent());
                 currentAnswer.setIsCorrect(uAnswer.getIsCorrect());
             } else {
-                currentAnswer = new Answer();
+                currentAnswer = new AnswerModel();
                 currentAnswer.setContent(uAnswer.getContent());
                 currentAnswer.setIsCorrect(uAnswer.getIsCorrect());
-                currentAnswer.setQuestion(question);
+                currentAnswer.setQuestionId(question.getId());
             }
 
             answerRepository.save(currentAnswer);
@@ -94,42 +74,39 @@ public class TestService {
     }
 
     @Transactional
-    public boolean updateTest(UpdateTestRequest request, Long testId) {
-        Test test = testRepository.findById(testId)
-                .orElseThrow(() -> new EntityNotFoundException("Test not found"));
+    public boolean updateTest(TestModel uModel, Long testId) {
+        TestModel model = repository.findById(testId);
 
-        test.setName(request.getName());
-        test.setDescription(request.getDescription());
+        model.setName(uModel.getName());
+        model.setDescription(uModel.getDescription());
 
-        List<Question> questionsFromRequest = new ArrayList<>();
+        List<QuestionModel> questionsFromRequest = new ArrayList<>();
 
-        for (UpdateQuestionRequest uQuestion : request.getQuestions()) {
-            Question currentQuestion;
-            boolean isExistingQuestion = uQuestion.getQuestionId() != null && uQuestion.getQuestionId() > 0;
+        for (QuestionModel uQuestion : uModel.getQuestions()) {
+            QuestionModel currentQuestion;
+            boolean isExistingQuestion = uQuestion.getId() != null && uQuestion.getId() > 0;
 
             if (isExistingQuestion) {
-                currentQuestion = questionRepository.findById(uQuestion.getQuestionId())
-                        .orElseThrow(() -> new EntityNotFoundException("Question not found"));
-
+                currentQuestion = questionRepository.findById(uQuestion.getId());
                 currentQuestion.setContent(uQuestion.getContent());
                 currentQuestion.setType(uQuestion.getType());
             } else {
-                currentQuestion = questionMapper.toQuestion(uQuestion, test);
-                currentQuestion.setTest(test);
-                currentQuestion =  questionRepository.save(currentQuestion);
+                currentQuestion = new QuestionModel();
+                currentQuestion.setTestId(testId);
+                currentQuestion = questionRepository.save(currentQuestion);
                 questionRepository.flush();
             }
-            setNewAnswers(currentQuestion, uQuestion.getAnswers());
+            setNewAnswers(currentQuestion, uQuestion.getAnswerModels());
 
             questionRepository.save(currentQuestion);
             questionsFromRequest.add(currentQuestion);
         }
-        if (test.getQuestions() != null) {
-            test.getQuestions().clear();
+        if (model.getQuestions() != null) {
+            model.getQuestions().clear();
         }
-        test.getQuestions().addAll(questionsFromRequest);
+        model.getQuestions().addAll(questionsFromRequest);
 
-        testRepository.save(test);
+        repository.save(model);
         return true;
     }
 }
