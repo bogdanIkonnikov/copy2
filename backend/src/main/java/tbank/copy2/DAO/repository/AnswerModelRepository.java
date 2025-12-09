@@ -8,4 +8,8 @@ import java.util.List;
 public interface AnswerModelRepository {
     List<AnswerModel> findAllByQuestionId(Long id);
     AnswerModel save(AnswerModel answerModel);
+
+    void flush();
+
+    AnswerModel findById(Long id);
 }
