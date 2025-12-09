@@ -8,11 +8,14 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import tbank.copy2.service.model.AnswerModel;
 import tbank.copy2.web.dto.answer.AddAnswerRequest;
 import tbank.copy2.web.dto.answer.AnswerResponse;
 import tbank.copy2.service.service.AnswerService;
+import tbank.copy2.web.mapper.AnswerMapper;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/answers")
@@ -20,14 +23,19 @@ import java.util.List;
 public class AnswerController {
     @Autowired
     private AnswerService answerService;
+    @Autowired
+    private AnswerMapper mapper;
 
     @Operation(summary = "Получить ответы по id вопроса")
     @GetMapping("/question/{id}")
     public List<AnswerResponse> getAnswersByQuestionId(
             @Parameter(description = "Идентификатор вопроса", example = "1")
             @PathVariable Long id) {
-
-        return answerService.getAnswersByQuestionId(id);
+        List<AnswerResponse> responses = answerService.getAnswersByQuestionId(id)
+                .stream()
+                .map(m -> mapper.toResponse(m))
+                .collect(Collectors.toList());
+        return responses;
     }
 
     @Operation(summary = "Добавить новый ответ")
@@ -39,7 +47,9 @@ public class AnswerController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = AddAnswerRequest.class))
             )
             @RequestBody @Valid AddAnswerRequest addAnswerRequest) {
-        return answerService.addAnswer(addAnswerRequest);
+        AnswerModel model = mapper.toModel(addAnswerRequest);
+        AnswerResponse response = mapper.toResponse(answerService.addAnswer(model));
+        return response;
     }
 
 }
