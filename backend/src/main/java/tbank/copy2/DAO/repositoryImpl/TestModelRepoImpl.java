@@ -1,0 +1,39 @@
+package tbank.copy2.DAO.repositoryImpl;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+import tbank.copy2.DAO.mapper.TestModelMapper;
+import tbank.copy2.DAO.repository.TestModelRepository;
+import tbank.copy2.repository.entity.Test;
+import tbank.copy2.repository.repository.TestRepository;
+import tbank.copy2.service.model.TestModel;
+
+import java.util.List;
+
+@Repository
+public class TestModelRepoImpl implements TestModelRepository {
+    @Autowired
+    private TestRepository testRepository;
+    @Autowired
+    private TestModelMapper mapper;
+
+    @Override
+    public List<TestModel> findAll() {
+        List<TestModel> models = testRepository.findAll().stream()
+                .map(t -> mapper.toModel(t)).toList();
+        return models;
+    }
+
+    @Override
+    public TestModel save(TestModel model) {
+        Test saved = testRepository.save(mapper.toEntity(model));
+        return mapper.toModel(saved);
+    }
+
+    @Override
+    public TestModel findById(Long id) {
+        Test test = testRepository.findById(id).orElse(null);
+        return mapper.toModel(test);
+    }
+
+}
