@@ -13,7 +13,7 @@ import java.util.List;
 @Repository
 public class AnswerModelRepoImpl implements AnswerModelRepository {
     @Autowired
-    AnswerRepository repository;
+    private AnswerRepository repository;
     @Autowired
     private AnswerModelMapper mapper;
 
@@ -27,6 +27,17 @@ public class AnswerModelRepoImpl implements AnswerModelRepository {
     @Override
     public AnswerModel save(AnswerModel answerModel) {
         Answer answer = repository.save(mapper.toEntity(answerModel));
+        return mapper.toModel(answer);
+    }
+
+    @Override
+    public void flush() {
+        repository.flush();
+    }
+
+    @Override
+    public AnswerModel findById(Long id) {
+        Answer answer = repository.findById(id).orElse(null);
         return mapper.toModel(answer);
     }
 }
