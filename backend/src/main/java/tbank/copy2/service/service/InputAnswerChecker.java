@@ -4,7 +4,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import tbank.copy2.DAO.repository.AnswerModelRepository;
-import tbank.copy2.web.dto.answer.CheckedAnswer;
+import tbank.copy2.service.model.CheckedAnswerModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +16,7 @@ public class InputAnswerChecker implements AnswerChecker {
     private AnswerModelRepository answerRepository;
 
     @Override
-    public CheckedAnswer checkAnswer(Long questionId, List<Object> answers) {
+    public CheckedAnswerModel checkAnswer(Long questionId, List<Object> answers) {
         boolean isCorrect = false;
         String trueAnswer = answerRepository.findAllByQuestionId(questionId).get(0).getContent();
         String userAnswer = answers.get(0).toString();
@@ -25,6 +25,6 @@ public class InputAnswerChecker implements AnswerChecker {
         }
         List<Object> correctAnswer = new ArrayList<>();
         correctAnswer.add(trueAnswer);
-        return new CheckedAnswer(correctAnswer, isCorrect);
+        return new CheckedAnswerModel(correctAnswer, isCorrect);
     }
 }

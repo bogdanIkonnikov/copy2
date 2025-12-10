@@ -3,8 +3,8 @@ package tbank.copy2.service.service;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import tbank.copy2.repository.repository.AnswerRepository;
-import tbank.copy2.web.dto.answer.CheckedAnswer;
+import tbank.copy2.DAO.repository.AnswerModelRepository;
+import tbank.copy2.service.model.CheckedAnswerModel;
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,13 +15,13 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 public class ChoiceAnswerChecker implements AnswerChecker {
     @Autowired
-    private AnswerRepository answerRepository;
+    private AnswerModelRepository repository;
 
     @Override
-    public CheckedAnswer checkAnswer(Long questionId, List<Object> answers) {
+    public CheckedAnswerModel checkAnswer(Long questionId, List<Object> answers) {
         boolean isCorrect = false;
         Set<Long> trueAnswers =
-                answerRepository.findAllByQuestionId(questionId)
+                repository.findAllByQuestionId(questionId)
                         .stream()
                         .filter(answer -> Boolean.TRUE.equals(answer.getIsCorrect()))
                         .map(answer -> answer.getId())
@@ -33,6 +33,6 @@ public class ChoiceAnswerChecker implements AnswerChecker {
         if (trueAnswers.equals(userAnswers)) {
             isCorrect = true;
         }
-        return new CheckedAnswer(Arrays.asList(trueAnswers.toArray()), isCorrect);
+        return new CheckedAnswerModel(Arrays.asList(trueAnswers.toArray()), isCorrect);
     }
 }
