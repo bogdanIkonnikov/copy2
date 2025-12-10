@@ -1,41 +1,54 @@
 package tbank.copy2.web.mapper;
 
 import org.springframework.stereotype.Component;
-import tbank.copy2.web.dto.testSession.AddTestSessionRequest;
-import tbank.copy2.web.dto.testSession.TestSessionResponse;
-import tbank.copy2.web.dto.testSession.TestSessionStatusResponse;
-import tbank.copy2.repository.entity.Test;
-import tbank.copy2.repository.entity.TestSession;
-import tbank.copy2.repository.entity.User;
+import tbank.copy2.service.model.TestSessionAnswerModel;
+import tbank.copy2.service.model.TestSessionModel;
+import tbank.copy2.service.model.TestSessionResponseModel;
+import tbank.copy2.web.dto.testSession.*;
 
 import java.time.LocalDateTime;
 
 @Component
 public class TestSessionMapper {
-    public TestSession toTestSession(AddTestSessionRequest request, Test test, User user){
-        TestSession testSession = new TestSession();
-        testSession.setTest(test);
-        testSession.setUser(user);
-        testSession.setCorrectCount(0);
-        testSession.setTotalCount(testSession.getTest().getQuestions().size());
-        testSession.setStarted_at(LocalDateTime.now());
-        return testSession;
+    public TestSessionModel toModel(AddTestSessionRequest request){
+        TestSessionModel model = new TestSessionModel();
+        model.setTestId(request.getTestId());
+        model.setUserId(request.getUserId());
+        model.setCorrectCount(0);
+        model.setTotalCount(1);
+        model.setStarted_at(LocalDateTime.now());
+        return model;
     }
-    public TestSessionResponse toSessionResponse(TestSession testSession){
+    public TestSessionAnswerModel toModel(AnswerSessionRequest request, Long sessionId){
+        TestSessionAnswerModel model = new TestSessionAnswerModel();
+        model.setSessionId(sessionId);
+        model.setUserAnswer(request.getUserAnswer());
+        model.setQuestionId(request.getQuestionId());
+        return model;
+    }
+    public AnswerSessionResponse toResponse(TestSessionResponseModel model){
+        AnswerSessionResponse response = new AnswerSessionResponse();
+        response.setIsCorrect(model.getIsCorrect());
+        response.setCorrectAnswer(model.getCorrectAnswer());
+        response.setSaved(model.getSaved());
+        return response;
+    }
+
+    public TestSessionResponse toSessionResponse(TestSessionModel model){
         TestSessionResponse testSessionResponse = new TestSessionResponse();
-        testSessionResponse.setSessionId(testSession.getId());
-        testSessionResponse.setTestId(testSession.getTest().getId());
-        testSessionResponse.setTestName(testSession.getTest().getName());
-        testSessionResponse.setStarted_at(String.valueOf(testSession.getStarted_at()));
+        testSessionResponse.setSessionId(model.getId());
+        testSessionResponse.setTestId(model.getTestId());
+        testSessionResponse.setTestName(model.getTestName());
+        testSessionResponse.setStarted_at(String.valueOf(model.getStarted_at()));
         return testSessionResponse;
     }
-    public TestSessionStatusResponse toSessionStatusResponse(TestSession testSession){
+    public TestSessionStatusResponse toSessionStatusResponse(TestSessionModel testSession){
         TestSessionStatusResponse testSessionStatusResponse = new TestSessionStatusResponse();
-        testSessionStatusResponse.setTestId(testSession.getTest().getId());
+        testSessionStatusResponse.setTestId(testSession.getTestId());
         testSessionStatusResponse.setProgress(testSession.getCorrectCount());
         testSessionStatusResponse.setQuestionsCount(testSession.getTotalCount());
         testSessionStatusResponse.setFinished_at(testSession.getFinished_at().toString());
-        testSessionStatusResponse.setUserId(testSession.getUser().getId());
+        testSessionStatusResponse.setUserId(testSession.getUserId());
         testSessionStatusResponse.setSessionId(testSession.getId());
         return testSessionStatusResponse;
     }

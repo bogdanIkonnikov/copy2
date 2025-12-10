@@ -8,15 +8,21 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import tbank.copy2.service.model.TestSessionAnswerModel;
+import tbank.copy2.service.model.TestSessionModel;
+import tbank.copy2.service.model.TestSessionResponseModel;
 import tbank.copy2.service.service.TestSessionService;
 import tbank.copy2.web.dto.testSession.*;
+import tbank.copy2.web.mapper.TestSessionMapper;
 
 @RestController
 @RequestMapping("/api/test-sessions")
 @Tag(name = "Сессия", description = "Операции, связанные с сессиями тестов")
 public class TestSessionController {
     @Autowired
-    private TestSessionService testSessionService;
+    private TestSessionService service;
+    @Autowired
+    private TestSessionMapper mapper;
 
     @Operation(summary = "Начать новую тестовую сессию")
     @PostMapping()
@@ -28,7 +34,9 @@ public class TestSessionController {
             )
             @Valid
             @RequestBody AddTestSessionRequest addTestSessionRequest) {
-        return testSessionService.startSession(addTestSessionRequest);
+        TestSessionModel model = mapper.toModel(addTestSessionRequest);
+        TestSessionModel saved = service.startSession(model);
+        return mapper.toSessionResponse(saved);
     }
 
     @Operation(summary = "Отправить ответ на вопрос")
@@ -43,7 +51,9 @@ public class TestSessionController {
             @RequestBody AnswerSessionRequest request,
             @Parameter(description = "Идентификатор сессии")
             @PathVariable Long sessionId) {
-        return testSessionService.answerSession(request, sessionId);
+        TestSessionAnswerModel model = mapper.toModel(request, sessionId);
+        TestSessionResponseModel responseModel = service.answerSession(model, sessionId);
+        return mapper.toResponse(responseModel);
     }
 
     @Operation(summary = "Получить статус сессии")
@@ -51,7 +61,8 @@ public class TestSessionController {
     public TestSessionStatusResponse getSessionStatus(
             @Parameter(description = "Идентификатор сессии")
             @PathVariable Long sessionId) {
-        return testSessionService.getTestSessionStatus(sessionId);
+        TestSessionModel model = service.getTestSessionStatus(sessionId);
+        return mapper.toSessionStatusResponse(model);
     }
 
     @Operation(summary = "Завершить сессию")
@@ -59,7 +70,8 @@ public class TestSessionController {
     public TestSessionStatusResponse finishSession(
             @Parameter(description = "Идентификатор сессии")
             @PathVariable Long sessionId) {
-        return testSessionService.finishSession(sessionId);
+        TestSessionModel model = service.finishSession(sessionId);
+        return mapper.toSessionStatusResponse(model);
     }
 
 }
