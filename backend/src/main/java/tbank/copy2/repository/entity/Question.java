@@ -43,4 +43,16 @@ public class Question {
     @UpdateTimestamp
     @Column(nullable = false)
     private LocalDateTime updated_at;
+
+    @Override
+    public String toString() {
+        return "Question{" +
+                "id=" + id +
+                ", content='" + content + '\'' +
+                ", questionType=" + type +
+                ", testId=" + (test != null ? test.getId() : null) + // Используем только ID теста
+                ", createdAt=" + created_at +
+                ", updatedAt=" + updated_at +
+                '}';
+    }
 }

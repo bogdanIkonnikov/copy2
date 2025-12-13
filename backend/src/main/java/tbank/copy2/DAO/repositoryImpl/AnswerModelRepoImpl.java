@@ -9,6 +9,7 @@ import tbank.copy2.repository.repository.AnswerRepository;
 import tbank.copy2.service.model.AnswerModel;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 public class AnswerModelRepoImpl implements AnswerModelRepository {
@@ -20,7 +21,7 @@ public class AnswerModelRepoImpl implements AnswerModelRepository {
     @Override
     public List<AnswerModel> findAllByQuestionId(Long id) {
         List<Answer> answers = repository.findAllByQuestionId(id);
-        List<AnswerModel> answerModels = answers.stream().map(a -> mapper.toModel(a)).toList();
+        List<AnswerModel> answerModels = answers.stream().map(a -> mapper.toModel(a)).collect(Collectors.toList());
         return answerModels;
     }
 

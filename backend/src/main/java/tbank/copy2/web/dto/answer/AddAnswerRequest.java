@@ -16,7 +16,7 @@ public class AddAnswerRequest {
     @Schema(description = "id вопроса, к которому добавляется ответ", example = "1")
     @NotNull
     @Positive
-    private Long questionId;
+    private Long answerId;
 
     @Schema(description = "Содержимое ответа", example = "Это красный шарик")
     @NotEmpty

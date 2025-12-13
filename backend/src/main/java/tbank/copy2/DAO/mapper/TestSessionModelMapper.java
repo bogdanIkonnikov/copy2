@@ -1,3 +1,4 @@
+// java
 package tbank.copy2.DAO.mapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ public class TestSessionModelMapper {
     private TestRepository testRepository;
 
     public TestSession toEntity(TestSessionModel model) {
+        if (model == null) return null;
         TestSession testSession = new TestSession();
         testSession.setId(model.getId());
         testSession.setTest(testRepository.findById(model.getTestId()).orElse(null));
@@ -23,15 +25,20 @@ public class TestSessionModelMapper {
     }
 
     public TestSessionModel toModel(TestSession session) {
+        if (session == null) return null;
         TestSessionModel model = new TestSessionModel();
         model.setId(session.getId());
-        model.setTestId(session.getTest().getId());
+        if (session.getTest() != null) {
+            model.setTestId(session.getTest().getId());
+            model.setTestName(session.getTest().getName());
+        }
+        if (session.getUser() != null) {
+            model.setUserId(session.getUser().getId());
+        }
         model.setCorrectCount(session.getCorrectCount());
         model.setFinished_at(session.getFinished_at());
         model.setTotalCount(session.getTotalCount());
         model.setStarted_at(session.getStarted_at());
-        model.setTestName(session.getTest().getName());
-        model.setUserId(session.getUser().getId());
-        return null;
+        return model;
     }
 }

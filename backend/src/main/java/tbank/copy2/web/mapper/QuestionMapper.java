@@ -8,6 +8,7 @@ import tbank.copy2.web.dto.answer.AnswerResponse;
 import tbank.copy2.web.dto.question.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class QuestionMapper {
@@ -38,6 +39,9 @@ public class QuestionMapper {
         model.setType(updateQuestionRequest.getType());
         model.setContent(updateQuestionRequest.getContent());
         model.setTestId(testId);
+        List<AnswerModel> answerModels = updateQuestionRequest.getAnswers().stream()
+                .map(a -> answerMapper.toModel(a)).collect(Collectors.toList());
+        model.setAnswerModels(answerModels);
         return model;
     }
 

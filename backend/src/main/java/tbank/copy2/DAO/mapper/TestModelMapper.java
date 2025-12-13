@@ -35,7 +35,7 @@ public class TestModelMapper {
         model.setUpdated_at(test.getUpdated_at());
         model.setDescription(test.getDescription());
         model.setUserId(test.getUser().getId());
-        model.setQuestions(test.getQuestions().stream().map(q -> qMapper.toModel(q)).toList());
+        model.setQuestions(test.getQuestions().stream().map(q -> qMapper.toModel(q)).collect(Collectors.toList()));
         return model;
     }
 }

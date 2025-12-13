@@ -9,6 +9,7 @@ import tbank.copy2.repository.repository.QuestionRepository;
 import tbank.copy2.service.model.QuestionModel;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 public class QuestionModelRepoImpl implements QuestionModelRepository {
@@ -26,7 +27,7 @@ public class QuestionModelRepoImpl implements QuestionModelRepository {
     @Override
     public List<QuestionModel> findAllByTestId(Long testId) {
         List<Question> questions = repository.findAllByTestId(testId);
-        return questions.stream().map(q -> mapper.toModel(q)).toList();
+        return questions.stream().map(q -> mapper.toModel(q)).collect(Collectors.toList());
     }
 
     @Override

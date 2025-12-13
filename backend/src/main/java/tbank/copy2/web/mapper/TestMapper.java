@@ -8,10 +8,10 @@ import tbank.copy2.web.dto.test.TestResponse;
 import tbank.copy2.repository.repository.UserRepository;
 import tbank.copy2.web.dto.test.UpdateTestRequest;
 
+import java.util.stream.Collectors;
+
 @Component
 public class TestMapper {
-    @Autowired
-    UserRepository userRepository;
     @Autowired
     private QuestionMapper questionMapper;
 
@@ -39,7 +39,7 @@ public class TestMapper {
         model.setName(request.getName());
         model.setDescription(request.getDescription());
         model.setQuestions(request.getQuestions().stream()
-                .map(q -> questionMapper.toModel(q, testId)).toList());
+                .map(q -> questionMapper.toModel(q, testId)).collect(Collectors.toList()));
         return model;
     }
 }
