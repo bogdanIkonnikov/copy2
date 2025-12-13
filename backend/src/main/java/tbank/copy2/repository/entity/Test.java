@@ -41,4 +41,16 @@ public class Test {
     @UpdateTimestamp
     @Column(nullable = false)
     private LocalDateTime updated_at;
+
+    @Override
+    public String toString() {
+        return "Test{" +
+                "id=" + id +
+                ", testName='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", userId=" + (user != null ? user.getId() : null) + // Используем только ID пользователя
+                ", createdAt=" + created_at +
+                ", updatedAt=" + updated_at +
+                '}';
+    }
 }

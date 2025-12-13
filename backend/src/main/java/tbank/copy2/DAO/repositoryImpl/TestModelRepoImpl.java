@@ -9,6 +9,7 @@ import tbank.copy2.repository.repository.TestRepository;
 import tbank.copy2.service.model.TestModel;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 public class TestModelRepoImpl implements TestModelRepository {
@@ -20,7 +21,7 @@ public class TestModelRepoImpl implements TestModelRepository {
     @Override
     public List<TestModel> findAll() {
         List<TestModel> models = testRepository.findAll().stream()
-                .map(t -> mapper.toModel(t)).toList();
+                .map(t -> mapper.toModel(t)).collect(Collectors.toList());
         return models;
     }
 

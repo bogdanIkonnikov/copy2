@@ -33,4 +33,15 @@ public class User {
     @UpdateTimestamp
     @Column(nullable = false)
     private LocalDateTime updated_at;
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", createdAt=" + created_at +
+                ", updatedAt=" + updated_at +
+                '}';
+    }
 }

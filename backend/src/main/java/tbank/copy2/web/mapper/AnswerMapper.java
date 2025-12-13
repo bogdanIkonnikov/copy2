@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 import tbank.copy2.service.model.AnswerModel;
 import tbank.copy2.web.dto.answer.AddAnswerRequest;
 import tbank.copy2.web.dto.answer.AnswerResponse;
+import tbank.copy2.web.dto.answer.UpdateAnswerRequest;
 
 @Component
 public class AnswerMapper {
@@ -16,7 +17,14 @@ public class AnswerMapper {
     }
     public AnswerModel toModel(AddAnswerRequest request) {
         AnswerModel model = new AnswerModel();
-        model.setQuestionId(request.getQuestionId());
+        model.setId(request.getAnswerId());
+        model.setIsCorrect(request.getIsCorrect());
+        model.setContent(request.getContent());
+        return model;
+    }
+    public AnswerModel toModel(UpdateAnswerRequest request) {
+        AnswerModel model = new AnswerModel();
+        model.setId(request.getAnswerId());
         model.setIsCorrect(request.getIsCorrect());
         model.setContent(request.getContent());
         return model;

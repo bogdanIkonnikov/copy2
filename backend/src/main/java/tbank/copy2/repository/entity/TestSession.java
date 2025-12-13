@@ -40,4 +40,17 @@ public class TestSession {
     @UpdateTimestamp
     @Column()
     private LocalDateTime finished_at;
+
+    @Override
+    public String toString() {
+        return "TestSession{" +
+                "id=" + id +
+                ", userId=" + (user != null ? user.getId() : null) +
+                ", testId=" + (test != null ? test.getId() : null) +
+                ", correctCount=" + correctCount +
+                ", totalCount=" + totalCount +
+                ", startedAt=" + started_at +
+                ", finishedAt=" + finished_at +
+                '}';
+    }
 }

@@ -36,4 +36,16 @@ import java.time.LocalDateTime;
         @UpdateTimestamp
         @Column(nullable = false)
         private LocalDateTime updated_at;
+
+        @Override
+        public String toString() {
+            return "Answer{" +
+                    "id=" + id +
+                    ", content='" + content + '\'' +
+                    ", isCorrect=" + isCorrect +
+                    ", questionId=" + (question != null ? question.getId() : null) + // Используем только ID вопроса
+                    ", createdAt=" + created_at +
+                    ", updatedAt=" + updated_at +
+                    '}';
+        }
     }
