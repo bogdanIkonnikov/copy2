@@ -33,6 +33,7 @@ public class QuestionModelMapper {
                 .collect(Collectors.toList());
         System.out.println("Преобразованные модели ответов: " + answerModels);
         model.setAnswerModels(answerModels);
+        System.out.println("Модель вопроса после преобразования: " + model);
         return model;
     }
 
