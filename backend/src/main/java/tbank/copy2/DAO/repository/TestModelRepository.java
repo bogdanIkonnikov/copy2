@@ -10,4 +10,6 @@ public interface TestModelRepository {
     TestModel save(TestModel model);
 
     TestModel findById(Long id);
+
+    Long deleteById(Long id);
 }

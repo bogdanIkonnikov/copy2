@@ -64,6 +64,12 @@ public class TestController {
         return mapper.toTestResponse(testService.getTestById(id));
     }
 
+    @Operation(summary = "Удалить тест по его id")
+    @DeleteMapping("/{id}")
+    public Long deleteById(@Parameter(description = "Идентификатор теста", example = "1") @PathVariable Long id) {
+        return testService.deleteById(id);
+    }
+
     @Operation(
             summary = "Получить список вопросов по id теста",
             description = "Возвращает список вопросов в зависимости от параметра light",
