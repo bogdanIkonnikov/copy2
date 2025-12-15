@@ -1,7 +1,9 @@
 package tbank.copy2.service.service;
 
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tbank.copy2.DAO.repository.TestModelRepository;
 import tbank.copy2.DAO.repository.TestSessionModelRepository;
 import tbank.copy2.service.model.*;
 
@@ -14,8 +16,12 @@ public class TestSessionService {
     private TestSessionModelRepository repository;
     @Autowired
     private AnswerTypeChecker answerTypeChecker;
+    @Autowired
+    private TestModelRepository testModelRepository;
 
     public TestSessionModel startSession(TestSessionModel model) {
+        TestSessionModel oldModel = repository.getTestSessionByTestIdAndUserId(model.getTestId(), model.getUserId());
+        if (oldModel != null) repository.delete(oldModel);
         return repository.save(model);
     }
 
@@ -48,5 +54,13 @@ public class TestSessionService {
         model.setFinished_at(LocalDateTime.now());
         repository.save(model);
         return repository.save(model);
+    }
+
+    public TestSessionModel getSessionByTestIdAndUserId(Long id, Long userId) {
+        return repository.getTestSessionByTestIdAndUserId(id, userId);
+    }
+
+    public long getTotalCount(@NotNull Long Id) {
+        return testModelRepository.findById(Id).getQuestions().size();
     }
 }

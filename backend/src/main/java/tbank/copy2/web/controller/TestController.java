@@ -47,7 +47,7 @@ public class TestController {
     }
 
     @Operation(summary = "Добавить новый тест")
-    @PostMapping("/add")
+    @PostMapping("")
     public void addTest(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Данные для добавления нового теста",

@@ -26,4 +26,16 @@ public class TestSessionModelRepoImpl implements TestSessionModelRepository {
         TestSession session = repository.findById(sessionId).orElse(null);
         return mapper.toModel(session);
     }
+
+    @Override
+    public TestSessionModel getTestSessionByTestIdAndUserId(Long id, Long userId) {
+        TestSession session = repository.findByTestIdAndUserId(id, userId);
+        return mapper.toModel(session);
+    }
+
+    @Override
+    public void delete(TestSessionModel oldModel) {
+        TestSession session = mapper.toEntity(oldModel);
+        repository.delete(session);
+    }
 }

@@ -23,6 +23,5 @@ public class AddTestRequest {
     private String description;
 
     @Schema(description = "ID пользователя-владельца", example = "1")
-    @NotNull
     private Long userId;
 }
