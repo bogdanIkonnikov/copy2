@@ -4,18 +4,25 @@ import org.springframework.stereotype.Component;
 import tbank.copy2.service.model.TestSessionAnswerModel;
 import tbank.copy2.service.model.TestSessionModel;
 import tbank.copy2.service.model.TestSessionResponseModel;
+import tbank.copy2.service.service.TestSessionService;
 import tbank.copy2.web.dto.testSession.*;
 
 import java.time.LocalDateTime;
 
 @Component
 public class TestSessionMapper {
+    private final TestSessionService testSessionService;
+
+    public TestSessionMapper(TestSessionService testSessionService) {
+        this.testSessionService = testSessionService;
+    }
+
     public TestSessionModel toModel(AddTestSessionRequest request){
         TestSessionModel model = new TestSessionModel();
         model.setTestId(request.getTestId());
-        model.setUserId(request.getUserId());
+        model.setUserId(1L); //заменить логикой
         model.setCorrectCount(0);
-        model.setTotalCount(1);
+        model.setTotalCount(testSessionService.getTotalCount(request.getTestId()));
         model.setStarted_at(LocalDateTime.now());
         return model;
     }

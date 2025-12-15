@@ -5,17 +5,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import tbank.copy2.repository.entity.TestSession;
 import tbank.copy2.repository.repository.TestRepository;
+import tbank.copy2.repository.repository.UserRepository;
 import tbank.copy2.service.model.TestSessionModel;
 
 @Component
 public class TestSessionModelMapper {
     @Autowired
     private TestRepository testRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     public TestSession toEntity(TestSessionModel model) {
         if (model == null) return null;
         TestSession testSession = new TestSession();
         testSession.setId(model.getId());
+        testSession.setUser(userRepository.findById(model.getUserId()).orElse(null));
         testSession.setTest(testRepository.findById(model.getTestId()).orElse(null));
         testSession.setCorrectCount(model.getCorrectCount());
         testSession.setFinished_at(model.getFinished_at());
