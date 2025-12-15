@@ -37,4 +37,10 @@ public class TestModelRepoImpl implements TestModelRepository {
         return mapper.toModel(test);
     }
 
+    @Override
+    public Long deleteById(Long id) {
+        testRepository.deleteById(id);
+        return id;
+    }
+
 }

@@ -122,4 +122,8 @@ public class TestService {
         repository.save(model);
         return true;
     }
+
+    public Long deleteById(Long id) {
+        return repository.deleteById(id);
+    }
 }
