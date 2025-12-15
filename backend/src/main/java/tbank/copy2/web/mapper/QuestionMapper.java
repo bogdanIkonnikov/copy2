@@ -39,6 +39,7 @@ public class QuestionMapper {
         model.setType(updateQuestionRequest.getType());
         model.setContent(updateQuestionRequest.getContent());
         model.setTestId(testId);
+        model.setId(updateQuestionRequest.getQuestionId());
         List<AnswerModel> answerModels = updateQuestionRequest.getAnswers().stream()
                 .map(a -> answerMapper.toModel(a)).collect(Collectors.toList());
         model.setAnswerModels(answerModels);
