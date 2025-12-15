@@ -48,14 +48,15 @@ public class TestController {
 
     @Operation(summary = "Добавить новый тест")
     @PostMapping("")
-    public void addTest(
+    public TestResponse addTest(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Данные для добавления нового теста",
                     required = true,
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = AddTestRequest.class))
             )
             @RequestBody @Valid AddTestRequest request) {
-        testService.addTest(mapper.toModel(request));
+        TestModel model = testService.addTest(mapper.toModel(request));
+        return mapper.toTestResponse(model);
     }
 
     @Operation(summary = "Получить тест по его id")
