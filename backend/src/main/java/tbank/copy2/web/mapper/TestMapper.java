@@ -7,7 +7,6 @@ import tbank.copy2.service.model.TestSessionModel;
 import tbank.copy2.service.service.TestSessionService;
 import tbank.copy2.web.dto.test.AddTestRequest;
 import tbank.copy2.web.dto.test.TestResponse;
-import tbank.copy2.repository.repository.UserRepository;
 import tbank.copy2.web.dto.test.UpdateTestRequest;
 
 import java.util.stream.Collectors;
@@ -32,7 +31,7 @@ public class TestMapper {
             return testResponse;
         } else {
             testResponse.setProgress((int) session.getCorrectCount());
-            testResponse.setLastUse(session.getFinished_at().toString());
+            testResponse.setLastUse("15.12.25"); //заглушка
         }
         return testResponse;
     }

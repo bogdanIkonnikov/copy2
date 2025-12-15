@@ -54,7 +54,7 @@ public class TestSessionMapper {
         testSessionStatusResponse.setTestId(testSession.getTestId());
         testSessionStatusResponse.setProgress(testSession.getCorrectCount());
         testSessionStatusResponse.setQuestionsCount(testSession.getTotalCount());
-        testSessionStatusResponse.setFinished_at(testSession.getFinished_at().toString());
+        testSessionStatusResponse.setFinished_at("15.12.2025"); //заглушка
         testSessionStatusResponse.setUserId(testSession.getUserId());
         testSessionStatusResponse.setSessionId(testSession.getId());
         return testSessionStatusResponse;
