@@ -8,6 +8,7 @@ import tbank.copy2.service.service.TestSessionService;
 import tbank.copy2.web.dto.testSession.*;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Component
 public class TestSessionMapper {
@@ -54,7 +55,7 @@ public class TestSessionMapper {
         testSessionStatusResponse.setTestId(testSession.getTestId());
         testSessionStatusResponse.setProgress(testSession.getCorrectCount());
         testSessionStatusResponse.setQuestionsCount(testSession.getTotalCount());
-        testSessionStatusResponse.setFinished_at("15.12.2025"); //заглушка
+        testSessionStatusResponse.setFinished_at(testSession.getFinished_at().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         testSessionStatusResponse.setUserId(testSession.getUserId());
         testSessionStatusResponse.setSessionId(testSession.getId());
         return testSessionStatusResponse;

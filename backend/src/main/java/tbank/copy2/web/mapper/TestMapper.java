@@ -9,6 +9,7 @@ import tbank.copy2.web.dto.test.AddTestRequest;
 import tbank.copy2.web.dto.test.TestResponse;
 import tbank.copy2.web.dto.test.UpdateTestRequest;
 
+import java.time.format.DateTimeFormatter;
 import java.util.stream.Collectors;
 
 @Component
@@ -31,7 +32,7 @@ public class TestMapper {
             return testResponse;
         } else {
             testResponse.setProgress((int) session.getCorrectCount());
-            testResponse.setLastUse("15.12.25"); //заглушка
+            testResponse.setLastUse(session.getFinished_at().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         }
         return testResponse;
     }
