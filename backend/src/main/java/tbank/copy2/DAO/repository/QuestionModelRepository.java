@@ -8,6 +8,5 @@ public interface QuestionModelRepository {
     QuestionModel save(QuestionModel questionModel);
     List<QuestionModel> findAllByTestId(Long testId);
     QuestionModel findById(Long id);
-
     void flush();
 }

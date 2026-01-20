@@ -7,9 +7,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import tbank.copy2.service.model.QuestionModel;
+import tbank.copy2.service.model.TestFileModel;
 import tbank.copy2.service.model.TestModel;
 import tbank.copy2.web.dto.question.QuestionLightResponse;
 import tbank.copy2.web.dto.question.QuestionWithAnswersResponse;
@@ -21,6 +25,7 @@ import tbank.copy2.web.dto.test.UpdateTestRequest;
 import tbank.copy2.web.mapper.QuestionMapper;
 import tbank.copy2.web.mapper.TestMapper;
 
+import java.awt.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,8 +47,10 @@ public class TestController {
 
     @Operation(summary = "Получить список тестов")
     @GetMapping("")
-    public List<TestResponse> getTests() {
-        return testService.getTests().stream().map(t -> mapper.toTestResponse(t)).toList();
+    public List<TestResponse> getTests(
+            @PositiveOrZero @RequestParam(defaultValue = "0") int page,
+            @Positive @RequestParam(defaultValue = "10") int size) {
+        return testService.getTests(page, size).stream().map(t -> mapper.toTestResponse(t)).toList();
     }
 
     @Operation(summary = "Добавить новый тест")
@@ -114,6 +121,19 @@ public class TestController {
     public boolean updateTestById(@PathVariable Long id, @RequestBody @Valid UpdateTestRequest request) {
         TestModel model = mapper.toModel(request, id);
         return testService.updateTest(model, id);
+    }
+
+    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public TestResponse addFromFile(@RequestParam("name")
+                                        @NotBlank(message = "Имя обязательно")
+                                        String name,
+                                    @RequestParam("description")
+                                        String description,
+                                    @RequestParam("file")
+                                        @NotNull(message = "Файл обязателен")
+                                        MultipartFile file){
+        TestFileModel model = mapper.toModel(name, description, file);
+        return mapper.toTestResponse(testService.addTest(model));
     }
 
 }

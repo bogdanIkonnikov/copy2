@@ -18,6 +18,8 @@ public class TestSessionService {
     private AnswerTypeChecker answerTypeChecker;
     @Autowired
     private TestModelRepository testModelRepository;
+    @Autowired
+    private UserAnswerService userAnswerService;
 
     public TestSessionModel startSession(TestSessionModel model) {
         TestSessionModel oldModel = repository.getTestSessionByTestIdAndUserId(model.getTestId(), model.getUserId());
@@ -33,9 +35,10 @@ public class TestSessionService {
         isCorrect = answer.isTrue();
         if (isCorrect) {
             model.setCorrectCount(model.getCorrectCount() + 1);
-            //добавить ответ в UserAnswers
             repository.save(model);
         }
+
+        userAnswerService.addAnswer(sessionId, aModel.getQuestionId(), isCorrect);
 
         saved = true;
         TestSessionResponseModel response = new TestSessionResponseModel();

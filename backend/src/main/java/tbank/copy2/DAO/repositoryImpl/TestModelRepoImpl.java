@@ -1,6 +1,7 @@
 package tbank.copy2.DAO.repositoryImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import tbank.copy2.DAO.mapper.TestModelMapper;
 import tbank.copy2.DAO.repository.TestModelRepository;
@@ -19,8 +20,8 @@ public class TestModelRepoImpl implements TestModelRepository {
     private TestModelMapper mapper;
 
     @Override
-    public List<TestModel> findAll() {
-        List<TestModel> models = testRepository.findAll().stream()
+    public List<TestModel> findAll(Pageable pageable) {
+        List<TestModel> models = testRepository.findAll(pageable).stream()
                 .map(t -> mapper.toModel(t)).collect(Collectors.toList());
         return models;
     }
