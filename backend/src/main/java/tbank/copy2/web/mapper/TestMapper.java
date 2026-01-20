@@ -2,6 +2,8 @@ package tbank.copy2.web.mapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
+import tbank.copy2.service.model.TestFileModel;
 import tbank.copy2.service.model.TestModel;
 import tbank.copy2.service.model.TestSessionModel;
 import tbank.copy2.service.service.TestSessionService;
@@ -42,6 +44,14 @@ public class TestMapper {
         model.setName(request.getName());
         model.setDescription(request.getDescription());
         model.setUserId(1L); //заменить логикой
+        return model;
+    }
+
+    public TestFileModel toModel(String name, String description, MultipartFile file){
+        TestFileModel model = new TestFileModel();
+        model.setName(name);
+        model.setDescription(description);
+        model.setFile(file);
         return model;
     }
 

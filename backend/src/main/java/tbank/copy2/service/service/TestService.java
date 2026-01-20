@@ -1,15 +1,24 @@
 package tbank.copy2.service.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import tbank.copy2.DAO.repository.AnswerModelRepository;
 import tbank.copy2.DAO.repository.QuestionModelRepository;
 import tbank.copy2.DAO.repository.TestModelRepository;
+import tbank.copy2.common.enums.Type;
 import tbank.copy2.service.model.AnswerModel;
 import tbank.copy2.service.model.QuestionModel;
+import tbank.copy2.service.model.TestFileModel;
 import tbank.copy2.service.model.TestModel;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,19 +31,159 @@ public class TestService {
     @Autowired
     private QuestionModelRepository questionRepository;
 
-    public List<TestModel> getTests() {
-        return repository.findAll();
+
+    public List<TestModel> getTests(int pageNumber, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        return repository.findAll(pageable);
     }
 
     public TestModel addTest(TestModel model) {
         return repository.save(model);
     }
 
+    public TestModel addTest(TestFileModel model) {
+        TestModel testModel = new TestModel();
+        testModel.setName(model.getName());
+        testModel.setDescription(model.getDescription());
+        testModel.setUserId(1L);
+        TestModel savedModel = repository.save(testModel);
+        savedModel.setQuestions(parseQuestions(model.getFile(), savedModel.getId()));
+        return repository.save(savedModel);
+    }
+
+    public List<QuestionModel> parseQuestions(MultipartFile file, Long id) {
+        String line;
+        int qCount = 0;
+        int answersCount = 0;
+        boolean questionFound = false;
+        boolean answerFound = false;
+        AnswerModel answerModel = new AnswerModel();
+        QuestionModel questionModel = new QuestionModel();
+        StringBuilder questionName = new StringBuilder();
+        StringBuilder answerName = new StringBuilder();
+        List<QuestionModel> questions = new ArrayList<>();
+        List<AnswerModel> answers = new ArrayList<>();
+
+
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))) {
+
+
+            while ((line = reader.readLine()) != null) {
+                String[] words = line.split(" ");
+
+                for (String word : words) {
+                    switch (word) {
+                        case ("ВОПРОС:"):
+                            if (answersCount - answers.size() == 1){
+                                System.out.println("Поставили вариант ответа: " + answerName);
+                                answerModel.setContent(answerName.toString());
+                                answers.add(answerModel);
+                                answerModel = new AnswerModel();
+                                answerName.setLength(0);
+                            }
+
+                            if (qCount != 0) {
+                                System.out.println("Это не первый вопрос так что ставим предыдущему ответы");
+                                questionModel.setTestId(id);
+                                questionModel.setContent("initial");
+                                questionModel = questionRepository.save(questionModel);
+                                for (AnswerModel aModel : answers) {
+                                    aModel.setQuestionId(questionModel.getId());
+                                }
+                                questionModel.setContent(questionName.toString());
+                                questionName = new StringBuilder();
+                                if (answers.size() > 1) {
+                                    questionModel.setType(Type.CHOICE);
+                                } else questionModel.setType(Type.INPUT);
+                                questionModel.setAnswerModels(answers);
+                                answers = new ArrayList<>();
+                                questions.add(questionModel);
+                                questionRepository.save(questionModel);
+                                questionModel = new QuestionModel();
+                                System.out.println("Обновленный список вопросов: " + questions);
+                            }
+
+                            System.out.println("Дальше пойдёт содержимое вопроса: ");
+
+
+                            answersCount = 0;
+                            qCount++;
+                            questionFound = true;
+                            answerFound = false;
+                            break;
+                        case ("ОТВЕТ:"), ("ВАРИАНТ:"):
+                            if (answersCount != 0) {
+                                System.out.println("Поставили вариант ответа: " + answerName);
+                                answerModel.setContent(answerName.toString());
+                                answers.add(answerModel);
+                                answerModel = new AnswerModel();
+                                System.out.println("Обновленный список ответов: " + answers);
+
+                                answerName.setLength(0);
+                            }
+
+                            if (word.equals("ОТВЕТ:")){
+                                System.out.println("Дальше пойдёт содержимое ответа: ");
+                                answerModel.setIsCorrect(true);
+                            } else {
+                                System.out.println("Дальше пойдёт содержимое варианта: ");
+                                answerModel.setIsCorrect(false);
+                            }
+
+                            answersCount++;
+
+                            questionFound = false;
+                            answerFound = true;
+                            break;
+                        default: {
+                            if (questionFound) {
+                                System.out.print(" " + word);
+                                questionName.append(" " + word);
+                            }
+                            if (answerFound) {
+                                System.out.print(" " + word);
+                                answerName.append(" " + word);
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+            if (answersCount - answers.size() == 1){
+                System.out.println("Поставили вариант ответа: " + answerName);
+                answerModel.setContent(answerName.toString());
+                answers.add(answerModel);
+            }
+
+            if (qCount != 0) {
+                System.out.println("Это не первый вопрос так что ставим предыдущему ответы");
+                questionModel.setTestId(id);
+                questionModel.setContent("initial");
+                questionModel = questionRepository.save(questionModel);
+                for (AnswerModel aModel : answers) {
+                    aModel.setQuestionId(questionModel.getId());
+                }
+                questionModel.setContent(questionName.toString());
+                if (answers.size() > 1) {
+                    questionModel.setType(Type.CHOICE);
+                } else questionModel.setType(Type.INPUT);
+                questionModel.setAnswerModels(answers);
+                questions.add(questionModel);
+                questionRepository.save(questionModel);
+                System.out.println("Обновленный список вопросов: " + questions);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return questions;
+    }
+
     public TestModel getTestById(Long id) {
         return repository.findById(id);
     }
 
-    protected void setNewAnswers(QuestionModel question, List<AnswerModel> answers){
+    protected void setNewAnswers(QuestionModel question, List<AnswerModel> answers) {
         if (question.getId() == null) {
             question = questionRepository.save(question);
             questionRepository.flush();
