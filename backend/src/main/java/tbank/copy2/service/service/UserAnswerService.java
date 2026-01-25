@@ -5,6 +5,9 @@ import org.springframework.stereotype.Service;
 import tbank.copy2.DAO.repository.UserAnswerModelRepository;
 import tbank.copy2.service.model.UserAnswerModel;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class UserAnswerService {
     @Autowired
@@ -16,5 +19,13 @@ public class UserAnswerService {
         model.setQuestionId(questionId);
         model.setCorrect(isCorrect);
         repository.save(model);
+    }
+
+    public List<Long> getAllWrongIdsBySessionId(Long sessionId) {
+        return repository.findUserAnswerModelsBySessionId(sessionId)
+                .stream()
+                .map(m -> !m.getCorrect() ? m : null)
+                .map(m -> m.getQuestionId())
+                .collect(Collectors.toList());
     }
 }
