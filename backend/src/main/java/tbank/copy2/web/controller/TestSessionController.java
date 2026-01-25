@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import tbank.copy2.service.model.TestSessionAnswerModel;
@@ -36,6 +37,15 @@ public class TestSessionController {
             @RequestBody AddTestSessionRequest addTestSessionRequest) {
         TestSessionModel model = mapper.toModel(addTestSessionRequest);
         TestSessionModel saved = service.startSession(model);
+        return mapper.toSessionResponse(saved);
+    }
+
+    @Operation(summary = "Начать новую тестовую сессию по неправильным вопросам")
+    @GetMapping("/start-wrong/{id}")
+    public TestSessionResponse startWrongSession(
+            @Positive
+            @PathVariable Long id) {
+        TestSessionModel saved = service.startWrongSession(id);
         return mapper.toSessionResponse(saved);
     }
 
