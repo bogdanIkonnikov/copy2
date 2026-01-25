@@ -15,9 +15,11 @@ import org.springframework.web.multipart.MultipartFile;
 import tbank.copy2.service.model.QuestionModel;
 import tbank.copy2.service.model.TestFileModel;
 import tbank.copy2.service.model.TestModel;
+import tbank.copy2.service.model.TestsPageModel;
 import tbank.copy2.web.dto.question.QuestionLightResponse;
 import tbank.copy2.web.dto.question.QuestionWithAnswersResponse;
 import tbank.copy2.web.dto.test.AddTestRequest;
+import tbank.copy2.web.dto.test.TestPageResponse;
 import tbank.copy2.web.dto.test.TestResponse;
 import tbank.copy2.service.service.QuestionService;
 import tbank.copy2.service.service.TestService;
@@ -47,10 +49,11 @@ public class TestController {
 
     @Operation(summary = "Получить список тестов")
     @GetMapping("")
-    public List<TestResponse> getTests(
+    public TestPageResponse getTests(
             @PositiveOrZero @RequestParam(defaultValue = "0") int page,
             @Positive @RequestParam(defaultValue = "10") int size) {
-        return testService.getTests(page, size).stream().map(t -> mapper.toTestResponse(t)).toList();
+        TestsPageModel model = testService.getTests(page, size);
+        return mapper.toTestPageResponse(model, page, size);
     }
 
     @Operation(summary = "Добавить новый тест")

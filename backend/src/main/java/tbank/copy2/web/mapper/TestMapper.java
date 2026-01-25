@@ -6,12 +6,16 @@ import org.springframework.web.multipart.MultipartFile;
 import tbank.copy2.service.model.TestFileModel;
 import tbank.copy2.service.model.TestModel;
 import tbank.copy2.service.model.TestSessionModel;
+import tbank.copy2.service.model.TestsPageModel;
 import tbank.copy2.service.service.TestSessionService;
 import tbank.copy2.web.dto.test.AddTestRequest;
+import tbank.copy2.web.dto.test.TestPageResponse;
 import tbank.copy2.web.dto.test.TestResponse;
 import tbank.copy2.web.dto.test.UpdateTestRequest;
 
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
@@ -37,6 +41,17 @@ public class TestMapper {
             testResponse.setLastUse(session.getFinished_at().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         }
         return testResponse;
+    }
+
+    public TestPageResponse toTestPageResponse(TestsPageModel model, int page, int size) {
+        TestPageResponse response = new TestPageResponse();
+        response.setPage(page);
+        response.setSize(size);
+        response.setTotalPages(model.getTotalPages());
+        response.setTotalItems(model.getTotalModels());
+        List<TestResponse> items = model.getModels().stream().map(this::toTestResponse).collect(Collectors.toList());
+        response.setItems(items);
+        return response;
     }
 
     public TestModel toModel(AddTestRequest request) {

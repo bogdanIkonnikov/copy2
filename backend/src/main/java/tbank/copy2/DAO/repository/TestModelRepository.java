@@ -8,6 +8,8 @@ import java.util.List;
 public interface TestModelRepository {
     List<TestModel> findAll(Pageable pageable);
 
+    List<TestModel> findAll();
+
     TestModel save(TestModel model);
 
     TestModel findById(Long id);
