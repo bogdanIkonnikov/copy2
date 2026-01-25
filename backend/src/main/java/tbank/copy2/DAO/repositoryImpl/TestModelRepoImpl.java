@@ -27,6 +27,13 @@ public class TestModelRepoImpl implements TestModelRepository {
     }
 
     @Override
+    public List<TestModel> findAll() {
+        List<TestModel> models = testRepository.findAll().stream()
+                .map(t -> mapper.toModel(t)).collect(Collectors.toList());
+        return models;
+    }
+
+    @Override
     public TestModel save(TestModel model) {
         Test saved = testRepository.save(mapper.toEntity(model));
         return mapper.toModel(saved);

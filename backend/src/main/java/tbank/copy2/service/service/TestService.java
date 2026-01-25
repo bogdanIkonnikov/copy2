@@ -10,10 +10,7 @@ import tbank.copy2.DAO.repository.AnswerModelRepository;
 import tbank.copy2.DAO.repository.QuestionModelRepository;
 import tbank.copy2.DAO.repository.TestModelRepository;
 import tbank.copy2.common.enums.Type;
-import tbank.copy2.service.model.AnswerModel;
-import tbank.copy2.service.model.QuestionModel;
-import tbank.copy2.service.model.TestFileModel;
-import tbank.copy2.service.model.TestModel;
+import tbank.copy2.service.model.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -32,9 +29,14 @@ public class TestService {
     private QuestionModelRepository questionRepository;
 
 
-    public List<TestModel> getTests(int pageNumber, int pageSize) {
+    public TestsPageModel getTests(int pageNumber, int pageSize) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        return repository.findAll(pageable);
+        List<TestModel> models = repository.findAll(pageable);
+        TestsPageModel model = new TestsPageModel();
+        model.setModels(models);
+        model.setTotalModels(repository.findAll().size());
+        model.setTotalPages((int) Math.ceil(model.getTotalModels() / (double) pageSize));
+        return model;
     }
 
     public TestModel addTest(TestModel model) {
