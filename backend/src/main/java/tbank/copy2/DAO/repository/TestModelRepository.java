@@ -15,4 +15,6 @@ public interface TestModelRepository {
     TestModel findById(Long id);
 
     Long deleteById(Long id);
+
+    List<TestModel> findByNameContainingIgnoreCase(String name, Pageable pageable);
 }
