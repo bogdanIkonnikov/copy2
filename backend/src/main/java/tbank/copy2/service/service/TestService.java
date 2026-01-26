@@ -77,7 +77,7 @@ public class TestService {
                 for (String word : words) {
                     switch (word) {
                         case ("ВОПРОС:"):
-                            if (answersCount - answers.size() == 1){
+                            if (answersCount - answers.size() == 1) {
                                 System.out.println("Поставили вариант ответа: " + answerName);
                                 answerModel.setContent(answerName.toString());
                                 answers.add(answerModel);
@@ -125,7 +125,7 @@ public class TestService {
                                 answerName.setLength(0);
                             }
 
-                            if (word.equals("ОТВЕТ:")){
+                            if (word.equals("ОТВЕТ:")) {
                                 System.out.println("Дальше пойдёт содержимое ответа: ");
                                 answerModel.setIsCorrect(true);
                             } else {
@@ -152,7 +152,7 @@ public class TestService {
                     }
                 }
             }
-            if (answersCount - answers.size() == 1){
+            if (answersCount - answers.size() == 1) {
                 System.out.println("Поставили вариант ответа: " + answerName);
                 answerModel.setContent(answerName.toString());
                 answers.add(answerModel);
@@ -277,4 +277,43 @@ public class TestService {
     public Long deleteById(Long id) {
         return repository.deleteById(id);
     }
+
+    public TestsPageModel searchTest(String keyword, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        List<TestModel> tests = repository.findByNameContainingIgnoreCase(keyword, pageable);
+        tests.sort((p1, p2) -> {
+            int relevance1 = calculateRelevance(p1.getName(), keyword);
+            int relevance2 = calculateRelevance(p2.getName(), keyword);
+            return Integer.compare(relevance2, relevance1);
+        });
+        TestsPageModel pageModel = new TestsPageModel();
+        pageModel.setTotalPages((int) Math.ceil(tests.size() / (double) size));
+        pageModel.setTotalModels(tests.size());
+        pageModel.setModels(tests);
+        return pageModel;
+    }
+
+    private int calculateRelevance(String testName, String keyword) {
+        String lowerName = testName.toLowerCase();
+        String lowerKeyword = keyword.toLowerCase();
+
+        if (lowerName.equals(lowerKeyword)) {
+            return 5;
+        }
+        if (lowerName.startsWith(lowerKeyword)) {
+            return 4;
+        }
+        if (lowerName.endsWith(lowerKeyword)) {
+            return 3;
+        }
+        if (lowerName.contains(" " + lowerKeyword + " ")) {
+            return 2;
+        }
+        if (lowerName.contains(lowerKeyword)) {
+            return 1;
+        }
+        return 0;
+
+    }
+
 }

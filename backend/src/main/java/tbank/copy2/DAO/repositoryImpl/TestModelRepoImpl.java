@@ -51,4 +51,9 @@ public class TestModelRepoImpl implements TestModelRepository {
         return id;
     }
 
+    @Override
+    public List<TestModel> findByNameContainingIgnoreCase(String name, Pageable pageable) {
+        List<Test> tests = testRepository.findByNameContainingIgnoreCase(name, pageable);
+        return tests.stream().map(t -> mapper.toModel(t)).collect(Collectors.toList());
+    }
 }
