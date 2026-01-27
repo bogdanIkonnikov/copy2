@@ -5,12 +5,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tbank.copy2.DAO.repository.TestModelRepository;
 import tbank.copy2.DAO.repository.TestSessionModelRepository;
-import tbank.copy2.service.mapper.TestModelMapper;
-import tbank.copy2.service.mapper.TestSessionModelMapper;
+import tbank.copy2.service.mapper.TestModelServiceMapper;
+import tbank.copy2.service.mapper.TestSessionModelServiceMapper;
 import tbank.copy2.service.model.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 
 @Service
@@ -24,9 +23,9 @@ public class TestSessionService {
     @Autowired
     private UserAnswerService userAnswerService;
     @Autowired
-    private TestModelMapper mapper;
+    private TestModelServiceMapper mapper;
     @Autowired
-    private TestSessionModelMapper sessionMapper;
+    private TestSessionModelServiceMapper sessionMapper;
 
 
     public TestSessionModel startSession(TestSessionModel model) {
@@ -40,6 +39,7 @@ public class TestSessionService {
         TestModel newTest = mapper.toModel(testModelRepository.findById(oldSession.getTestId()), sessionId);
         Long userId = oldSession.getUserId();
         repository.delete(oldSession);
+        newTest = testModelRepository.save(newTest);
         return repository.save(sessionMapper.toSession(newTest, userId));
     }
 

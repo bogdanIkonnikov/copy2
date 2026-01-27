@@ -43,6 +43,7 @@ public class TestSessionController {
     @Operation(summary = "Начать новую тестовую сессию по неправильным вопросам")
     @GetMapping("/start-wrong/{id}")
     public TestSessionResponse startWrongSession(
+            @Parameter(description = "Идентификатор сессии")
             @Positive
             @PathVariable Long id) {
         TestSessionModel saved = service.startWrongSession(id);

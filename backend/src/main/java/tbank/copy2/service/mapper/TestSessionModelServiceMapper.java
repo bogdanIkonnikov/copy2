@@ -5,7 +5,7 @@ import tbank.copy2.service.model.TestModel;
 import tbank.copy2.service.model.TestSessionModel;
 
 @Component
-public class TestSessionModelMapper {
+public class TestSessionModelServiceMapper {
     public TestSessionModel toSession(TestModel test, Long userId) {
         TestSessionModel model = new TestSessionModel();
         model.setUserId(userId);
