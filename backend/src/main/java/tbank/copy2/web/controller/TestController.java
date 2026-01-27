@@ -141,9 +141,9 @@ public class TestController {
 
     @GetMapping("/search")
     public TestPageResponse searchTests(
-            @RequestParam String keyWord,
-            @RequestParam int page,
-            @RequestParam int size
+            @RequestParam("keyWord") String keyWord,
+            @RequestParam("page") int page,
+            @RequestParam("size") int size
     ){
         TestsPageModel model = testService.searchTest(keyWord, page, size);
         return mapper.toTestPageResponse(model, page, size);

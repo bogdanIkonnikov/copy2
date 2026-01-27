@@ -4,14 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import tbank.copy2.service.model.QuestionModel;
 import tbank.copy2.service.model.TestModel;
-import tbank.copy2.service.model.TestSessionModel;
 import tbank.copy2.service.service.UserAnswerService;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class TestModelMapper {
+public class TestModelServiceMapper {
     @Autowired
     UserAnswerService service;
 
