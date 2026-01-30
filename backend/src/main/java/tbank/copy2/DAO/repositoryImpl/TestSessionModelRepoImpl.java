@@ -3,7 +3,7 @@ package tbank.copy2.DAO.repositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import tbank.copy2.DAO.mapper.TestSessionModelMapper;
-import tbank.copy2.DAO.repository.TestSessionModelRepository;
+import tbank.copy2.service.repository.TestSessionModelRepository;
 import tbank.copy2.repository.entity.TestSession;
 import tbank.copy2.repository.repository.TestSessionRepository;
 import tbank.copy2.service.model.TestSessionModel;

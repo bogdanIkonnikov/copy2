@@ -2,7 +2,7 @@ package tbank.copy2.service.service;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import tbank.copy2.DAO.repository.QuestionModelRepository;
+import tbank.copy2.service.repository.QuestionModelRepository;
 import tbank.copy2.common.enums.Type;
 
 import java.util.Map;

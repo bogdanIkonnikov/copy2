@@ -3,7 +3,7 @@ package tbank.copy2.service.service;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import tbank.copy2.DAO.repository.AnswerModelRepository;
+import tbank.copy2.service.repository.AnswerModelRepository;
 import tbank.copy2.service.model.CheckedAnswerModel;
 
 import java.util.Arrays;

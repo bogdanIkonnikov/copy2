@@ -2,7 +2,7 @@ package tbank.copy2.service.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import tbank.copy2.DAO.repository.QuestionModelRepository;
+import tbank.copy2.service.repository.QuestionModelRepository;
 import tbank.copy2.service.model.QuestionModel;
 
 import java.util.List;

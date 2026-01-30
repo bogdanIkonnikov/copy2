@@ -1,6 +1,7 @@
 package tbank.copy2.DAO.mapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 import tbank.copy2.repository.entity.Test;
 import tbank.copy2.repository.repository.UserRepository;
@@ -37,5 +38,9 @@ public class TestModelMapper {
         model.setUserId(test.getUser().getId());
         model.setQuestions(test.getQuestions().stream().map(q -> qMapper.toModel(q)).collect(Collectors.toList()));
         return model;
+    }
+
+    public Page<TestModel> toPageModel(Page<Test> tests) {
+        return tests.map(t -> toModel(t));
     }
 }
