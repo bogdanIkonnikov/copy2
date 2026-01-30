@@ -1,14 +1,15 @@
 package tbank.copy2.service.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import tbank.copy2.DAO.repository.AnswerModelRepository;
-import tbank.copy2.DAO.repository.QuestionModelRepository;
-import tbank.copy2.DAO.repository.TestModelRepository;
+import tbank.copy2.service.repository.AnswerModelRepository;
+import tbank.copy2.service.repository.QuestionModelRepository;
+import tbank.copy2.service.repository.TestModelRepository;
 import tbank.copy2.common.enums.Type;
 import tbank.copy2.service.model.*;
 
@@ -280,15 +281,19 @@ public class TestService {
 
     public TestsPageModel searchTest(String keyword, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        List<TestModel> tests = repository.findByNameContainingIgnoreCase(keyword, pageable);
+
+        Page<TestModel> testPage = repository.findByNameContainingIgnoreCase(keyword, pageable);
+
+        List<TestModel> tests = testPage.getContent();
+
         tests.sort((p1, p2) -> {
             int relevance1 = calculateRelevance(p1.getName(), keyword);
             int relevance2 = calculateRelevance(p2.getName(), keyword);
             return Integer.compare(relevance2, relevance1);
         });
         TestsPageModel pageModel = new TestsPageModel();
-        pageModel.setTotalPages((int) Math.ceil(tests.size() / (double) size));
-        pageModel.setTotalModels(tests.size());
+        pageModel.setTotalPages(testPage.getTotalPages());
+        pageModel.setTotalModels((int) testPage.getTotalElements());
         pageModel.setModels(tests);
         return pageModel;
     }

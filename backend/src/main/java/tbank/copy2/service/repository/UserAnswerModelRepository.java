@@ -1,4 +1,4 @@
-package tbank.copy2.DAO.repository;
+package tbank.copy2.service.repository;
 
 import tbank.copy2.service.model.UserAnswerModel;
 

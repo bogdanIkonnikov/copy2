@@ -1,10 +1,11 @@
 package tbank.copy2.DAO.repositoryImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import tbank.copy2.DAO.mapper.TestModelMapper;
-import tbank.copy2.DAO.repository.TestModelRepository;
+import tbank.copy2.service.repository.TestModelRepository;
 import tbank.copy2.repository.entity.Test;
 import tbank.copy2.repository.repository.TestRepository;
 import tbank.copy2.service.model.TestModel;
@@ -52,8 +53,8 @@ public class TestModelRepoImpl implements TestModelRepository {
     }
 
     @Override
-    public List<TestModel> findByNameContainingIgnoreCase(String name, Pageable pageable) {
-        List<Test> tests = testRepository.findByNameContainingIgnoreCase(name, pageable);
-        return tests.stream().map(t -> mapper.toModel(t)).collect(Collectors.toList());
+    public Page<TestModel> findByNameContainingIgnoreCase(String name, Pageable pageable) {
+        Page<Test> tests = testRepository.findByNameContainingIgnoreCase(name, pageable);
+        return mapper.toPageModel(tests);
     }
 }

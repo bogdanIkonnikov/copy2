@@ -1,5 +1,6 @@
 package tbank.copy2.repository.repository;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,5 +14,5 @@ import java.util.Optional;
 public interface TestRepository extends JpaRepository<Test, Long> {
     @EntityGraph(attributePaths = {"questions", "questions.answers"})
     Optional<Test> findById(Long testId);
-    List<Test> findByNameContainingIgnoreCase(String name, Pageable pageable);
+    Page<Test> findByNameContainingIgnoreCase(String name, Pageable pageable);
 }

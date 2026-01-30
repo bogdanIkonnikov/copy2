@@ -3,7 +3,7 @@ package tbank.copy2.DAO.repositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import tbank.copy2.DAO.mapper.AnswerModelMapper;
-import tbank.copy2.DAO.repository.AnswerModelRepository;
+import tbank.copy2.service.repository.AnswerModelRepository;
 import tbank.copy2.repository.entity.Answer;
 import tbank.copy2.repository.repository.AnswerRepository;
 import tbank.copy2.service.model.AnswerModel;
