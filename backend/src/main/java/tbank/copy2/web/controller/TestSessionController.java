@@ -41,7 +41,7 @@ public class TestSessionController {
     }
 
     @Operation(summary = "Начать новую тестовую сессию по неправильным вопросам")
-    @GetMapping("/start-wrong/{id}")
+    @PostMapping("/start-wrong/{id}")
     public TestSessionResponse startWrongSession(
             @Parameter(description = "Идентификатор сессии")
             @Positive
