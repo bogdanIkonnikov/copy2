@@ -284,7 +284,11 @@ public class TestService {
 
         Page<TestModel> testPage = repository.findByNameContainingIgnoreCase(keyword, pageable);
 
-        List<TestModel> tests = testPage.getContent();
+        System.out.println("%testPage%" + testPage);
+
+        List<TestModel> tests = new ArrayList<>(testPage.getContent());
+
+        System.out.println("%tests%" + tests);
 
         tests.sort((p1, p2) -> {
             int relevance1 = calculateRelevance(p1.getName(), keyword);
@@ -295,6 +299,9 @@ public class TestService {
         pageModel.setTotalPages(testPage.getTotalPages());
         pageModel.setTotalModels((int) testPage.getTotalElements());
         pageModel.setModels(tests);
+
+        System.out.println("%pageModel%" + pageModel);
+
         return pageModel;
     }
 
