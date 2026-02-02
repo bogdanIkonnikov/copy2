@@ -29,6 +29,8 @@ public class UserAnswerModelMapper {
         entity.setId(model.getId());
         entity.setCorrect(model.getCorrect());
         entity.setSession(testSessionRepository.findById(model.getSessionId()).orElse(null));
+        System.out.println("model = " + model);
+        System.out.println("session%%%% " + entity.getSession());
         entity.setCreated_at(model.getCreated_at());
         entity.setQuestion(questionRepository.findById(model.getQuestionId()).orElse(null));
         return entity;

@@ -36,9 +36,11 @@ public class TestSessionService {
 
     public TestSessionModel startWrongSession(Long sessionId) {
         TestSessionModel oldSession = repository.getTestSessionById(sessionId);
+        System.out.println("oldSession = " + oldSession);
         TestModel newTest = mapper.toModel(testModelRepository.findById(oldSession.getTestId()), sessionId);
+        System.out.println("newTest = " + newTest);
         Long userId = oldSession.getUserId();
-        repository.delete(oldSession);
+        repository.deleteById(sessionId);
         newTest = testModelRepository.save(newTest);
         return repository.save(sessionMapper.toSession(newTest, userId));
     }
@@ -71,7 +73,6 @@ public class TestSessionService {
     public TestSessionModel finishSession(Long sessionId) {
         TestSessionModel model = repository.getTestSessionById(sessionId);
         model.setFinished_at(LocalDateTime.now());
-        repository.save(model);
         return repository.save(model);
     }
 

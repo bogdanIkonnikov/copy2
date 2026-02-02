@@ -31,7 +31,7 @@ public class Test {
     @Column
     private String description;
 
-    @OneToMany(mappedBy = "test", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "test", fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.REFRESH}, orphanRemoval = true)
     private List<Question> questions = new ArrayList<>();
 
     @CreationTimestamp

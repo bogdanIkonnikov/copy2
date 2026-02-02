@@ -79,7 +79,6 @@ public class TestService {
                     switch (word) {
                         case ("ВОПРОС:"):
                             if (answersCount - answers.size() == 1) {
-                                System.out.println("Поставили вариант ответа: " + answerName);
                                 answerModel.setContent(answerName.toString());
                                 answers.add(answerModel);
                                 answerModel = new AnswerModel();
@@ -87,7 +86,6 @@ public class TestService {
                             }
 
                             if (qCount != 0) {
-                                System.out.println("Это не первый вопрос так что ставим предыдущему ответы");
                                 questionModel.setTestId(id);
                                 questionModel.setContent("initial");
                                 questionModel = questionRepository.save(questionModel);
@@ -104,10 +102,8 @@ public class TestService {
                                 questions.add(questionModel);
                                 questionRepository.save(questionModel);
                                 questionModel = new QuestionModel();
-                                System.out.println("Обновленный список вопросов: " + questions);
                             }
 
-                            System.out.println("Дальше пойдёт содержимое вопроса: ");
 
 
                             answersCount = 0;
@@ -117,20 +113,16 @@ public class TestService {
                             break;
                         case ("ОТВЕТ:"), ("ВАРИАНТ:"):
                             if (answersCount != 0) {
-                                System.out.println("Поставили вариант ответа: " + answerName);
                                 answerModel.setContent(answerName.toString());
                                 answers.add(answerModel);
                                 answerModel = new AnswerModel();
-                                System.out.println("Обновленный список ответов: " + answers);
 
                                 answerName.setLength(0);
                             }
 
                             if (word.equals("ОТВЕТ:")) {
-                                System.out.println("Дальше пойдёт содержимое ответа: ");
                                 answerModel.setIsCorrect(true);
                             } else {
-                                System.out.println("Дальше пойдёт содержимое варианта: ");
                                 answerModel.setIsCorrect(false);
                             }
 
@@ -154,13 +146,11 @@ public class TestService {
                 }
             }
             if (answersCount - answers.size() == 1) {
-                System.out.println("Поставили вариант ответа: " + answerName);
                 answerModel.setContent(answerName.toString());
                 answers.add(answerModel);
             }
 
             if (qCount != 0) {
-                System.out.println("Это не первый вопрос так что ставим предыдущему ответы");
                 questionModel.setTestId(id);
                 questionModel.setContent("initial");
                 questionModel = questionRepository.save(questionModel);
@@ -174,7 +164,6 @@ public class TestService {
                 questionModel.setAnswerModels(answers);
                 questions.add(questionModel);
                 questionRepository.save(questionModel);
-                System.out.println("Обновленный список вопросов: " + questions);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -198,7 +187,6 @@ public class TestService {
                 answerIdsFromRequest.add(uAnswer.getId());
             }
         }
-        System.out.println("Айдишники ответов из реквеста: " + answerIdsFromRequest);
 
         question.getAnswerModels().removeIf(model ->
                 !answerIdsFromRequest.contains(model.getId())
@@ -211,21 +199,16 @@ public class TestService {
 
             if (!isNewAnswer) {
                 currentAnswer = answerRepository.findById(uAnswer.getId());
-                System.out.println("Найденный текущий ответ из БД: " + currentAnswer);
                 currentAnswer.setContent(uAnswer.getContent());
                 currentAnswer.setIsCorrect(uAnswer.getIsCorrect());
-                System.out.println("Текущий ответ после обновления полей: " + currentAnswer);
             } else {
                 currentAnswer = new AnswerModel();
-                System.out.println("Создан новый ответ: " + currentAnswer);
                 currentAnswer.setContent(uAnswer.getContent());
                 currentAnswer.setIsCorrect(uAnswer.getIsCorrect());
                 currentAnswer.setQuestionId(question.getId());
-                System.out.println("Новый ответ после установки полей: " + currentAnswer);
             }
 
             answerRepository.save(currentAnswer);
-            System.out.println("Сохраненный текущий ответ: " + currentAnswer);
         }
 
     }
@@ -238,7 +221,6 @@ public class TestService {
         model.setDescription(uModel.getDescription());
 
         List<QuestionModel> questionsFromRequest = new ArrayList<>();
-        System.out.println("Вопросы из реквеста: " + uModel.getQuestions());
 
         for (QuestionModel uQuestion : uModel.getQuestions()) {
             QuestionModel currentQuestion;
@@ -257,14 +239,10 @@ public class TestService {
                 currentQuestion = questionRepository.save(currentQuestion);
                 questionRepository.flush();
             }
-            System.out.println("Текущий вопрос перед установкой ответов: " + currentQuestion);
             setNewAnswers(currentQuestion, uQuestion.getAnswerModels());
-            System.out.println("Текущий вопрос после установки ответов: " + currentQuestion);
 
             questionRepository.save(currentQuestion);
-            System.out.println("Сохраненный текущий вопрос: " + currentQuestion);
             questionsFromRequest.add(currentQuestion);
-            System.out.println("Список сохраненных поросов: " + questionsFromRequest);
         }
         if (model.getQuestions() != null) {
             model.getQuestions().clear();
@@ -284,11 +262,9 @@ public class TestService {
 
         Page<TestModel> testPage = repository.findByNameContainingIgnoreCase(keyword, pageable);
 
-        System.out.println("%testPage%" + testPage);
 
         List<TestModel> tests = new ArrayList<>(testPage.getContent());
 
-        System.out.println("%tests%" + tests);
 
         tests.sort((p1, p2) -> {
             int relevance1 = calculateRelevance(p1.getName(), keyword);
@@ -300,7 +276,6 @@ public class TestService {
         pageModel.setTotalModels((int) testPage.getTotalElements());
         pageModel.setModels(tests);
 
-        System.out.println("%pageModel%" + pageModel);
 
         return pageModel;
     }

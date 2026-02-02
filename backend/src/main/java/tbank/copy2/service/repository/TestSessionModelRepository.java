@@ -6,6 +6,6 @@ public interface TestSessionModelRepository {
     TestSessionModel save(TestSessionModel model);
     TestSessionModel getTestSessionById(Long sessionId);
     TestSessionModel getTestSessionByTestIdAndUserId(Long id, Long userId);
-
+    void deleteById(Long id);
     void delete(TestSessionModel oldModel);
 }

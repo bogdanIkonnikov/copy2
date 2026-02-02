@@ -21,10 +21,11 @@ public class UserAnswerService {
         repository.save(model);
     }
 
-    public List<Long> getAllWrongIdsBySessionId(Long sessionId) {
+    public List<Long> getAllCorrectIdsBySessionId(Long sessionId) {
         return repository.findUserAnswerModelsBySessionId(sessionId)
                 .stream()
-                .map(m -> !m.getCorrect() ? m : null)
+                .map(m -> m.getCorrect() ? m : null)
+                .filter(m -> m != null)
                 .map(m -> m.getQuestionId())
                 .collect(Collectors.toList());
     }

@@ -19,8 +19,10 @@ public class TestModelServiceMapper {
         model.setName(oldModel.getName());
         model.setDescription(oldModel.getDescription());
         model.setUserId(oldModel.getUserId());
-        List<Long> questionIds = service.getAllWrongIdsBySessionId(sessionId);
-        List<QuestionModel> questions = oldModel.getQuestions().stream().filter(question -> questionIds.contains(question.getId())).collect(Collectors.toList());
+        List<Long> questionIds = service.getAllCorrectIdsBySessionId(sessionId);
+        System.out.println("questionIds: " + questionIds);
+        List<QuestionModel> questions = oldModel.getQuestions().stream().filter(question -> !questionIds.contains(question.getId())).collect(Collectors.toList());
+        System.out.println("questions: " + questions);
         model.setQuestions(questions);
         return model;
     }
