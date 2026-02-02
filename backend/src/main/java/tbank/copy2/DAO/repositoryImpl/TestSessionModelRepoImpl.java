@@ -38,4 +38,9 @@ public class TestSessionModelRepoImpl implements TestSessionModelRepository {
         TestSession session = mapper.toEntity(oldModel);
         repository.delete(session);
     }
+
+    @Override
+    public void deleteById(Long id) {
+        repository.deleteById(id);
+    }
 }

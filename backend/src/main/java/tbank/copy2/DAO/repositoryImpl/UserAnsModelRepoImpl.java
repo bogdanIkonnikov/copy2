@@ -9,6 +9,7 @@ import tbank.copy2.repository.repository.UserAnswerRepository;
 import tbank.copy2.service.model.UserAnswerModel;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 public class UserAnsModelRepoImpl implements UserAnswerModelRepository {
@@ -25,6 +26,7 @@ public class UserAnsModelRepoImpl implements UserAnswerModelRepository {
 
     @Override
     public List<UserAnswerModel> findUserAnswerModelsBySessionId(Long id) {
-        return null;
+        List<UserAnswer> userAnswers = repository.findUserAnswersBySession_id(id);
+        return userAnswers.stream().map(mapper::toModel).collect(Collectors.toList());
     }
 }

@@ -27,8 +27,7 @@ public class TestSession {
 
     @OneToMany(
             mappedBy = "session",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
+            cascade = {CascadeType.MERGE, CascadeType.REMOVE}
     )
     private List<UserAnswer> answers = new ArrayList<>();
 

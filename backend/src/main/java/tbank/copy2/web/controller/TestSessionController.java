@@ -45,7 +45,8 @@ public class TestSessionController {
     public TestSessionResponse startWrongSession(
             @Parameter(description = "Идентификатор сессии")
             @Positive
-            @PathVariable Long id) {
+            @PathVariable("id") Long id) {
+        System.out.println("!!!!!" + id);
         TestSessionModel saved = service.startWrongSession(id);
         return mapper.toSessionResponse(saved);
     }
