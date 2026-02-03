@@ -50,7 +50,7 @@ public class Question {
                 "id=" + id +
                 ", content='" + content + '\'' +
                 ", questionType=" + type +
-                ", testId=" + (test != null ? test.getId() : null) + // Используем только ID теста
+                ", testId=" + (test != null ? test.getId() : null) +
                 ", createdAt=" + created_at +
                 ", updatedAt=" + updated_at +
                 '}';

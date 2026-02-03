@@ -43,7 +43,7 @@ import java.time.LocalDateTime;
                     "id=" + id +
                     ", content='" + content + '\'' +
                     ", isCorrect=" + isCorrect +
-                    ", questionId=" + (question != null ? question.getId() : null) + // Используем только ID вопроса
+                    ", questionId=" + (question != null ? question.getId() : null) +
                     ", createdAt=" + created_at +
                     ", updatedAt=" + updated_at +
                     '}';
