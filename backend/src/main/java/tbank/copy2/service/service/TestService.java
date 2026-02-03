@@ -210,7 +210,6 @@ public class TestService {
                 currentAnswer.setQuestionId(question.getId());
             }
 
-            answerRepository.save(currentAnswer);
             answerModels.add(currentAnswer);
         }
         question.setAnswerModels(answerModels);
