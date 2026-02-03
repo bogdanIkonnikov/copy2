@@ -42,6 +42,7 @@ public class TestSessionService {
         Long userId = oldSession.getUserId();
         repository.deleteById(sessionId);
         newTest = testModelRepository.save(newTest);
+        System.out.println("newTest = " + newTest);
         return repository.save(sessionMapper.toSession(newTest, userId));
     }
 

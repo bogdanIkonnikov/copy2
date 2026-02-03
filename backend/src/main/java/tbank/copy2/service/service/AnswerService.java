@@ -21,4 +21,14 @@ public class AnswerService {
     public AnswerModel addAnswer(AnswerModel answerModel) {
         return repository.save(answerModel);
     }
+
+    public AnswerModel copyAnswer(AnswerModel answerModel, Long questionId) {
+        AnswerModel copy = new AnswerModel();
+        copy.setQuestionId(questionId);
+        copy.setContent(answerModel.getContent());
+        copy.setIsCorrect(answerModel.getIsCorrect());
+        return repository.save(copy);
+    }
+
 }
+

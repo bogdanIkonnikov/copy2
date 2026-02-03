@@ -48,7 +48,7 @@ public class Test {
                 "id=" + id +
                 ", testName='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", userId=" + (user != null ? user.getId() : null) + // Используем только ID пользователя
+                ", userId=" + (user != null ? user.getId() : null) +
                 ", createdAt=" + created_at +
                 ", updatedAt=" + updated_at +
                 '}';
