@@ -193,6 +193,8 @@ public class TestService {
         );
         answerRepository.flush();
 
+        List<AnswerModel> answerModels = new ArrayList<>();
+
         for (AnswerModel uAnswer : answers) {
             AnswerModel currentAnswer;
             boolean isNewAnswer = uAnswer.getId() == null;
@@ -209,8 +211,9 @@ public class TestService {
             }
 
             answerRepository.save(currentAnswer);
+            answerModels.add(currentAnswer);
         }
-
+        question.setAnswerModels(answerModels);
     }
 
     @Transactional
@@ -228,9 +231,14 @@ public class TestService {
 
             if (isExistingQuestion) {
                 currentQuestion = questionRepository.findById(uQuestion.getId());
+
+                System.out.println(currentQuestion);
+
                 currentQuestion.setTestId(testId);
                 currentQuestion.setContent(uQuestion.getContent());
                 currentQuestion.setType(uQuestion.getType());
+
+                System.out.println(currentQuestion);
             } else {
                 currentQuestion = new QuestionModel();
                 currentQuestion.setTestId(testId);
@@ -242,6 +250,9 @@ public class TestService {
             setNewAnswers(currentQuestion, uQuestion.getAnswerModels());
 
             questionRepository.save(currentQuestion);
+
+            System.out.println(currentQuestion);
+
             questionsFromRequest.add(currentQuestion);
         }
         if (model.getQuestions() != null) {
