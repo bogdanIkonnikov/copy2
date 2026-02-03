@@ -29,8 +29,10 @@ public class TestSessionService {
 
 
     public TestSessionModel startSession(TestSessionModel model) {
+        System.out.println(model);
         TestSessionModel oldModel = repository.getTestSessionByTestIdAndUserId(model.getTestId(), model.getUserId());
-        if (oldModel != null) repository.delete(oldModel);
+        System.out.println(oldModel);
+        if (oldModel != null) repository.deleteById(oldModel.getId());
         return repository.save(model);
     }
 
