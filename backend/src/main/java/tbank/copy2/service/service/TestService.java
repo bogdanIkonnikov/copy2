@@ -30,6 +30,7 @@ public class TestService {
     private QuestionModelRepository questionRepository;
 
 
+    @Transactional
     public TestsPageModel getTests(int pageNumber, int pageSize) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         List<TestModel> models = repository.findAll(pageable);
@@ -37,6 +38,7 @@ public class TestService {
         model.setModels(models);
         model.setTotalModels(repository.findAll().size());
         model.setTotalPages((int) Math.ceil(model.getTotalModels() / (double) pageSize));
+        repository.deleteByUserIdAndVisible(1L, false);
         return model;
     }
 
@@ -103,8 +105,6 @@ public class TestService {
                                 questionRepository.save(questionModel);
                                 questionModel = new QuestionModel();
                             }
-
-
 
                             answersCount = 0;
                             qCount++;
@@ -247,10 +247,6 @@ public class TestService {
                 questionRepository.flush();
             }
             setNewAnswers(currentQuestion, uQuestion.getAnswerModels());
-
-            questionRepository.save(currentQuestion);
-
-            System.out.println(currentQuestion);
 
             questionsFromRequest.add(currentQuestion);
         }

@@ -25,6 +25,7 @@ public class TestModelServiceMapper {
         model.setName(oldModel.getName());
         model.setDescription(oldModel.getDescription());
         model.setUserId(oldModel.getUserId());
+        model.setVisible(false);
         List<Long> questionIds = service.getAllCorrectIdsBySessionId(sessionId);
 
         model = testModelRepository.save(model);

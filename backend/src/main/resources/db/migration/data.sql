@@ -12,6 +12,7 @@ CREATE TABLE tests (
                        test_name VARCHAR(255) NOT NULL,
                        user_id BIGINT,
                        description TEXT,
+                       visible BOOLEAN,
                        created_at TIMESTAMP NOT NULL,
                        updated_at TIMESTAMP NOT NULL,
                        CONSTRAINT fk_tests_user FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE SET NULL
@@ -63,10 +64,10 @@ INSERT INTO users (username, email, password_hash, created_at, updated_at)
 VALUES ('vasya', 'vasya@mail.ru', '$2a$10$hashedpass', NOW(), NOW())
 ON CONFLICT (username) DO NOTHING;
 
-INSERT INTO tests (test_name, user_id, description, created_at, updated_at)
-VALUES ('Математика', 1, 'Тест по математике', NOW(), NOW()),
-       ('Русский язык', 1, 'Тест по русскому языку', NOW(), NOW()),
-       ('Физика', 1, 'Тест по физике', NOW(), NOW());
+INSERT INTO tests (test_name, user_id, description, visible, created_at, updated_at)
+VALUES ('Математика', 1, 'Тест по математике', true,  NOW(), NOW()),
+       ('Русский язык', 1, 'Тест по русскому языку', true, NOW(), NOW()),
+       ('Физика', 1, 'Тест по физике', true, NOW(), NOW());
 
 INSERT INTO questions (test_id, content, question_type, created_at, updated_at)
 VALUES (1, 'Вопрос 1 Математика', 'CHOICE', NOW(), NOW()),
