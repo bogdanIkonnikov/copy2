@@ -22,6 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+@Transactional
 @Service
 public class TestService {
     @Autowired
@@ -32,7 +33,6 @@ public class TestService {
     private QuestionModelRepository questionRepository;
 
 
-    @Transactional
     public TestsPageModel getTests(int pageNumber, int pageSize) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         List<TestModel> models = repository.findAll(pageable);

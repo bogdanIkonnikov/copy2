@@ -2,11 +2,13 @@ package tbank.copy2.service.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tbank.copy2.service.repository.AnswerModelRepository;
 import tbank.copy2.service.model.AnswerModel;
 
 import java.util.List;
 
+@Transactional
 @Service
 public class AnswerService {
     @Autowired
