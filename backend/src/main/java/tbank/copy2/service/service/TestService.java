@@ -7,6 +7,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import tbank.copy2.exception.FileParseException;
+import tbank.copy2.exception.InvalidFileFormatException;
 import tbank.copy2.service.repository.AnswerModelRepository;
 import tbank.copy2.service.repository.QuestionModelRepository;
 import tbank.copy2.service.repository.TestModelRepository;
@@ -57,6 +59,14 @@ public class TestService {
     }
 
     public List<QuestionModel> parseQuestions(MultipartFile file, Long id) {
+
+        String fileName = file.getOriginalFilename();
+        if (!fileName.endsWith(".txt")) throw new InvalidFileFormatException("Неверный формат файла");
+
+        if (file.isEmpty()) {
+            throw new InvalidFileFormatException("Файл пуст");
+        }
+
         String line;
         int qCount = 0;
         int answersCount = 0;
@@ -80,6 +90,10 @@ public class TestService {
                 for (String word : words) {
                     switch (word) {
                         case ("ВОПРОС:"):
+                            if (qCount > 0 && answers.isEmpty()) {
+                                throw new InvalidFileFormatException("У вопроса №" + qCount + " нет вариантов ответа");
+                            }
+
                             if (answersCount - answers.size() == 1) {
                                 answerModel.setContent(answerName.toString());
                                 answers.add(answerModel);
@@ -166,7 +180,7 @@ public class TestService {
                 questionRepository.save(questionModel);
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new FileParseException("Не удалось прочитать файл: " + e.getMessage());
         }
         return questions;
     }
