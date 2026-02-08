@@ -3,6 +3,7 @@ package tbank.copy2.service.service;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tbank.copy2.service.repository.TestModelRepository;
 import tbank.copy2.service.repository.TestSessionModelRepository;
 import tbank.copy2.service.mapper.TestModelServiceMapper;
@@ -11,7 +12,7 @@ import tbank.copy2.service.model.*;
 
 import java.time.LocalDateTime;
 
-
+@Transactional
 @Service
 public class TestSessionService {
     @Autowired

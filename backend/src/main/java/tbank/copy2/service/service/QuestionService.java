@@ -2,6 +2,7 @@ package tbank.copy2.service.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tbank.copy2.service.model.AnswerModel;
 import tbank.copy2.service.repository.QuestionModelRepository;
 import tbank.copy2.service.model.QuestionModel;
@@ -9,6 +10,7 @@ import tbank.copy2.service.model.QuestionModel;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Transactional
 @Service
 public class QuestionService {
     @Autowired
