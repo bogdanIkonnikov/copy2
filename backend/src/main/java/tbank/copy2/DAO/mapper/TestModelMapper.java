@@ -20,6 +20,7 @@ public class TestModelMapper {
         Test test = new Test();
         test.setId(testModel.getId());
         test.setName(testModel.getName());
+        test.setVisible(testModel.getVisible());
         test.setCreated_at(testModel.getCreated_at());
         test.setUpdated_at(testModel.getUpdated_at());
         test.setDescription(testModel.getDescription());
@@ -32,6 +33,7 @@ public class TestModelMapper {
         TestModel model = new TestModel();
         model.setId(test.getId());
         model.setName(test.getName());
+        model.setVisible(test.getVisible());
         model.setCreated_at(test.getCreated_at());
         model.setUpdated_at(test.getUpdated_at());
         model.setDescription(test.getDescription());

@@ -57,4 +57,10 @@ public class TestModelRepoImpl implements TestModelRepository {
         Page<Test> tests = testRepository.findByNameContainingIgnoreCase(name, pageable);
         return mapper.toPageModel(tests);
     }
+
+    @Override
+    public void deleteByUserIdAndVisible(Long id, boolean visible){
+        testRepository.deleteAllByVisibleAndUser_Id(visible, id);
+    }
+
 }

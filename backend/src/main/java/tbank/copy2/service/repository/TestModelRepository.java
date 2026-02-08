@@ -18,4 +18,6 @@ public interface TestModelRepository {
     Long deleteById(Long id);
 
     Page<TestModel> findByNameContainingIgnoreCase(String name, Pageable pageable);
+
+    void deleteByUserIdAndVisible(Long id, boolean visible);
 }

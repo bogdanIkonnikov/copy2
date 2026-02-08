@@ -31,8 +31,12 @@ public class Test {
     @Column
     private String description;
 
+    @org.hibernate.annotations.BatchSize(size = 20)
     @OneToMany(mappedBy = "test", fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.REFRESH}, orphanRemoval = true)
     private List<Question> questions = new ArrayList<>();
+
+    @Column(nullable = false)
+    private Boolean visible = true;
 
     @CreationTimestamp
     @Column(nullable = false)

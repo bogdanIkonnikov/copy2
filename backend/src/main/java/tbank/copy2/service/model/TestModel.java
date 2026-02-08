@@ -22,6 +22,8 @@ public class TestModel {
 
     private List<QuestionModel> questions = new ArrayList<>();
 
+    private Boolean visible;
+
     private LocalDateTime created_at;
 
     private LocalDateTime updated_at;
