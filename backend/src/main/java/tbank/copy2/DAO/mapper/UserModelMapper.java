@@ -11,6 +11,7 @@ public class UserModelMapper {
         model.setId(1L);
         model.setUsername(user.getUsername());
         model.setEmail(user.getEmail());
+        model.setRole(user.getRole());
         model.setPassword_hash(user.getPassword_hash());
         model.setCreated_at(user.getCreated_at());
         model.setUpdated_at(user.getUpdated_at());
@@ -21,6 +22,7 @@ public class UserModelMapper {
         user.setId(userModel.getId());
         user.setUsername(userModel.getUsername());
         user.setEmail(userModel.getEmail());
+        user.setRole(userModel.getRole());
         user.setPassword_hash(userModel.getPassword_hash());
         user.setCreated_at(userModel.getCreated_at());
         user.setUpdated_at(userModel.getUpdated_at());

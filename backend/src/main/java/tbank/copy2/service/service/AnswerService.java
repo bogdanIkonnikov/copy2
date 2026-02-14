@@ -14,10 +14,8 @@ public class AnswerService {
     @Autowired
     private AnswerModelRepository repository;
 
-
     public List<AnswerModel> getAnswersByQuestionId(Long questionId) {
-        List<AnswerModel> answers = repository.findAllByQuestionId(questionId);
-        return answers;
+        return repository.findAllByQuestionId(questionId);
     }
 
     public AnswerModel addAnswer(AnswerModel answerModel) {
