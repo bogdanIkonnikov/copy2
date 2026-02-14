@@ -139,5 +139,13 @@ public class TestController {
         return mapper.toTestResponse(testService.addTest(model));
     }
 
+    @GetMapping("/search")
+    public TestPageResponse searchTests(
+            @RequestParam("keyWord") String keyWord,
+            @RequestParam("page") int page,
+            @RequestParam("size") int size
+    ){
+        TestsPageModel model = testService.searchTest(keyWord, page, size);
+        return mapper.toTestPageResponse(model, page, size);
+    }
 }
-

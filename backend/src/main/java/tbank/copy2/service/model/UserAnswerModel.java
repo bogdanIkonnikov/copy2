@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 public class UserAnswerModel {
     private Long id;
 
-    private Long  sessionId;
+    private Long sessionId;
 
     private Long questionId;
 

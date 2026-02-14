@@ -1,14 +1,17 @@
 package tbank.copy2.service.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import tbank.copy2.DAO.repository.AnswerModelRepository;
-import tbank.copy2.DAO.repository.QuestionModelRepository;
-import tbank.copy2.DAO.repository.TestModelRepository;
+import tbank.copy2.exception.FileParseException;
+import tbank.copy2.exception.InvalidFileFormatException;
+import tbank.copy2.service.repository.AnswerModelRepository;
+import tbank.copy2.service.repository.QuestionModelRepository;
+import tbank.copy2.service.repository.TestModelRepository;
 import tbank.copy2.common.enums.Type;
 import tbank.copy2.service.model.*;
 
@@ -19,6 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+@Transactional
 @Service
 public class TestService {
     @Autowired
@@ -36,6 +40,7 @@ public class TestService {
         model.setModels(models);
         model.setTotalModels(repository.findAll().size());
         model.setTotalPages((int) Math.ceil(model.getTotalModels() / (double) pageSize));
+        repository.deleteByUserIdAndVisible(1L, false);
         return model;
     }
 
@@ -54,6 +59,14 @@ public class TestService {
     }
 
     public List<QuestionModel> parseQuestions(MultipartFile file, Long id) {
+
+        String fileName = file.getOriginalFilename();
+        if (!fileName.endsWith(".txt")) throw new InvalidFileFormatException("Неверный формат файла");
+
+        if (file.isEmpty()) {
+            throw new InvalidFileFormatException("Файл пуст");
+        }
+
         String line;
         int qCount = 0;
         int answersCount = 0;
@@ -77,8 +90,11 @@ public class TestService {
                 for (String word : words) {
                     switch (word) {
                         case ("ВОПРОС:"):
-                            if (answersCount - answers.size() == 1){
-                                System.out.println("Поставили вариант ответа: " + answerName);
+                            if (qCount > 0 && answers.isEmpty()) {
+                                throw new InvalidFileFormatException("У вопроса №" + qCount + " нет вариантов ответа");
+                            }
+
+                            if (answersCount - answers.size() == 1) {
                                 answerModel.setContent(answerName.toString());
                                 answers.add(answerModel);
                                 answerModel = new AnswerModel();
@@ -86,7 +102,6 @@ public class TestService {
                             }
 
                             if (qCount != 0) {
-                                System.out.println("Это не первый вопрос так что ставим предыдущему ответы");
                                 questionModel.setTestId(id);
                                 questionModel.setContent("initial");
                                 questionModel = questionRepository.save(questionModel);
@@ -103,11 +118,7 @@ public class TestService {
                                 questions.add(questionModel);
                                 questionRepository.save(questionModel);
                                 questionModel = new QuestionModel();
-                                System.out.println("Обновленный список вопросов: " + questions);
                             }
-
-                            System.out.println("Дальше пойдёт содержимое вопроса: ");
-
 
                             answersCount = 0;
                             qCount++;
@@ -116,20 +127,16 @@ public class TestService {
                             break;
                         case ("ОТВЕТ:"), ("ВАРИАНТ:"):
                             if (answersCount != 0) {
-                                System.out.println("Поставили вариант ответа: " + answerName);
                                 answerModel.setContent(answerName.toString());
                                 answers.add(answerModel);
                                 answerModel = new AnswerModel();
-                                System.out.println("Обновленный список ответов: " + answers);
 
                                 answerName.setLength(0);
                             }
 
-                            if (word.equals("ОТВЕТ:")){
-                                System.out.println("Дальше пойдёт содержимое ответа: ");
+                            if (word.equals("ОТВЕТ:")) {
                                 answerModel.setIsCorrect(true);
                             } else {
-                                System.out.println("Дальше пойдёт содержимое варианта: ");
                                 answerModel.setIsCorrect(false);
                             }
 
@@ -152,14 +159,12 @@ public class TestService {
                     }
                 }
             }
-            if (answersCount - answers.size() == 1){
-                System.out.println("Поставили вариант ответа: " + answerName);
+            if (answersCount - answers.size() == 1) {
                 answerModel.setContent(answerName.toString());
                 answers.add(answerModel);
             }
 
             if (qCount != 0) {
-                System.out.println("Это не первый вопрос так что ставим предыдущему ответы");
                 questionModel.setTestId(id);
                 questionModel.setContent("initial");
                 questionModel = questionRepository.save(questionModel);
@@ -173,10 +178,9 @@ public class TestService {
                 questionModel.setAnswerModels(answers);
                 questions.add(questionModel);
                 questionRepository.save(questionModel);
-                System.out.println("Обновленный список вопросов: " + questions);
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new FileParseException("Не удалось прочитать файл: " + e.getMessage());
         }
         return questions;
     }
@@ -197,12 +201,13 @@ public class TestService {
                 answerIdsFromRequest.add(uAnswer.getId());
             }
         }
-        System.out.println("Айдишники ответов из реквеста: " + answerIdsFromRequest);
 
         question.getAnswerModels().removeIf(model ->
                 !answerIdsFromRequest.contains(model.getId())
         );
         answerRepository.flush();
+
+        List<AnswerModel> answerModels = new ArrayList<>();
 
         for (AnswerModel uAnswer : answers) {
             AnswerModel currentAnswer;
@@ -210,23 +215,18 @@ public class TestService {
 
             if (!isNewAnswer) {
                 currentAnswer = answerRepository.findById(uAnswer.getId());
-                System.out.println("Найденный текущий ответ из БД: " + currentAnswer);
                 currentAnswer.setContent(uAnswer.getContent());
                 currentAnswer.setIsCorrect(uAnswer.getIsCorrect());
-                System.out.println("Текущий ответ после обновления полей: " + currentAnswer);
             } else {
                 currentAnswer = new AnswerModel();
-                System.out.println("Создан новый ответ: " + currentAnswer);
                 currentAnswer.setContent(uAnswer.getContent());
                 currentAnswer.setIsCorrect(uAnswer.getIsCorrect());
                 currentAnswer.setQuestionId(question.getId());
-                System.out.println("Новый ответ после установки полей: " + currentAnswer);
             }
 
-            answerRepository.save(currentAnswer);
-            System.out.println("Сохраненный текущий ответ: " + currentAnswer);
+            answerModels.add(currentAnswer);
         }
-
+        question.setAnswerModels(answerModels);
     }
 
     @Transactional
@@ -237,7 +237,6 @@ public class TestService {
         model.setDescription(uModel.getDescription());
 
         List<QuestionModel> questionsFromRequest = new ArrayList<>();
-        System.out.println("Вопросы из реквеста: " + uModel.getQuestions());
 
         for (QuestionModel uQuestion : uModel.getQuestions()) {
             QuestionModel currentQuestion;
@@ -245,9 +244,14 @@ public class TestService {
 
             if (isExistingQuestion) {
                 currentQuestion = questionRepository.findById(uQuestion.getId());
+
+                System.out.println(currentQuestion);
+
                 currentQuestion.setTestId(testId);
                 currentQuestion.setContent(uQuestion.getContent());
                 currentQuestion.setType(uQuestion.getType());
+
+                System.out.println(currentQuestion);
             } else {
                 currentQuestion = new QuestionModel();
                 currentQuestion.setTestId(testId);
@@ -256,14 +260,9 @@ public class TestService {
                 currentQuestion = questionRepository.save(currentQuestion);
                 questionRepository.flush();
             }
-            System.out.println("Текущий вопрос перед установкой ответов: " + currentQuestion);
             setNewAnswers(currentQuestion, uQuestion.getAnswerModels());
-            System.out.println("Текущий вопрос после установки ответов: " + currentQuestion);
 
-            questionRepository.save(currentQuestion);
-            System.out.println("Сохраненный текущий вопрос: " + currentQuestion);
             questionsFromRequest.add(currentQuestion);
-            System.out.println("Список сохраненных поросов: " + questionsFromRequest);
         }
         if (model.getQuestions() != null) {
             model.getQuestions().clear();
@@ -277,4 +276,51 @@ public class TestService {
     public Long deleteById(Long id) {
         return repository.deleteById(id);
     }
+
+    public TestsPageModel searchTest(String keyword, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<TestModel> testPage = repository.findByNameContainingIgnoreCase(keyword, pageable);
+
+
+        List<TestModel> tests = new ArrayList<>(testPage.getContent());
+
+
+        tests.sort((p1, p2) -> {
+            int relevance1 = calculateRelevance(p1.getName(), keyword);
+            int relevance2 = calculateRelevance(p2.getName(), keyword);
+            return Integer.compare(relevance2, relevance1);
+        });
+        TestsPageModel pageModel = new TestsPageModel();
+        pageModel.setTotalPages(testPage.getTotalPages());
+        pageModel.setTotalModels((int) testPage.getTotalElements());
+        pageModel.setModels(tests);
+
+
+        return pageModel;
+    }
+
+    private int calculateRelevance(String testName, String keyword) {
+        String lowerName = testName.toLowerCase();
+        String lowerKeyword = keyword.toLowerCase();
+
+        if (lowerName.equals(lowerKeyword)) {
+            return 5;
+        }
+        if (lowerName.startsWith(lowerKeyword)) {
+            return 4;
+        }
+        if (lowerName.endsWith(lowerKeyword)) {
+            return 3;
+        }
+        if (lowerName.contains(" " + lowerKeyword + " ")) {
+            return 2;
+        }
+        if (lowerName.contains(lowerKeyword)) {
+            return 1;
+        }
+        return 0;
+
+    }
+
 }

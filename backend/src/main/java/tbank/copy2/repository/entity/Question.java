@@ -26,6 +26,7 @@ public class Question {
     @JoinColumn(name = "test_id")
     private Test test;
 
+    @org.hibernate.annotations.BatchSize(size = 20)
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Answer> answers = new ArrayList<>();
 
@@ -50,7 +51,7 @@ public class Question {
                 "id=" + id +
                 ", content='" + content + '\'' +
                 ", questionType=" + type +
-                ", testId=" + (test != null ? test.getId() : null) + // Используем только ID теста
+                ", testId=" + (test != null ? test.getId() : null) +
                 ", createdAt=" + created_at +
                 ", updatedAt=" + updated_at +
                 '}';

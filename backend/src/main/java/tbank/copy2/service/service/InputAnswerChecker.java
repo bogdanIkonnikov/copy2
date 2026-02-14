@@ -3,12 +3,14 @@ package tbank.copy2.service.service;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import tbank.copy2.DAO.repository.AnswerModelRepository;
+import org.springframework.transaction.annotation.Transactional;
+import tbank.copy2.service.repository.AnswerModelRepository;
 import tbank.copy2.service.model.CheckedAnswerModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Transactional
 @Component
 @NoArgsConstructor
 public class InputAnswerChecker implements AnswerChecker {

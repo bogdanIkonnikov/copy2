@@ -1,5 +1,6 @@
-package tbank.copy2.DAO.repository;
+package tbank.copy2.service.repository;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import tbank.copy2.service.model.TestModel;
 
@@ -15,4 +16,8 @@ public interface TestModelRepository {
     TestModel findById(Long id);
 
     Long deleteById(Long id);
+
+    Page<TestModel> findByNameContainingIgnoreCase(String name, Pageable pageable);
+
+    void deleteByUserIdAndVisible(Long id, boolean visible);
 }
