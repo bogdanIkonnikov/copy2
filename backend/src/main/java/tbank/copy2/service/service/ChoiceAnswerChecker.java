@@ -3,7 +3,8 @@ package tbank.copy2.service.service;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import tbank.copy2.DAO.repository.AnswerModelRepository;
+import org.springframework.transaction.annotation.Transactional;
+import tbank.copy2.service.repository.AnswerModelRepository;
 import tbank.copy2.service.model.CheckedAnswerModel;
 
 import java.util.Arrays;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Transactional
 @Component
 @NoArgsConstructor
 public class ChoiceAnswerChecker implements AnswerChecker {

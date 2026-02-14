@@ -1,10 +1,11 @@
 package tbank.copy2.DAO.repositoryImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import tbank.copy2.DAO.mapper.TestModelMapper;
-import tbank.copy2.DAO.repository.TestModelRepository;
+import tbank.copy2.service.repository.TestModelRepository;
 import tbank.copy2.repository.entity.Test;
 import tbank.copy2.repository.repository.TestRepository;
 import tbank.copy2.service.model.TestModel;
@@ -49,6 +50,17 @@ public class TestModelRepoImpl implements TestModelRepository {
     public Long deleteById(Long id) {
         testRepository.deleteById(id);
         return id;
+    }
+
+    @Override
+    public Page<TestModel> findByNameContainingIgnoreCase(String name, Pageable pageable) {
+        Page<Test> tests = testRepository.findByNameContainingIgnoreCase(name, pageable);
+        return mapper.toPageModel(tests);
+    }
+
+    @Override
+    public void deleteByUserIdAndVisible(Long id, boolean visible){
+        testRepository.deleteAllByVisibleAndUser_Id(visible, id);
     }
 
 }

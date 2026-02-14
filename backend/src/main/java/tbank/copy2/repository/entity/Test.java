@@ -31,8 +31,12 @@ public class Test {
     @Column
     private String description;
 
-    @OneToMany(mappedBy = "test", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @org.hibernate.annotations.BatchSize(size = 20)
+    @OneToMany(mappedBy = "test", fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.REFRESH}, orphanRemoval = true)
     private List<Question> questions = new ArrayList<>();
+
+    @Column(nullable = false)
+    private Boolean visible = true;
 
     @CreationTimestamp
     @Column(nullable = false)
@@ -48,7 +52,7 @@ public class Test {
                 "id=" + id +
                 ", testName='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", userId=" + (user != null ? user.getId() : null) + // Используем только ID пользователя
+                ", userId=" + (user != null ? user.getId() : null) +
                 ", createdAt=" + created_at +
                 ", updatedAt=" + updated_at +
                 '}';

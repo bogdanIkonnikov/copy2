@@ -3,16 +3,16 @@ package tbank.copy2.service.service;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import tbank.copy2.DAO.repository.TestModelRepository;
-import tbank.copy2.DAO.repository.TestSessionModelRepository;
-import tbank.copy2.service.mapper.TestModelMapper;
-import tbank.copy2.service.mapper.TestSessionModelMapper;
+import org.springframework.transaction.annotation.Transactional;
+import tbank.copy2.service.repository.TestModelRepository;
+import tbank.copy2.service.repository.TestSessionModelRepository;
+import tbank.copy2.service.mapper.TestModelServiceMapper;
+import tbank.copy2.service.mapper.TestSessionModelServiceMapper;
 import tbank.copy2.service.model.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
-
+@Transactional
 @Service
 public class TestSessionService {
     @Autowired
@@ -24,22 +24,27 @@ public class TestSessionService {
     @Autowired
     private UserAnswerService userAnswerService;
     @Autowired
-    private TestModelMapper mapper;
+    private TestModelServiceMapper mapper;
     @Autowired
-    private TestSessionModelMapper sessionMapper;
+    private TestSessionModelServiceMapper sessionMapper;
 
 
     public TestSessionModel startSession(TestSessionModel model) {
+        System.out.println(model);
         TestSessionModel oldModel = repository.getTestSessionByTestIdAndUserId(model.getTestId(), model.getUserId());
-        if (oldModel != null) repository.delete(oldModel);
+        System.out.println(oldModel);
+        if (oldModel != null) repository.deleteById(oldModel.getId());
         return repository.save(model);
     }
 
     public TestSessionModel startWrongSession(Long sessionId) {
         TestSessionModel oldSession = repository.getTestSessionById(sessionId);
+        System.out.println("oldSession = " + oldSession);
         TestModel newTest = mapper.toModel(testModelRepository.findById(oldSession.getTestId()), sessionId);
+        System.out.println("newTest = " + newTest);
         Long userId = oldSession.getUserId();
-        repository.delete(oldSession);
+        repository.deleteById(sessionId);
+        newTest = testModelRepository.save(newTest);
         return repository.save(sessionMapper.toSession(newTest, userId));
     }
 
@@ -70,8 +75,8 @@ public class TestSessionService {
 
     public TestSessionModel finishSession(Long sessionId) {
         TestSessionModel model = repository.getTestSessionById(sessionId);
+
         model.setFinished_at(LocalDateTime.now());
-        repository.save(model);
         return repository.save(model);
     }
 

@@ -26,14 +26,11 @@ public class QuestionModelMapper {
         model.setTestId(question.getTest().getId());
         model.setCreated_at(question.getCreated_at());
         model.setUpdated_at(question.getUpdated_at());
-        System.out.println("Сами ответы из сущности вопроса: " + question.getAnswers());
         List<AnswerModel> answerModels = question.getAnswers()
                 .stream()
                 .map(a -> mapper.toModel(a))
                 .collect(Collectors.toList());
-        System.out.println("Преобразованные модели ответов: " + answerModels);
         model.setAnswerModels(answerModels);
-        System.out.println("Модель вопроса после преобразования: " + model);
         return model;
     }
 
