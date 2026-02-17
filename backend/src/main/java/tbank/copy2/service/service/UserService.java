@@ -13,8 +13,8 @@ public class UserService implements UserDetailsService {
     @Autowired
     private UserModelRepository repository;
 
-    public UserDetails getByUsername(String username) {
-        return repository.findByUsername(username);
+    public UserDetails getByEmail(String email) {
+        return repository.findByEmail(email);
     }
 
     public UserDetails createUser(UserModel model) {
@@ -22,7 +22,7 @@ public class UserService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return repository.findByUsername(username);
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        return repository.findByEmail(email);
     }
 }

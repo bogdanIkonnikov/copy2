@@ -21,7 +21,7 @@ public class UserMapper {
 
     public SignInCommand toCommand(SignInRequest request) {
         SignInCommand signInCommand = new SignInCommand();
-        signInCommand.setUsername(request.getUsername());
+        signInCommand.setEmail(request.getEmail());
         signInCommand.setPassword(request.getPassword());
         return signInCommand;
     }
