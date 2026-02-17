@@ -22,7 +22,7 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String username;
 
     @Column(unique = true, nullable = false)
@@ -81,5 +81,9 @@ public class User implements UserDetails {
     @Override
     public String getPassword() {
         return this.password_hash;
+    }
+
+    public String getUsername() {
+        return this.email;
     }
 }

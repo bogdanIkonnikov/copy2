@@ -17,8 +17,8 @@ public class UserModelRepoImpl implements UserModelRepository {
 
 
     @Override
-    public UserModel findByUsername(String username) {
-        return mapper.toModel(repository.findByUsername(username).orElse(null));
+    public UserModel findByEmail(String username) {
+        return mapper.toModel(repository.findByEmail(username).orElse(null));
     }
 
     @Override

@@ -25,11 +25,11 @@ public class AuthenticationService {
 
     public String signIn(SignInCommand command) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                command.getUsername(),
+                command.getEmail(),
                 command.getPassword()
         ));
 
-        var user = userService.getByUsername(command.getUsername());
+        var user = userService.getByEmail(command.getEmail());
 
         return jwtService.generateToken(user);
     }

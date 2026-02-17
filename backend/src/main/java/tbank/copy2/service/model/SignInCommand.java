@@ -6,6 +6,6 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class SignInCommand {
-    private String username;
+    private String email;
     private String password;
 }
