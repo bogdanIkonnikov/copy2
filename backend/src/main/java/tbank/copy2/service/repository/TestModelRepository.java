@@ -7,7 +7,7 @@ import tbank.copy2.service.model.TestModel;
 import java.util.List;
 
 public interface TestModelRepository {
-    List<TestModel> findAll(Pageable pageable);
+    List<TestModel> findAllByUserId(Pageable pageable, Long userId);
 
     List<TestModel> findAll();
 

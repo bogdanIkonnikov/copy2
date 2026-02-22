@@ -18,10 +18,10 @@ public class TestSessionMapper {
         this.testSessionService = testSessionService;
     }
 
-    public TestSessionModel toModel(AddTestSessionRequest request){
+    public TestSessionModel toModel(AddTestSessionRequest request, Long userId) {
         TestSessionModel model = new TestSessionModel();
         model.setTestId(request.getTestId());
-        model.setUserId(1L); //заменить логикой
+        model.setUserId(userId);
         model.setCorrectCount(0);
         model.setTotalCount(testSessionService.getTotalCount(request.getTestId()));
         model.setStarted_at(LocalDateTime.now());

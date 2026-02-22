@@ -8,7 +8,7 @@ import tbank.copy2.service.model.UserModel;
 public class UserModelMapper {
     public UserModel toModel(User user) {
         UserModel model = new UserModel();
-        model.setId(1L);
+        model.setId(user.getId());
         model.setUsername(user.getUsername());
         model.setEmail(user.getEmail());
         model.setRole(user.getRole());
