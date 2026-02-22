@@ -8,12 +8,14 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import tbank.copy2.service.model.TestSessionAnswerModel;
 import tbank.copy2.service.model.TestSessionModel;
 import tbank.copy2.service.model.TestSessionResponseModel;
 import tbank.copy2.service.service.TestSessionService;
 import tbank.copy2.web.dto.testSession.*;
+import tbank.copy2.web.dto.user.CurrentUser;
 import tbank.copy2.web.mapper.TestSessionMapper;
 
 @RestController
@@ -34,8 +36,9 @@ public class TestSessionController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = AddTestSessionRequest.class))
             )
             @Valid
-            @RequestBody AddTestSessionRequest addTestSessionRequest) {
-        TestSessionModel model = mapper.toModel(addTestSessionRequest);
+            @RequestBody AddTestSessionRequest addTestSessionRequest,
+            @AuthenticationPrincipal CurrentUser user) {
+        TestSessionModel model = mapper.toModel(addTestSessionRequest, user.getUserId());
         TestSessionModel saved = service.startSession(model);
         return mapper.toSessionResponse(saved);
     }
