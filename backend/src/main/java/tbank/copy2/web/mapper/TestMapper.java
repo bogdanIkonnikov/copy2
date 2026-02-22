@@ -14,7 +14,6 @@ import tbank.copy2.web.dto.test.TestResponse;
 import tbank.copy2.web.dto.test.UpdateTestRequest;
 
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -54,19 +53,20 @@ public class TestMapper {
         return response;
     }
 
-    public TestModel toModel(AddTestRequest request) {
+    public TestModel toModel(AddTestRequest request, Long userId) {
         TestModel model = new TestModel();
         model.setName(request.getName());
         model.setDescription(request.getDescription());
-        model.setUserId(1L); //заменить логикой
+        model.setUserId(userId);
         return model;
     }
 
-    public TestFileModel toModel(String name, String description, MultipartFile file){
+    public TestFileModel toModel(String name, String description, MultipartFile file, Long userId) {
         TestFileModel model = new TestFileModel();
         model.setName(name);
         model.setDescription(description);
         model.setFile(file);
+        model.setUserId(userId);
         return model;
     }
 

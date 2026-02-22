@@ -14,6 +14,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import tbank.copy2.service.service.JwtService;
+import tbank.copy2.web.dto.user.CurrentUser;
 
 import java.io.IOException;
 
@@ -44,8 +45,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
             if (jwtService.isTokenValid(jwt, userDetails)) {
+                Long userId = ((tbank.copy2.service.model.UserModel) userDetails).getId();
+
+                CurrentUser currentUser = new CurrentUser();
+                currentUser.setUserId(userId);
+                currentUser.setUsername(userDetails.getUsername());
+                currentUser.setAuthorities(userDetails.getAuthorities());
+
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities()
+                        currentUser, null, userDetails.getAuthorities()
                 );
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);

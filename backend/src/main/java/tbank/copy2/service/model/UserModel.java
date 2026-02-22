@@ -29,7 +29,6 @@ public class UserModel implements UserDetails {
 
     private LocalDateTime updated_at;
 
-    // Возвращаем список прав пользователя (в нашем случае - его роль)
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
@@ -40,7 +39,6 @@ public class UserModel implements UserDetails {
         return this.password_hash;
     }
 
-    // Эти методы обычно возвращают true, если ты не планируешь сложную логику блокировки
     @Override
     public boolean isAccountNonExpired() {
         return true;

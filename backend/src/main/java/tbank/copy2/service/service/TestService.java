@@ -33,14 +33,14 @@ public class TestService {
     private QuestionModelRepository questionRepository;
 
 
-    public TestsPageModel getTests(int pageNumber, int pageSize) {
+    public TestsPageModel getTests(int pageNumber, int pageSize, Long userId) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        List<TestModel> models = repository.findAll(pageable);
+        List<TestModel> models = repository.findAllByUserId(pageable, userId);
         TestsPageModel model = new TestsPageModel();
         model.setModels(models);
         model.setTotalModels(repository.findAll().size());
         model.setTotalPages((int) Math.ceil(model.getTotalModels() / (double) pageSize));
-        repository.deleteByUserIdAndVisible(1L, false);
+        repository.deleteByUserIdAndVisible(userId, false);
         return model;
     }
 

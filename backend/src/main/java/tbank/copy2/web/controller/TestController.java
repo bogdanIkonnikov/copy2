@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import tbank.copy2.service.model.QuestionModel;
@@ -24,10 +25,10 @@ import tbank.copy2.web.dto.test.TestResponse;
 import tbank.copy2.service.service.QuestionService;
 import tbank.copy2.service.service.TestService;
 import tbank.copy2.web.dto.test.UpdateTestRequest;
+import tbank.copy2.web.dto.user.CurrentUser;
 import tbank.copy2.web.mapper.QuestionMapper;
 import tbank.copy2.web.mapper.TestMapper;
 
-import java.awt.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,8 +52,9 @@ public class TestController {
     @GetMapping("")
     public TestPageResponse getTests(
             @PositiveOrZero @RequestParam(defaultValue = "0") int page,
-            @Positive @RequestParam(defaultValue = "10") int size) {
-        TestsPageModel model = testService.getTests(page, size);
+            @Positive @RequestParam(defaultValue = "10") int size,
+            @AuthenticationPrincipal CurrentUser user) {
+        TestsPageModel model = testService.getTests(page, size, user.getUserId());
         return mapper.toTestPageResponse(model, page, size);
     }
 
@@ -64,8 +66,9 @@ public class TestController {
                     required = true,
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = AddTestRequest.class))
             )
-            @RequestBody @Valid AddTestRequest request) {
-        TestModel model = testService.addTest(mapper.toModel(request));
+            @RequestBody @Valid AddTestRequest request,
+    @AuthenticationPrincipal CurrentUser user) {
+        TestModel model = testService.addTest(mapper.toModel(request, user.getUserId()));
         return mapper.toTestResponse(model);
     }
 
@@ -134,8 +137,9 @@ public class TestController {
                                         String description,
                                     @RequestParam("file")
                                         @NotNull(message = "Файл обязателен")
-                                        MultipartFile file){
-        TestFileModel model = mapper.toModel(name, description, file);
+                                        MultipartFile file,
+                                    @AuthenticationPrincipal CurrentUser user){
+        TestFileModel model = mapper.toModel(name, description, file, user.getUserId());
         return mapper.toTestResponse(testService.addTest(model));
     }
 

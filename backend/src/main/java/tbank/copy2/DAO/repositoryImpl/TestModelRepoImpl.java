@@ -21,8 +21,8 @@ public class TestModelRepoImpl implements TestModelRepository {
     private TestModelMapper mapper;
 
     @Override
-    public List<TestModel> findAll(Pageable pageable) {
-        List<TestModel> models = testRepository.findAll(pageable).stream()
+    public List<TestModel> findAllByUserId(Pageable pageable, Long userId) {
+        List<TestModel> models = testRepository.findAllByUserId(pageable, userId).stream()
                 .map(t -> mapper.toModel(t)).collect(Collectors.toList());
         return models;
     }
