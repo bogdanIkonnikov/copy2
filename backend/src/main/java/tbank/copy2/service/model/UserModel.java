@@ -25,6 +25,8 @@ public class UserModel implements UserDetails {
 
     private Role role;
 
+    private String photoUrl;
+
     private LocalDateTime created_at;
 
     private LocalDateTime updated_at;

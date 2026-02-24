@@ -21,6 +21,10 @@ public class UserService implements UserDetailsService {
         return repository.save(model);
     }
 
+    public UserModel getUserById(Long id) {
+        return repository.findById(id);
+    }
+
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return repository.findByEmail(email);

@@ -7,6 +7,7 @@ import tbank.copy2.service.model.UserModel;
 import tbank.copy2.web.dto.user.JwtAuthenticationResponse;
 import tbank.copy2.web.dto.user.SignInRequest;
 import tbank.copy2.web.dto.user.SignUpRequest;
+import tbank.copy2.web.dto.user.UserInfoResponse;
 
 @Component
 public class UserMapper {
@@ -31,4 +32,15 @@ public class UserMapper {
         jwtAuthenticationResponse.setToken(token);
         return jwtAuthenticationResponse;
     }
+
+    public UserInfoResponse toInfoResponse(UserModel model){
+        UserInfoResponse response = new UserInfoResponse();
+        response.setEmail(model.getEmail());
+        response.setPassword(model.getPassword());
+        response.setUsername(model.getUsername());
+        response.setRole(model.getRole());
+        response.setPhotoURL(model.getPhotoUrl());
+        return response;
+    }
+
 }
