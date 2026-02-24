@@ -17,13 +17,18 @@ public class UserModelRepoImpl implements UserModelRepository {
 
 
     @Override
-    public UserModel findByEmail(String username) {
-        return mapper.toModel(repository.findByEmail(username).orElse(null));
+    public UserModel findByEmail(String email) {
+        return mapper.toModel(repository.findByEmail(email).orElse(null));
     }
 
     @Override
     public UserModel save(UserModel userModel) {
         User user = repository.save(mapper.toEntity(userModel));
         return mapper.toModel(user);
+    }
+
+    @Override
+    public UserModel findById(Long id) {
+        return mapper.toModel(repository.findById(id).orElse(null));
     }
 }

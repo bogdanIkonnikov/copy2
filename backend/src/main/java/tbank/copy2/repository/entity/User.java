@@ -34,6 +34,9 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @Column()
+    private String photoUrl;
+
     @CreationTimestamp
     @Column(nullable = false)
     private LocalDateTime created_at;
@@ -81,9 +84,5 @@ public class User implements UserDetails {
     @Override
     public String getPassword() {
         return this.password_hash;
-    }
-
-    public String getUsername() {
-        return this.email;
     }
 }
