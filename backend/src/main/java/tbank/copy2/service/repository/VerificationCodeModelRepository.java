@@ -7,4 +7,8 @@ import java.util.Optional;
 
 public interface VerificationCodeModelRepository{
      VerificationCodeModel findByEmailAndCode(String email, String code);
+
+    void delete(VerificationCodeModel codeModel);
+
+    void save(VerificationCodeModel codeModel);
 }
