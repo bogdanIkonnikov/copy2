@@ -20,4 +20,14 @@ public class VerifCodeModelRepoImpl implements VerificationCodeModelRepository {
     public VerificationCodeModel findByEmailAndCode(String email, String code) {
         return mapper.toModel(repository.findByEmailAndCode(email, code));
     }
+
+    @Override
+    public void delete(VerificationCodeModel codeModel) {
+        repository.delete(mapper.toEntity(codeModel));
+    }
+
+    @Override
+    public void save(VerificationCodeModel codeModel) {
+        repository.save(mapper.toEntity(codeModel));
+    }
 }

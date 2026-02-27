@@ -1,6 +1,7 @@
 package tbank.copy2.web.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -71,5 +72,12 @@ public class AuthController {
         } else {
             return ResponseEntity.badRequest().body("Неверный код или срок действия истек");
         }
+    }
+
+    @Operation(summary = "Отправка кода подтверждения на почту")
+    @PostMapping("/send-code")
+    public ResponseEntity<?> sendVerificationCode(@Parameter(name = "Почта пользователя") @RequestParam String email) {
+        verificationService.sendVerificationCode(email);
+        return ResponseEntity.ok("Код подтверждения отправлен на почту");
     }
 }
