@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tbank.copy2.service.service.AuthenticationService;
 import tbank.copy2.service.service.VerificationService;
-import tbank.copy2.web.dto.question.AddQuestionRequest;
 import tbank.copy2.web.dto.user.JwtAuthenticationResponse;
 import tbank.copy2.web.dto.user.SignInRequest;
 import tbank.copy2.web.dto.user.SignUpRequest;
@@ -20,7 +19,7 @@ import tbank.copy2.web.dto.verification.VerificationRequest;
 import tbank.copy2.web.mapper.UserMapper;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 @RequiredArgsConstructor
 @Tag(name = "Аутентификация", description = "Операции, связанные с аутентификацией")
 public class AuthController {
