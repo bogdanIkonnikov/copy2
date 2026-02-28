@@ -7,8 +7,6 @@ import tbank.copy2.repository.repository.VerificationCodeRepository;
 import tbank.copy2.service.model.VerificationCodeModel;
 import tbank.copy2.service.repository.VerificationCodeModelRepository;
 
-import java.util.Optional;
-
 @Repository
 public class VerifCodeModelRepoImpl implements VerificationCodeModelRepository {
     @Autowired
@@ -29,5 +27,15 @@ public class VerifCodeModelRepoImpl implements VerificationCodeModelRepository {
     @Override
     public void save(VerificationCodeModel codeModel) {
         repository.save(mapper.toEntity(codeModel));
+    }
+
+    @Override
+    public void deleteByEmail(String email) {
+        repository.deleteByEmail(email);
+    }
+
+    @Override
+    public void flush() {
+        repository.flush();
     }
 }
