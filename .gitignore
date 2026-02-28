@@ -1,6 +1,5 @@
 backend/HELP.md
 .gradle
-.env
 build/
 !backend/gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
