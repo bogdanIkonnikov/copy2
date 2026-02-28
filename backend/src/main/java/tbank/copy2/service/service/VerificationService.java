@@ -40,6 +40,8 @@ public class VerificationService {
     }
 
     private String generateCode(String email) {
+        repository.deleteByEmail(email);
+        repository.flush();
         VerificationCodeModel codeModel = new VerificationCodeModel();
         codeModel.setEmail(email);
         codeModel.setExpiryDate(LocalDateTime.now().plusMinutes(10));
