@@ -20,7 +20,7 @@ import tbank.copy2.web.dto.verification.VerificationRequest;
 import tbank.copy2.web.mapper.UserMapper;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 @RequiredArgsConstructor
 @Tag(name = "Аутентификация", description = "Операции, связанные с аутентификацией")
 public class AuthController {
