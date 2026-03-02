@@ -31,4 +31,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleCodeExpired(VerificationCodeExpiredException ex) {
         return ResponseEntity.status(HttpStatus.GONE).body(ex.getMessage());
     }
+
+    @ExceptionHandler(ExpiredTokenException.class)
+    public ResponseEntity<String> handleTokenExpired(VerificationCodeExpiredException ex) {
+        return ResponseEntity.status(HttpStatus.GONE).body(ex.getMessage());
+    }
 }
