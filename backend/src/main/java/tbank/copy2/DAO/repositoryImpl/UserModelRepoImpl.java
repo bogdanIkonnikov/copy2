@@ -31,4 +31,9 @@ public class UserModelRepoImpl implements UserModelRepository {
     public UserModel findById(Long id) {
         return mapper.toModel(repository.findById(id).orElse(null));
     }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return repository.existsByEmail(email);
+    }
 }
