@@ -6,4 +6,6 @@ public interface UserModelRepository {
     UserModel findByEmail(String email);
     UserModel save(UserModel userModel);
     UserModel findById(Long id);
+
+    boolean existsByEmail(String email);
 }
