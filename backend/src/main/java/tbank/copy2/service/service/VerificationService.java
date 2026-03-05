@@ -1,7 +1,5 @@
 package tbank.copy2.service.service;
 
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tbank.copy2.exception.VerificationCodeExpiredException;
@@ -13,10 +11,10 @@ import java.time.LocalDateTime;
 @Service
 public class VerificationService {
     private final VerificationCodeModelRepository repository;
-    private final JavaMailSender mailSender;
+    private final MailService mailService;
 
-    public VerificationService(JavaMailSender mailSender, VerificationCodeModelRepository repository) {
-        this.mailSender = mailSender;
+    public VerificationService(MailService mailService, VerificationCodeModelRepository repository) {
+        this.mailService = mailService;
         this.repository = repository;
     }
 
@@ -31,13 +29,8 @@ public class VerificationService {
 
     @Transactional
     public void sendVerificationCode(String email) {
-        SimpleMailMessage message = new SimpleMailMessage();
         String code = generateCode(email);
-        message.setTo(email);
-        message.setFrom("krefature@mail.ru");
-        message.setSubject("Код подтверждения регистрации");
-        message.setText("Ваш код для входа: " + code);
-        mailSender.send(message);
+        mailService.send(email, "Код подтверждения регистрации", "Ваш код для входа: " + code);
     }
 
     private String generateCode(String email) {
