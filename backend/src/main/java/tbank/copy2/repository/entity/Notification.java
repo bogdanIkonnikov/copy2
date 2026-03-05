@@ -20,7 +20,7 @@ public class Notification {
     @ManyToOne
     private User user;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "is_enabled")
     private Boolean isEnabled = true;
 
     @Column()
@@ -29,6 +29,6 @@ public class Notification {
     @Column(nullable = false)
     private LocalDateTime next_sent_at;
 
-    @Column(nullable = false)
-    private int interval;
+    @Column(nullable = false, name = "current_step")
+    private int currentStep;
 }
