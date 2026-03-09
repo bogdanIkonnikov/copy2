@@ -2,10 +2,12 @@ package tbank.copy2.repository.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.data.domain.Persistable;
 
 @Entity
 @Data
-public class NotificationSettings {
+@Table(name = "notification_settings")
+public class NotificationSettings implements Persistable<Long> {
     @Id
     private Long id;
 
@@ -13,6 +15,9 @@ public class NotificationSettings {
     @MapsId
     @JoinColumn(name = "user_id")
     private User user;
+
+    @Transient
+    private boolean isNew = true;
 
     @Column(nullable = false, name = "step_0")
     private int step0 = 20;

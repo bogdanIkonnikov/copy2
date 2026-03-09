@@ -2,7 +2,7 @@ package tbank.copy2.DAO.repositoryImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import tbank.copy2.DAO.mapper.NotificationMapper;
+import tbank.copy2.DAO.mapper.NotificationModelMapper;
 import tbank.copy2.repository.entity.Notification;
 import tbank.copy2.repository.repository.NotificationRepository;
 import tbank.copy2.service.model.NotificationModel;
@@ -17,16 +17,22 @@ public class NotificationModelRepoImpl implements NotificationModelRepository {
     @Autowired
     private NotificationRepository repository;
     @Autowired
-    private NotificationMapper mapper;
+    private NotificationModelMapper mapper;
 
     @Override
     public List<NotificationModel> findAllForRemind(LocalDateTime now) {
-        List<Notification> entities = repository.findAllByIsEnabledAndNext_sent_atIsBefore(true, now);
+        List<Notification> entities = repository.findAllToRemind(true, now);
         return entities.stream().map(n -> mapper.toModel(n)).collect(Collectors.toList());
     }
 
     @Override
     public void save(NotificationModel n) {
         repository.save(mapper.toEntity(n));
+    }
+
+    @Override
+    public NotificationModel findByUserIdAndTestId(Long userId, Long testId) {
+        Notification n = repository.findByUserIdAndTestId(userId, testId);
+        return mapper.toModel(n);
     }
 }
