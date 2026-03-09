@@ -6,4 +6,8 @@ public interface NotificationSettingsModelRepo {
     NotificationSettingsModel findById(Long id);
 
     void save(NotificationSettingsModel n);
+
+    NotificationSettingsModel findByUserId(Long userId);
+
+    boolean existsByUserId(Long userId);
 }

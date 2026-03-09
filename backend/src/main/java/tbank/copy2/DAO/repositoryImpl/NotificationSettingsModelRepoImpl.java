@@ -2,7 +2,9 @@ package tbank.copy2.DAO.repositoryImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import tbank.copy2.DAO.mapper.NotificationSettingsMapper;
+import tbank.copy2.DAO.mapper.NotificationSettingsModelMapper;
+import tbank.copy2.repository.entity.Notification;
+import tbank.copy2.repository.entity.NotificationSettings;
 import tbank.copy2.repository.repository.NotificationSettingsModelRepo;
 import tbank.copy2.repository.repository.NotificationSettingsRepository;
 import tbank.copy2.service.model.NotificationSettingsModel;
@@ -12,7 +14,7 @@ public class NotificationSettingsModelRepoImpl implements NotificationSettingsMo
     @Autowired
     private NotificationSettingsRepository repository;
     @Autowired
-    private NotificationSettingsMapper mapper;
+    private NotificationSettingsModelMapper mapper;
 
     @Override
     public NotificationSettingsModel findById(Long id) {
@@ -21,6 +23,19 @@ public class NotificationSettingsModelRepoImpl implements NotificationSettingsMo
 
     @Override
     public void save(NotificationSettingsModel n) {
-        repository.save(mapper.toEntity(n));
+        NotificationSettings settings = mapper.toEntity(n);
+        if (repository.existsById(settings.getId())) settings.setNew(false);
+        repository.save(settings);
+    }
+
+    @Override
+    public NotificationSettingsModel findByUserId(Long userId) {
+        return mapper.toModel(repository.findByUserId(userId));
+    }
+
+
+    @Override
+    public boolean existsByUserId(Long userId) {
+        return repository.existsByUserId(userId);
     }
 }

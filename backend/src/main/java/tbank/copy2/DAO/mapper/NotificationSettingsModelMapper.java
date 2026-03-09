@@ -7,7 +7,7 @@ import tbank.copy2.repository.repository.UserRepository;
 import tbank.copy2.service.model.NotificationSettingsModel;
 
 @Component
-public class NotificationSettingsMapper {
+public class NotificationSettingsModelMapper {
     @Autowired
     private UserRepository userRepository;
 
