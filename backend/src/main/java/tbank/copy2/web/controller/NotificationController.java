@@ -7,11 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import tbank.copy2.service.model.NotificationModel;
 import tbank.copy2.service.model.NotificationSettingsModel;
 import tbank.copy2.service.service.NotificationService;
+import tbank.copy2.web.dto.notification.NotificationResponse;
 import tbank.copy2.web.dto.notification.NotificationSettingsResponse;
 import tbank.copy2.web.dto.user.CurrentUser;
 import tbank.copy2.web.mapper.NotificationMapper;
+import tbank.copy2.web.mapper.NotificationSettingsMapper;
 
 import java.util.List;
 
@@ -21,10 +24,12 @@ public class NotificationController {
     @Autowired
     private NotificationService service;
     @Autowired
+    private NotificationSettingsMapper settingsMapper;
+    @Autowired
     private NotificationMapper mapper;
 
     @Operation(description = "Включить уведомления у пользователя для конкретного теста")
-    @PostMapping("/{testId}/enable")
+    @PutMapping("/{testId}/enable")
     public ResponseEntity<?> enableNotifications(@Parameter(description = "Идентификатор теста", example = "1")
                                                  @RequestParam Long testId,
                                                  @AuthenticationPrincipal CurrentUser user) {
@@ -33,7 +38,7 @@ public class NotificationController {
     }
 
     @Operation(description = "Выключить уведомления у пользователя для конкретного теста")
-    @PostMapping("/{testId}/disable")
+    @PutMapping("/{testId}/disable")
     public ResponseEntity<?> disableNotifications(@Parameter(description = "Идентификатор теста", example = "1")
                                                   @RequestParam Long testId,
                                                   @AuthenticationPrincipal CurrentUser user) {
@@ -42,7 +47,7 @@ public class NotificationController {
     }
 
     @Operation(description = "Выставить интервалы уведомлений пользователя")
-    @PutMapping("")
+    @PutMapping()
     public NotificationSettingsResponse setIntervals(@AuthenticationPrincipal CurrentUser user,
                                                      @io.swagger.v3.oas.annotations.parameters.RequestBody(
                                                              description = "Список интервалов",
@@ -50,14 +55,34 @@ public class NotificationController {
                                                              content = @Content(mediaType = "application/json")
                                                      )
                                                      @RequestBody List<Integer> intervals) {
-        NotificationSettingsModel model = service.setNotificationSettings(mapper.toModel(user.getUserId(), intervals));
-        return mapper.toResponse(model);
+        NotificationSettingsModel model = service.setNotificationSettings(settingsMapper.toModel(user.getUserId(), intervals));
+        return settingsMapper.toResponse(model);
     }
 
     @Operation(description = "Получить интервалы уведомлений пользователя")
-    @GetMapping("")
+    @GetMapping()
     public NotificationSettingsResponse getIntervals(@AuthenticationPrincipal CurrentUser user) {
         NotificationSettingsModel model = service.getNotificationSettings(user.getUserId());
+        return settingsMapper.toResponse(model);
+    }
+
+    @Operation(description = "Получить список активных напоминаний")
+    @GetMapping("/active")
+    public List<NotificationResponse> getActiveNotifications(@AuthenticationPrincipal CurrentUser user) {
+        List<NotificationModel> models = service.getActiveNotifications(user.getUserId());
+        return mapper.toResponses(models);
+    }
+
+    @Operation(description = "Удалить напоминание")
+    @DeleteMapping("/{testId}/delete")
+    public void deleteNotification(@PathVariable Long testId, @AuthenticationPrincipal CurrentUser user) {
+        service.deleteNotification(user.getUserId(), testId);
+    }
+
+    @Operation(description = "Добавить напоминание")
+    @PostMapping("/{testId}/add")
+    public NotificationResponse addNotification(@PathVariable Long testId, @AuthenticationPrincipal CurrentUser user) {
+        NotificationModel model = service.addNotification(user.getUserId(), testId);
         return mapper.toResponse(model);
     }
 }

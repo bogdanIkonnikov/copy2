@@ -16,4 +16,7 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
                                        @Param("timestamp") LocalDateTime timestamp);
     Notification findByUserIdAndTestId(Long userId, Long testId);
 
+    List<Notification> findAllEnabledByUserId(Long userId);
+
+    void deleteByUserIdAndTestId(Long userId, Long testId);
 }
