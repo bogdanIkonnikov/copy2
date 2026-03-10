@@ -26,13 +26,25 @@ public class NotificationModelRepoImpl implements NotificationModelRepository {
     }
 
     @Override
-    public void save(NotificationModel n) {
-        repository.save(mapper.toEntity(n));
+    public NotificationModel save(NotificationModel n) {
+        Notification saved = repository.save(mapper.toEntity(n));
+        return mapper.toModel(saved);
     }
 
     @Override
     public NotificationModel findByUserIdAndTestId(Long userId, Long testId) {
         Notification n = repository.findByUserIdAndTestId(userId, testId);
         return mapper.toModel(n);
+    }
+
+    @Override
+    public List<NotificationModel> findEnabledByUserId(Long userId) {
+        List<Notification> l = repository.findAllEnabledByUserId(userId);
+        return l.stream().map(n -> mapper.toModel(n)).collect(Collectors.toList());
+    }
+
+    @Override
+    public void deleteByUserIdAndTestId(Long userId, Long testId) {
+        repository.deleteByUserIdAndTestId(userId, testId);
     }
 }
