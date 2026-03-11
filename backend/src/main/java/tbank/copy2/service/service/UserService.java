@@ -5,6 +5,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import tbank.copy2.exception.UserAlreadyExistsException;
 import tbank.copy2.service.model.UserModel;
 import tbank.copy2.service.repository.UserModelRepository;
 
@@ -18,6 +19,9 @@ public class UserService implements UserDetailsService {
     }
 
     public UserDetails createUser(UserModel model) {
+        if (repository.existsByEmail(model.getEmail())) {
+            throw new UserAlreadyExistsException("Пользователь с таким Email уже существует!");
+        }
         return repository.save(model);
     }
 
