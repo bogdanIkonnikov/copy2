@@ -23,7 +23,7 @@ public class UserModel implements UserDetails {
 
     private String password_hash;
 
-    private Role role;
+    private Role role = Role.USER;
 
     private String photoUrl;
 
