@@ -4,10 +4,8 @@ import org.springframework.stereotype.Component;
 import tbank.copy2.common.enums.Role;
 import tbank.copy2.service.model.SignInCommand;
 import tbank.copy2.service.model.UserModel;
-import tbank.copy2.web.dto.user.JwtAuthenticationResponse;
-import tbank.copy2.web.dto.user.SignInRequest;
-import tbank.copy2.web.dto.user.SignUpRequest;
-import tbank.copy2.web.dto.user.UserInfoResponse;
+import tbank.copy2.service.model.UserStatisticModel;
+import tbank.copy2.web.dto.user.*;
 
 @Component
 public class UserMapper {
@@ -40,6 +38,15 @@ public class UserMapper {
         response.setUsername(model.getUsername());
         response.setRole(model.getRole());
         response.setPhotoURL(model.getPhotoUrl());
+        return response;
+    }
+
+    public UserStatisticResponse toStatisticResponse(UserStatisticModel model, Long testsCount){
+        UserStatisticResponse response = new UserStatisticResponse();
+        response.setLongestStreak(model.getLongestStreak());
+        response.setCurrentStreak(model.getCurrentStreak());
+        response.setTestCount(testsCount);
+        response.setCorrectAnswersPercentage((int) (model.getCorrectAnswers() / model.getTotalAnswers()*100));
         return response;
     }
 

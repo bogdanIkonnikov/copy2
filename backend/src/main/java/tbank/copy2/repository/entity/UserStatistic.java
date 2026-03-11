@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Persistable;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Data
 @Entity
@@ -36,5 +36,5 @@ public class UserStatistic implements Persistable<Long> {
     private int longestStreak;
 
     @Column(name = "last_test_date")
-    private LocalDateTime lastTestDate;
+    private LocalDate lastTestDate;
 }

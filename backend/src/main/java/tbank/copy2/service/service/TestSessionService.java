@@ -26,6 +26,8 @@ public class TestSessionService {
     @Autowired
     private TestModelServiceMapper mapper;
     @Autowired
+    private UserService userService;
+    @Autowired
     private TestSessionModelServiceMapper sessionMapper;
 
 
@@ -60,6 +62,7 @@ public class TestSessionService {
         }
 
         userAnswerService.addAnswer(sessionId, aModel.getQuestionId(), isCorrect);
+        userService.addAnswer(isCorrect, model.getUserId());
 
         saved = true;
         TestSessionResponseModel response = new TestSessionResponseModel();
@@ -77,6 +80,7 @@ public class TestSessionService {
         TestSessionModel model = repository.getTestSessionById(sessionId);
 
         model.setFinished_at(LocalDateTime.now());
+        userService.addActivity(model.getUserId());
         return repository.save(model);
     }
 

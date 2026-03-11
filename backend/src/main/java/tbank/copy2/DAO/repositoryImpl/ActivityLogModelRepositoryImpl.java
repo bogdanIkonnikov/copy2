@@ -35,4 +35,9 @@ public class ActivityLogModelRepositoryImpl implements ActivityLogModelRepositor
     public void save(ActivityLogModel activityLogModel) {
         repository.save(mapper.toEntity(activityLogModel));
     }
+
+    @Override
+    public ActivityLogModel findByUserId(Long userId) {
+        return mapper.toModel(repository.findByUserId(userId));
+    }
 }

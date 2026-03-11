@@ -19,6 +19,7 @@ public class UserStatisticModelMapper {
          model.setCorrectAnswers(entity.getCorrectAnswers());
          model.setLongestStreak(entity.getLongestStreak());
          model.setTotalAnswers(entity.getTotalAnswers());
+         model.setNew(entity.isNew());
          model.setLastTestDate(entity.getLastTestDate());
          return model;
      }
@@ -30,6 +31,7 @@ public class UserStatisticModelMapper {
          entity.setTotalAnswers(model.getTotalAnswers());
          entity.setCorrectAnswers(model.getCorrectAnswers());
          entity.setLastTestDate(model.getLastTestDate());
+         entity.setNew(model.isNew());
          entity.setId(model.getId());
          return entity;
      }
