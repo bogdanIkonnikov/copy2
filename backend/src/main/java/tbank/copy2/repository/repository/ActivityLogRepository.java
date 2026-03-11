@@ -10,4 +10,6 @@ import java.time.LocalDateTime;
 public interface ActivityLogRepository extends JpaRepository<ActivityLog, Long> {
     Long countByUserIdAndAttemptDateAfter(Long userId, LocalDateTime date);
     Long countByUserId(Long userId);
+
+    ActivityLog findByUserId(Long userId);
 }

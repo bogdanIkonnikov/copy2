@@ -1,17 +1,22 @@
 package tbank.copy2.web.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import tbank.copy2.common.enums.Interval;
 import tbank.copy2.service.model.UserModel;
+import tbank.copy2.service.model.UserStatisticModel;
 import tbank.copy2.service.service.UserService;
 import tbank.copy2.web.dto.user.CurrentUser;
 import tbank.copy2.web.dto.user.UserInfoResponse;
+import tbank.copy2.web.dto.user.UserStatisticResponse;
 import tbank.copy2.web.mapper.UserMapper;
 
 @RestController
@@ -33,6 +38,14 @@ public class UserController {
             @AuthenticationPrincipal CurrentUser user){
         UserModel userModel = service.getUserById(user.getUserId());
         return mapper.toInfoResponse(userModel);
+    }
+
+    @Operation(summary = "Получить статистику пользователя")
+    @GetMapping("/statistics")
+    public UserStatisticResponse getUserStatistic(@AuthenticationPrincipal CurrentUser user, @Parameter(name = "Временной интервал пройденных тестов") @RequestParam Interval interval) {
+        UserStatisticModel statistic = service.getUserStatistic(user.getUserId());
+        Long testsCount = service.getTestCount(user.getUserId(), interval);
+        return mapper.toStatisticResponse(statistic, testsCount);
     }
 
 }
