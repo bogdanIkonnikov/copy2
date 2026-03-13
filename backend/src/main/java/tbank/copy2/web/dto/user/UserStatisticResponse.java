@@ -6,8 +6,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class UserStatisticResponse {
-    private Long testCount;
-    private int correctAnswersPercentage;
+    private int testsCompleted;
+    private int avgScore;
     private int currentStreak;
     private int longestStreak;
 }

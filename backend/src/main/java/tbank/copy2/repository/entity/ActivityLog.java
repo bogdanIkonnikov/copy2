@@ -21,4 +21,14 @@ public class ActivityLog {
 
     @Column(name = "attempt_date")
     private LocalDateTime attemptDate;
+
+    @OneToOne
+    @JoinColumn(name = "test_id")
+    private Test test;
+
+    @Column(name = "score")
+    private int score;
+
+    @Column(name = "total")
+    private int total;
 }

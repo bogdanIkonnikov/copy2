@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tbank.copy2.common.enums.Interval;
 import tbank.copy2.exception.UserAlreadyExistsException;
 import tbank.copy2.service.model.ActivityLogModel;
+import tbank.copy2.service.model.ActivityLogsTransferModel;
 import tbank.copy2.service.model.UserModel;
 import tbank.copy2.service.model.UserStatisticModel;
 import tbank.copy2.service.repository.ActivityLogModelRepository;
@@ -17,6 +18,10 @@ import tbank.copy2.service.repository.UserStatisticModelRepository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -93,10 +98,14 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public void addActivity(Long userId){
+    public void addActivity(Long userId, Long testId, String testName, int total, int score) {
         ActivityLogModel activityModel = new ActivityLogModel();
         activityModel.setUserId(userId);
         activityModel.setAttemptDate(LocalDateTime.now());
+        activityModel.setTestId(testId);
+        activityModel.setScore(score);
+        activityModel.setTotal(total);
+        activityModel.setTestName(testName);
         activityRepository.save(activityModel);
 
         UserStatisticModel statisticModel = statsRepository.findById(userId);
@@ -111,5 +120,37 @@ public class UserService implements UserDetailsService {
             }
         }
         statsRepository.save(statisticModel);
+    }
+
+    public List<ActivityLogsTransferModel> getActivityLogs(Long userId) {
+        List<ActivityLogModel> activityLogs = activityRepository.findAllByUserId(userId);
+        List<ActivityLogsTransferModel> activityLogsTransferModels = new ArrayList<>();
+        Map<LocalDate, Integer> logsMap = new HashMap<>();
+        for (ActivityLogModel activityLog : activityLogs) {
+            LocalDate date = activityLog.getAttemptDate().toLocalDate();
+            if (logsMap.containsKey(date)) {
+                logsMap.put(date, logsMap.get(date) + 1);
+            } else {
+                logsMap.put(date, 1);
+            }
+        }
+        for (Map.Entry<LocalDate, Integer> entry : logsMap.entrySet()) {
+            activityLogsTransferModels.add(new ActivityLogsTransferModel(entry.getKey(), entry.getValue()));
+        }
+        return activityLogsTransferModels;
+    }
+
+    public List<ActivityLogModel> getRecentActivityLogs(Long userId) {
+        List<ActivityLogModel> activityLogs = activityRepository.findTop5ByUserIdOrderByAttemptDateDesc(userId);
+        return activityLogs;
+    }
+
+    public int getUniqueTestsCount(Long userId) {
+        List<ActivityLogModel> activityLogs = activityRepository.findAllByUserId(userId);
+        return (int) activityLogs.stream()
+                .filter(l -> l.getScore() == l.getTotal())
+                .map(ActivityLogModel::getTestId)
+                .distinct()
+                .count();
     }
 }

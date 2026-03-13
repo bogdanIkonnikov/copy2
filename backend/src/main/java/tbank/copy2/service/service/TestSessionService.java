@@ -80,7 +80,7 @@ public class TestSessionService {
         TestSessionModel model = repository.getTestSessionById(sessionId);
 
         model.setFinished_at(LocalDateTime.now());
-        userService.addActivity(model.getUserId());
+        userService.addActivity(model.getUserId(), model.getTestId(), model.getTestName(), (int) model.getTotalCount(), (int) model.getCorrectCount());
         return repository.save(model);
     }
 

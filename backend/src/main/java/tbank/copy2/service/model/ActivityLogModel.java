@@ -11,4 +11,8 @@ public class ActivityLogModel {
     private Long id;
     private Long userId;
     private LocalDateTime attemptDate;
+    private Long testId;
+    private String testName;
+    private int score;
+    private int total;
 }
