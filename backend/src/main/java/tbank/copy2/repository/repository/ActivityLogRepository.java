@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import tbank.copy2.repository.entity.ActivityLog;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Repository
 public interface ActivityLogRepository extends JpaRepository<ActivityLog, Long> {
@@ -12,4 +13,8 @@ public interface ActivityLogRepository extends JpaRepository<ActivityLog, Long> 
     Long countByUserId(Long userId);
 
     ActivityLog findByUserId(Long userId);
+
+    List<ActivityLog> findAllByUserId(Long userId);
+    List<ActivityLog> findTop5ByUserIdOrderByAttemptDateDesc(Long userId);
+
 }

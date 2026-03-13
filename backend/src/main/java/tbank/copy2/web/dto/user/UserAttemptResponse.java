@@ -1,4 +1,4 @@
-package tbank.copy2.service.model;
+package tbank.copy2.web.dto.user;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,12 +7,10 @@ import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
-public class ActivityLogModel {
-    private Long id;
-    private Long userId;
-    private LocalDateTime attemptDate;
+public class UserAttemptResponse {
     private Long testId;
     private String testName;
     private int score;
     private int total;
+    private LocalDateTime date;
 }

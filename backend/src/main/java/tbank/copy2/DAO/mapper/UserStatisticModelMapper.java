@@ -12,6 +12,9 @@ public class UserStatisticModelMapper {
     private UserRepository userRepository;
 
      public UserStatisticModel toModel(UserStatistic entity) {
+         if (entity == null) {
+             return null;
+         }
          UserStatisticModel model = new UserStatisticModel();
          model.setId(entity.getId());
          model.setUserId(entity.getUser().getId());

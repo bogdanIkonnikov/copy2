@@ -8,6 +8,8 @@ import tbank.copy2.service.model.ActivityLogModel;
 import tbank.copy2.service.repository.ActivityLogModelRepository;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 public class ActivityLogModelRepositoryImpl implements ActivityLogModelRepository {
@@ -37,7 +39,12 @@ public class ActivityLogModelRepositoryImpl implements ActivityLogModelRepositor
     }
 
     @Override
-    public ActivityLogModel findByUserId(Long userId) {
-        return mapper.toModel(repository.findByUserId(userId));
+    public List<ActivityLogModel> findAllByUserId(Long userId) {
+        return repository.findAllByUserId(userId).stream().map(mapper::toModel).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ActivityLogModel> findTop5ByUserIdOrderByAttemptDateDesc(Long userId) {
+        return repository.findTop5ByUserIdOrderByAttemptDateDesc(userId).stream().map(mapper::toModel).collect(Collectors.toList());
     }
 }
