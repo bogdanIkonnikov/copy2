@@ -3,12 +3,12 @@ package tbank.copy2.web.controller;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import tbank.copy2.service.service.UserService;
 import tbank.copy2.web.dto.user.CurrentUser;
+import tbank.copy2.web.dto.user.EditUsernameEmailRequest;
 import tbank.copy2.web.dto.user.UserProfileResponse;
 import tbank.copy2.web.mapper.UserMapper;
 
@@ -32,6 +32,12 @@ public class UserController {
                 service.getRecentActivityLogs(user.getUserId()),
                 service.getUniqueTestsCount(user.getUserId()),
                 service.getUserStatistic(user.getUserId()));
+    }
+
+    @PatchMapping("/me")
+    public ResponseEntity<?> editProfile(@RequestBody EditUsernameEmailRequest request, @AuthenticationPrincipal CurrentUser user) {
+        service.updateUserEmailAndUsername(user.getUserId(), request.getEmail(), request.getUsername());
+        return ResponseEntity.ok("Данные успешно изменены");
     }
 
 }
