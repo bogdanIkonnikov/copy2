@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tbank.copy2.common.enums.Interval;
+import tbank.copy2.exception.EmailAlreadyTakenException;
 import tbank.copy2.exception.UserAlreadyExistsException;
 import tbank.copy2.service.model.ActivityLogModel;
 import tbank.copy2.service.model.ActivityLogsTransferModel;
@@ -153,4 +154,25 @@ public class UserService implements UserDetailsService {
                 .distinct()
                 .count();
     }
+
+    public void updateUserEmailAndUsername(Long userId, String newEmail, String newUsername) {
+        UserModel user = repository.findById(userId);
+        if (repository.existsByEmail(newEmail)) throw new EmailAlreadyTakenException("Этот email уже занят");
+        if (user != null) {
+            user.setEmail(newEmail);
+            user.setUsername(newUsername);
+            repository.save(user);
+        }
+        else {
+            throw new RuntimeException("Пользователь не найден!");
+        }
+    }
+
+     public void updateUserPhotoURL(Long userId, String newPhotoURL) {
+         UserModel user = repository.findById(userId);
+         if (user != null) {
+             user.setPhotoUrl(newPhotoURL);
+             repository.save(user);
+         }
+     }
 }

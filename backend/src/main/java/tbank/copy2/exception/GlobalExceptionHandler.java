@@ -36,4 +36,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleTokenExpired(VerificationCodeExpiredException ex) {
         return ResponseEntity.status(HttpStatus.GONE).body(ex.getMessage());
     }
+
+    @ExceptionHandler(EmailAlreadyTakenException.class)
+    public ResponseEntity<String> handleEmailAlreadyTaken(EmailAlreadyTakenException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    }
 }
