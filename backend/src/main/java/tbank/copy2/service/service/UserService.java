@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tbank.copy2.common.enums.Interval;
@@ -32,6 +33,8 @@ public class UserService implements UserDetailsService {
     private UserStatisticModelRepository statsRepository;
     @Autowired
     private ActivityLogModelRepository activityRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public UserDetails getByEmail(String email) {
         return repository.findByEmail(email);
@@ -175,4 +178,13 @@ public class UserService implements UserDetailsService {
              repository.save(user);
          }
      }
+
+    public void changePassword(Long userId, String currentPassword, String newPassword) {
+        UserModel user = repository.findById(userId);
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            throw new RuntimeException("Неверный текущий пароль!");
+        }
+        user.setPassword_hash(passwordEncoder.encode(newPassword));
+        repository.save(user);
+    }
 }

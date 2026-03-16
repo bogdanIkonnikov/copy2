@@ -41,4 +41,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleEmailAlreadyTaken(EmailAlreadyTakenException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<String> handleRuntimeException(RuntimeException ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+    }
 }
