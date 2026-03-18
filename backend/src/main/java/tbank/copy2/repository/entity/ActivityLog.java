@@ -22,7 +22,7 @@ public class ActivityLog {
     @Column(name = "attempt_date")
     private LocalDateTime attemptDate;
 
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "test_id")
     private Test test;
 

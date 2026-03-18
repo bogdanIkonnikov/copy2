@@ -58,6 +58,7 @@ public class TestMapper {
         model.setName(request.getName());
         model.setDescription(request.getDescription());
         model.setUserId(userId);
+        model.setVisible(true);
         return model;
     }
 

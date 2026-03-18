@@ -15,6 +15,7 @@ import tbank.copy2.service.model.ActivityLogsTransferModel;
 import tbank.copy2.service.model.UserModel;
 import tbank.copy2.service.model.UserStatisticModel;
 import tbank.copy2.service.repository.ActivityLogModelRepository;
+import tbank.copy2.service.repository.TestModelRepository;
 import tbank.copy2.service.repository.UserModelRepository;
 import tbank.copy2.service.repository.UserStatisticModelRepository;
 
@@ -35,6 +36,8 @@ public class UserService implements UserDetailsService {
     private ActivityLogModelRepository activityRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private TestModelRepository testRepository;
 
     public UserDetails getByEmail(String email) {
         return repository.findByEmail(email);
@@ -82,7 +85,7 @@ public class UserService implements UserDetailsService {
             model.setNew(false);
             model.setTotalAnswers(model.getTotalAnswers() + 1);
             if (isCorrect) {
-                model.setCorrectAnswers(model.getCorrectAnswers() + 1);
+                model.setCorrectAnswers(((model.getCorrectAnswers() == null) ? 0 : model.getCorrectAnswers())  + 1);
             }
         }
         else{
@@ -93,9 +96,10 @@ public class UserService implements UserDetailsService {
             model.setTotalAnswers(1L);
             model.setId(userId);
             model.setCurrentStreak(0);
-            model.setLastTestDate(null);
+            model.setLastTestDate(LocalDate.now());
             if (isCorrect) {
                 model.setCorrectAnswers(1L);
+                model.setCorrectAnswers(0L);
             }
         }
         statsRepository.save(model);
@@ -103,27 +107,29 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public void addActivity(Long userId, Long testId, String testName, int total, int score) {
-        ActivityLogModel activityModel = new ActivityLogModel();
-        activityModel.setUserId(userId);
-        activityModel.setAttemptDate(LocalDateTime.now());
-        activityModel.setTestId(testId);
-        activityModel.setScore(score);
-        activityModel.setTotal(total);
-        activityModel.setTestName(testName);
-        activityRepository.save(activityModel);
+        if (testRepository.findById(testId).getVisible()) {
+            ActivityLogModel activityModel = new ActivityLogModel();
+            activityModel.setUserId(userId);
+            activityModel.setAttemptDate(LocalDateTime.now());
+            activityModel.setTestId(testId);
+            activityModel.setScore(score);
+            activityModel.setTotal(total);
+            activityModel.setTestName(testName);
+            activityRepository.save(activityModel);
 
-        UserStatisticModel statisticModel = statsRepository.findById(userId);
-        if (statisticModel != null) {
-            statisticModel.setNew(false);
-            if (!statisticModel.getLastTestDate().equals(LocalDate.now())){
-                statisticModel.setLastTestDate(LocalDate.now());
-                statisticModel.setCurrentStreak(statisticModel.getCurrentStreak() + 1);
-                if (statisticModel.getCurrentStreak() > statisticModel.getLongestStreak()){
-                    statisticModel.setLongestStreak(statisticModel.getCurrentStreak());
+            UserStatisticModel statisticModel = statsRepository.findById(userId);
+            if (statisticModel != null) {
+                statisticModel.setNew(false);
+                if (statisticModel.getLastTestDate() == null || !statisticModel.getLastTestDate().equals(LocalDate.now())){
+                    statisticModel.setLastTestDate(LocalDate.now());
+                    statisticModel.setCurrentStreak(statisticModel.getCurrentStreak() + 1);
+                    if (statisticModel.getCurrentStreak() > statisticModel.getLongestStreak()){
+                        statisticModel.setLongestStreak(statisticModel.getCurrentStreak());
+                    }
                 }
             }
+            statsRepository.save(statisticModel);
         }
-        statsRepository.save(statisticModel);
     }
 
     public List<ActivityLogsTransferModel> getActivityLogs(Long userId) {
