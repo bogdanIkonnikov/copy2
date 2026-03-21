@@ -48,16 +48,18 @@ public class TestService {
         return repository.save(model);
     }
 
+    @Transactional
     public TestModel addTest(TestFileModel model) {
         TestModel testModel = new TestModel();
         testModel.setName(model.getName());
         testModel.setDescription(model.getDescription());
-        testModel.setUserId(1L);
+        testModel.setUserId(model.getUserId());
         TestModel savedModel = repository.save(testModel);
         savedModel.setQuestions(parseQuestions(model.getFile(), savedModel.getId()));
-        return repository.save(savedModel);
+        return savedModel;
     }
 
+    @Transactional
     public List<QuestionModel> parseQuestions(MultipartFile file, Long id) {
 
         String fileName = file.getOriginalFilename();
@@ -146,12 +148,10 @@ public class TestService {
                             answerFound = true;
                             break;
                         default: {
-                            if (questionFound) {
-                                System.out.print(" " + word);
+                            if (questionFound && (questionName.length() + word.length() < 99)) {
                                 questionName.append(" " + word);
                             }
-                            if (answerFound) {
-                                System.out.print(" " + word);
+                            if (answerFound && (answerName.length() + word.length() < 99)) {
                                 answerName.append(" " + word);
                             }
                             break;
@@ -189,6 +189,7 @@ public class TestService {
         return repository.findById(id);
     }
 
+    @Transactional
     protected void setNewAnswers(QuestionModel question, List<AnswerModel> answers) {
         if (question.getId() == null) {
             question = questionRepository.save(question);
