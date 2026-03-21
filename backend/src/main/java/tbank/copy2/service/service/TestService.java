@@ -21,7 +21,6 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Transactional
 @Service
@@ -104,13 +103,14 @@ public class TestService {
                                 answerName.setLength(0);
                             }
 
-                            if (qCount != 0) {
+                            if (qCount != 0 && !questionName.isEmpty()) {
                                 questionModel.setTestId(id);
                                 questionModel.setContent("initial");
                                 questionModel = questionRepository.save(questionModel);
 
                                 Long questionId = questionModel.getId();
                                 answers.stream()
+                                        .filter(a -> !a.getContent().isEmpty())
                                         .limit(5)
                                         .forEach(aModel -> aModel.setQuestionId(questionId));
                                 questionModel.setContent(questionName.toString());
@@ -118,7 +118,7 @@ public class TestService {
                                 if (answers.size() > 1) {
                                     questionModel.setType(Type.CHOICE);
                                 } else questionModel.setType(Type.INPUT);
-                                questionModel.setAnswerModels(answers.stream().limit(5).collect(Collectors.toList()));
+                                questionModel.setAnswerModels(answers);
                                 answers = new ArrayList<>();
                                 questions.add(questionModel);
                                 questionRepository.save(questionModel);
@@ -167,19 +167,20 @@ public class TestService {
                 answers.add(answerModel);
             }
 
-            if (qCount != 0) {
+            if (qCount != 0 && !questionName.isEmpty()) {
                 questionModel.setTestId(id);
                 questionModel.setContent("initial");
                 questionModel = questionRepository.save(questionModel);
                 Long questionId = questionModel.getId();
                 answers.stream()
+                        .filter(a -> !a.getContent().isEmpty())
                         .limit(5)
                         .forEach(aModel -> aModel.setQuestionId(questionId));
                 questionModel.setContent(questionName.toString());
                 if (answers.size() > 1) {
                     questionModel.setType(Type.CHOICE);
                 } else questionModel.setType(Type.INPUT);
-                questionModel.setAnswerModels(answers.stream().limit(5).collect(Collectors.toList()));
+                questionModel.setAnswerModels(answers);
                 questions.add(questionModel);
                 questionRepository.save(questionModel);
             }
