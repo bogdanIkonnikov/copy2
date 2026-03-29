@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tbank.copy2.common.enums.Interval;
 import tbank.copy2.exception.EmailAlreadyTakenException;
+import tbank.copy2.exception.IncorrectEmailOrPassException;
 import tbank.copy2.exception.UserAlreadyExistsException;
 import tbank.copy2.domain.model.ActivityLogModel;
 import tbank.copy2.domain.model.ActivityLogsTransferModel;
@@ -189,7 +190,7 @@ public class UserService implements UserDetailsService {
     public void changePassword(Long userId, String currentPassword, String newPassword) {
         UserModel user = repository.findById(userId);
         if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
-            throw new RuntimeException("Неверный текущий пароль!");
+            throw new IncorrectEmailOrPassException("Неверный текущий пароль!");
         }
         user.setPassword_hash(passwordEncoder.encode(newPassword));
         repository.save(user);
