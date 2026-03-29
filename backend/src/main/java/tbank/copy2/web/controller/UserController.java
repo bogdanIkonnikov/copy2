@@ -4,14 +4,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import tbank.copy2.domain.service.UserService;
-import tbank.copy2.web.dto.user.ChangePasswordRequest;
-import tbank.copy2.web.dto.user.CurrentUser;
-import tbank.copy2.web.dto.user.EditUsernameEmailRequest;
-import tbank.copy2.web.dto.user.UserProfileResponse;
+import tbank.copy2.web.dto.user.*;
 import tbank.copy2.web.mapper.UserMapper;
 
 @RestController
@@ -39,15 +35,15 @@ public class UserController {
 
     @Operation(description = "Изменить имя пользователя и email текущего пользователя")
     @PatchMapping("/me")
-    public ResponseEntity<?> editProfile(@RequestBody EditUsernameEmailRequest request, @AuthenticationPrincipal CurrentUser user) {
-        service.updateUserEmailAndUsername(user.getUserId(), request.getEmail(), request.getUsername());
-        return ResponseEntity.ok("Данные успешно изменены");
+    public JwtAuthenticationResponse editProfile(@RequestBody EditUsernameEmailRequest request, @AuthenticationPrincipal CurrentUser user) {
+        String token = service.updateUserEmailAndUsername(user.getUserId(), request.getEmail(), request.getUsername());
+        return mapper.toAuthenticationResponse(token);
     }
 
     @Operation(description = "Изменить пароль текущего пользователя")
     @PostMapping("/me/change-password")
-    public ResponseEntity<?> changePassword(@AuthenticationPrincipal CurrentUser user, @RequestBody ChangePasswordRequest request) {
-        service.changePassword(user.getUserId(), request.getCurrentPassword(), request.getNewPassword());
-        return ResponseEntity.ok("Пароль успешно изменён");
+    public JwtAuthenticationResponse changePassword(@AuthenticationPrincipal CurrentUser user, @RequestBody ChangePasswordRequest request) {
+        String token = service.changePassword(user.getUserId(), request.getCurrentPassword(), request.getNewPassword());
+        return mapper.toAuthenticationResponse(token);
     }
 }

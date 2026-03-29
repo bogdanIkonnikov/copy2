@@ -39,6 +39,8 @@ public class UserService implements UserDetailsService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private TestModelRepository testRepository;
+    @Autowired
+    private JwtService jwtService;
 
     public UserDetails getByEmail(String email) {
         return repository.findByEmail(email);
@@ -164,7 +166,7 @@ public class UserService implements UserDetailsService {
                 .count();
     }
 
-    public void updateUserEmailAndUsername(Long userId, String newEmail, String newUsername) {
+    public String updateUserEmailAndUsername(Long userId, String newEmail, String newUsername) {
         UserModel user = repository.findById(userId);
         if (user != null) {
             if (!user.getEmail().equals(newEmail)) {
@@ -173,6 +175,7 @@ public class UserService implements UserDetailsService {
             }
             user.setUsername(newUsername);
             repository.save(user);
+            return jwtService.generateToken(user);
         }
         else{
             throw new RuntimeException("Пользователь не найден!");
@@ -187,12 +190,13 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    public void changePassword(Long userId, String currentPassword, String newPassword) {
+    public String changePassword(Long userId, String currentPassword, String newPassword) {
         UserModel user = repository.findById(userId);
         if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
             throw new IncorrectEmailOrPassException("Неверный текущий пароль!");
         }
         user.setPassword_hash(passwordEncoder.encode(newPassword));
         repository.save(user);
+        return jwtService.generateToken(user);
     }
 }
