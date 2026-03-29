@@ -85,10 +85,9 @@ public class UserService implements UserDetailsService {
             model.setNew(false);
             model.setTotalAnswers(model.getTotalAnswers() + 1);
             if (isCorrect) {
-                model.setCorrectAnswers(((model.getCorrectAnswers() == null) ? 0 : model.getCorrectAnswers())  + 1);
+                model.setCorrectAnswers(((model.getCorrectAnswers() == null) ? 0 : model.getCorrectAnswers()) + 1);
             }
-        }
-        else{
+        } else {
             model = new UserStatisticModel();
             model.setNew(true);
             model.setUserId(userId);
@@ -120,10 +119,10 @@ public class UserService implements UserDetailsService {
             UserStatisticModel statisticModel = statsRepository.findById(userId);
             if (statisticModel != null) {
                 statisticModel.setNew(false);
-                if (statisticModel.getLastTestDate() == null || !statisticModel.getLastTestDate().equals(LocalDate.now())){
+                if (statisticModel.getLastTestDate() == null || !statisticModel.getLastTestDate().equals(LocalDate.now())) {
                     statisticModel.setLastTestDate(LocalDate.now());
                     statisticModel.setCurrentStreak(statisticModel.getCurrentStreak() + 1);
-                    if (statisticModel.getCurrentStreak() > statisticModel.getLongestStreak()){
+                    if (statisticModel.getCurrentStreak() > statisticModel.getLongestStreak()) {
                         statisticModel.setLongestStreak(statisticModel.getCurrentStreak());
                     }
                 }
@@ -166,24 +165,26 @@ public class UserService implements UserDetailsService {
 
     public void updateUserEmailAndUsername(Long userId, String newEmail, String newUsername) {
         UserModel user = repository.findById(userId);
-        if (repository.existsByEmail(newEmail)) throw new EmailAlreadyTakenException("Этот email уже занят");
         if (user != null) {
-            user.setEmail(newEmail);
+            if (!user.getEmail().equals(newEmail)) {
+                if (repository.existsByEmail(newEmail)) throw new EmailAlreadyTakenException("Этот email уже занят");
+                user.setEmail(newEmail);
+            }
             user.setUsername(newUsername);
             repository.save(user);
         }
-        else {
+        else{
             throw new RuntimeException("Пользователь не найден!");
         }
     }
 
-     public void updateUserPhotoURL(Long userId, String newPhotoURL) {
-         UserModel user = repository.findById(userId);
-         if (user != null) {
-             user.setPhotoUrl(newPhotoURL);
-             repository.save(user);
-         }
-     }
+    public void updateUserPhotoURL(Long userId, String newPhotoURL) {
+        UserModel user = repository.findById(userId);
+        if (user != null) {
+            user.setPhotoUrl(newPhotoURL);
+            repository.save(user);
+        }
+    }
 
     public void changePassword(Long userId, String currentPassword, String newPassword) {
         UserModel user = repository.findById(userId);
