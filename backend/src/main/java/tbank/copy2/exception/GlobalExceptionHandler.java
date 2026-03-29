@@ -61,4 +61,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleRemindersNotFoundException(RemindersNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
+
+    @ExceptionHandler(IncorrectEmailOrPassException.class)
+    public ResponseEntity<String> handleIncorrectEmailOrPassException(IncorrectEmailOrPassException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
 }
