@@ -3,10 +3,9 @@ package tbank.copy2.DAO.repositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import tbank.copy2.DAO.mapper.NotificationModelMapper;
-import tbank.copy2.repository.entity.Notification;
-import tbank.copy2.repository.repository.NotificationRepository;
-import tbank.copy2.service.model.NotificationModel;
-import tbank.copy2.service.repository.NotificationModelRepository;
+import tbank.copy2.infrastructure.persistence.repository.NotificationRepository;
+import tbank.copy2.domain.model.NotificationModel;
+import tbank.copy2.domain.repository.NotificationModelRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,31 +19,24 @@ public class NotificationModelRepoImpl implements NotificationModelRepository {
     private NotificationModelMapper mapper;
 
     @Override
-    public List<NotificationModel> findAllForRemind(LocalDateTime now) {
-        List<Notification> entities = repository.findAllToRemind(true, now);
-        return entities.stream().map(n -> mapper.toModel(n)).collect(Collectors.toList());
+    public List<NotificationModel> findAllByUserId(Long userId) {
+        return repository.findAllByUserId(userId).stream()
+                .map(n -> mapper.toModel(n)).collect(Collectors.toList());
     }
 
     @Override
-    public NotificationModel save(NotificationModel n) {
-        Notification saved = repository.save(mapper.toEntity(n));
-        return mapper.toModel(saved);
+    public NotificationModel save(NotificationModel model) {
+        return mapper.toModel(repository.save(mapper.toEntity(model)));
     }
 
     @Override
-    public NotificationModel findByUserIdAndTestId(Long userId, Long testId) {
-        Notification n = repository.findByUserIdAndTestId(userId, testId);
-        return mapper.toModel(n);
+    public List<NotificationModel> findAllBySentAtBeforeAndSent(LocalDateTime now, boolean b) {
+        return repository.findAllBySentAndSentAtBefore(now, b);
     }
 
     @Override
-    public List<NotificationModel> findEnabledByUserId(Long userId) {
-        List<Notification> l = repository.findAllEnabledByUserId(userId);
-        return l.stream().map(n -> mapper.toModel(n)).collect(Collectors.toList());
+    public void saveAll(List<NotificationModel> notifications) {
+        repository.saveAll(notifications.stream().map(n -> mapper.toEntity(n)).collect(Collectors.toList()));
     }
 
-    @Override
-    public void deleteByUserIdAndTestId(Long userId, Long testId) {
-        repository.deleteByUserIdAndTestId(userId, testId);
-    }
 }

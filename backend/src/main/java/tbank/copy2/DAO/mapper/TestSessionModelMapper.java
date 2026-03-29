@@ -3,10 +3,10 @@ package tbank.copy2.DAO.mapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import tbank.copy2.repository.entity.TestSession;
-import tbank.copy2.repository.repository.TestRepository;
-import tbank.copy2.repository.repository.UserRepository;
-import tbank.copy2.service.model.TestSessionModel;
+import tbank.copy2.infrastructure.persistence.entity.TestSession;
+import tbank.copy2.infrastructure.persistence.repository.TestRepository;
+import tbank.copy2.infrastructure.persistence.repository.UserRepository;
+import tbank.copy2.domain.model.TestSessionModel;
 
 @Component
 public class TestSessionModelMapper {

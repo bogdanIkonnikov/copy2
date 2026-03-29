@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import tbank.copy2.service.service.UserService;
+import tbank.copy2.domain.service.UserService;
 import tbank.copy2.web.dto.user.ChangePasswordRequest;
 import tbank.copy2.web.dto.user.CurrentUser;
 import tbank.copy2.web.dto.user.EditUsernameEmailRequest;

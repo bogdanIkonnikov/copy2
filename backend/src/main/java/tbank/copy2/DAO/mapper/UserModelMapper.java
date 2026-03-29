@@ -1,8 +1,8 @@
 package tbank.copy2.DAO.mapper;
 
 import org.springframework.stereotype.Component;
-import tbank.copy2.repository.entity.User;
-import tbank.copy2.service.model.UserModel;
+import tbank.copy2.infrastructure.persistence.entity.User;
+import tbank.copy2.domain.model.UserModel;
 
 @Component
 public class UserModelMapper {

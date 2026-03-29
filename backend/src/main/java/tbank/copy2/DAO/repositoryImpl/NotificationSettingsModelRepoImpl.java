@@ -3,39 +3,38 @@ package tbank.copy2.DAO.repositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import tbank.copy2.DAO.mapper.NotificationSettingsModelMapper;
-import tbank.copy2.repository.entity.Notification;
-import tbank.copy2.repository.entity.NotificationSettings;
-import tbank.copy2.repository.repository.NotificationSettingsModelRepo;
-import tbank.copy2.repository.repository.NotificationSettingsRepository;
-import tbank.copy2.service.model.NotificationSettingsModel;
+import tbank.copy2.domain.model.NotificationSettingsModel;
+import tbank.copy2.domain.repository.NotificationSettingsModelRepository;
+import tbank.copy2.infrastructure.persistence.repository.NotificationSettingsRepository;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
-public class NotificationSettingsModelRepoImpl implements NotificationSettingsModelRepo {
+public class NotificationSettingsModelRepoImpl implements NotificationSettingsModelRepository {
     @Autowired
     private NotificationSettingsRepository repository;
     @Autowired
     private NotificationSettingsModelMapper mapper;
 
     @Override
-    public NotificationSettingsModel findById(Long id) {
-        return mapper.toModel(repository.findById(id).orElse(null));
+    public List<NotificationSettingsModel> getAllNotificationSettings(Long userId) {
+        return repository.findAllByUserId(userId).stream()
+                .map(n -> mapper.toModel(n)).collect(Collectors.toList());
     }
 
     @Override
-    public void save(NotificationSettingsModel n) {
-        NotificationSettings settings = mapper.toEntity(n);
-        if (repository.existsById(settings.getId())) settings.setNew(false);
-        repository.save(settings);
+    public NotificationSettingsModel save(NotificationSettingsModel model) {
+        return mapper.toModel(repository.save(mapper.toEntity(model)));
     }
 
     @Override
-    public NotificationSettingsModel findByUserId(Long userId) {
-        return mapper.toModel(repository.findByUserId(userId));
+    public boolean existsByUserIdAndTestId(Long userId, Long testId) {
+        return repository.existsByUserIdAndTestId(userId, testId);
     }
 
-
     @Override
-    public boolean existsByUserId(Long userId) {
-        return repository.existsByUserId(userId);
+    public void deleteByUserIdAndTestId(Long userId, Long testId) {
+        repository.deleteByUserIdAndTestId(userId, testId);
     }
 }

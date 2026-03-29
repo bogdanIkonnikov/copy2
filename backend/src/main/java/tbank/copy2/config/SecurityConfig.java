@@ -18,7 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import tbank.copy2.service.service.UserService;
+import tbank.copy2.domain.service.UserService;
 import tbank.copy2.web.security.JwtAuthenticationFilter;
 
 import java.util.List;

@@ -8,11 +8,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import tbank.copy2.service.model.QuestionModel;
+import tbank.copy2.domain.model.QuestionModel;
 import tbank.copy2.web.dto.question.AddQuestionRequest;
 import tbank.copy2.web.dto.question.QuestionResponse;
 import tbank.copy2.web.dto.question.QuestionWithAnswersResponse;
-import tbank.copy2.service.service.QuestionService;
+import tbank.copy2.domain.service.QuestionService;
 import tbank.copy2.web.mapper.QuestionMapper;
 
 

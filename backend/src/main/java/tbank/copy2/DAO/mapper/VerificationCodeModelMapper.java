@@ -1,8 +1,8 @@
 package tbank.copy2.DAO.mapper;
 
 import org.springframework.stereotype.Component;
-import tbank.copy2.repository.entity.VerificationCode;
-import tbank.copy2.service.model.VerificationCodeModel;
+import tbank.copy2.infrastructure.persistence.entity.VerificationCode;
+import tbank.copy2.domain.model.VerificationCodeModel;
 
 @Component
 public class VerificationCodeModelMapper {

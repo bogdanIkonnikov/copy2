@@ -51,4 +51,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleFileFormatException(InvalidFileFormatException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
+
+    @ExceptionHandler(RemindersAlreadyExistsException.class)
+    public ResponseEntity<String> handleRemindersExistsException(RemindersAlreadyExistsException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(RemindersNotFoundException.class)
+    public ResponseEntity<String> handleRemindersNotFoundException(RemindersNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
 }

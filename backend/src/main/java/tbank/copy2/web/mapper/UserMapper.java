@@ -2,7 +2,7 @@ package tbank.copy2.web.mapper;
 
 import org.springframework.stereotype.Component;
 import tbank.copy2.common.enums.Role;
-import tbank.copy2.service.model.*;
+import tbank.copy2.domain.model.*;
 import tbank.copy2.web.dto.user.*;
 
 import java.util.ArrayList;

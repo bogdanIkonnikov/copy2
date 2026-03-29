@@ -1,10 +1,10 @@
 package tbank.copy2.DAO.mapper;
 
 import org.springframework.stereotype.Component;
-import tbank.copy2.repository.entity.Answer;
-import tbank.copy2.repository.entity.Question;
-import tbank.copy2.repository.repository.QuestionRepository;
-import tbank.copy2.service.model.AnswerModel;
+import tbank.copy2.infrastructure.persistence.entity.Answer;
+import tbank.copy2.infrastructure.persistence.entity.Question;
+import tbank.copy2.infrastructure.persistence.repository.QuestionRepository;
+import tbank.copy2.domain.model.AnswerModel;
 
 @Component
 public class AnswerModelMapper {

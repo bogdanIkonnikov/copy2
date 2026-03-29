@@ -2,8 +2,8 @@ package tbank.copy2.web.mapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import tbank.copy2.service.model.AnswerModel;
-import tbank.copy2.service.model.QuestionModel;
+import tbank.copy2.domain.model.AnswerModel;
+import tbank.copy2.domain.model.QuestionModel;
 import tbank.copy2.web.dto.answer.AnswerResponse;
 import tbank.copy2.web.dto.question.*;
 

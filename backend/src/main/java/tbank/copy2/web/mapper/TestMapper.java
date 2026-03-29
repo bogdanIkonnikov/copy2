@@ -3,15 +3,12 @@ package tbank.copy2.web.mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
-import tbank.copy2.service.model.TestFileModel;
-import tbank.copy2.service.model.TestModel;
-import tbank.copy2.service.model.TestSessionModel;
-import tbank.copy2.service.model.TestsPageModel;
-import tbank.copy2.service.service.TestSessionService;
-import tbank.copy2.web.dto.test.AddTestRequest;
-import tbank.copy2.web.dto.test.TestPageResponse;
-import tbank.copy2.web.dto.test.TestResponse;
-import tbank.copy2.web.dto.test.UpdateTestRequest;
+import tbank.copy2.domain.model.TestFileModel;
+import tbank.copy2.domain.model.TestModel;
+import tbank.copy2.domain.model.TestSessionModel;
+import tbank.copy2.domain.model.TestsPageModel;
+import tbank.copy2.domain.service.TestSessionService;
+import tbank.copy2.web.dto.test.*;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -78,5 +75,16 @@ public class TestMapper {
         model.setQuestions(request.getQuestions().stream()
                 .map(q -> questionMapper.toModel(q, testId)).collect(Collectors.toList()));
         return model;
+    }
+
+    public List<ShortTestResponse> toShortResponses(List<TestModel> models) {
+        return models.stream().map(this::toShortResponse).collect(Collectors.toList());
+    }
+
+    public ShortTestResponse toShortResponse(TestModel model) {
+        ShortTestResponse response = new ShortTestResponse();
+        response.setId(model.getId());
+        response.setName(model.getName());
+        return response;
     }
 }
