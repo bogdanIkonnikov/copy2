@@ -5,10 +5,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import tbank.copy2.DAO.mapper.TestModelMapper;
-import tbank.copy2.service.repository.TestModelRepository;
-import tbank.copy2.repository.entity.Test;
-import tbank.copy2.repository.repository.TestRepository;
-import tbank.copy2.service.model.TestModel;
+import tbank.copy2.domain.repository.TestModelRepository;
+import tbank.copy2.infrastructure.persistence.entity.Test;
+import tbank.copy2.infrastructure.persistence.repository.TestRepository;
+import tbank.copy2.domain.model.TestModel;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,6 +25,11 @@ public class TestModelRepoImpl implements TestModelRepository {
         List<TestModel> models = testRepository.findAllByUserId(pageable, userId).stream()
                 .map(t -> mapper.toModel(t)).collect(Collectors.toList());
         return models;
+    }
+
+    @Override
+    public List<TestModel> findAllByUserId(Long userId) {
+        return testRepository.findAllByUserId(userId).stream().map(t -> mapper.toModel(t)).collect(Collectors.toList());
     }
 
     @Override

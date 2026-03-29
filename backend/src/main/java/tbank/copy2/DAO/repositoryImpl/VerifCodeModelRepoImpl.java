@@ -3,9 +3,9 @@ package tbank.copy2.DAO.repositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import tbank.copy2.DAO.mapper.VerificationCodeModelMapper;
-import tbank.copy2.repository.repository.VerificationCodeRepository;
-import tbank.copy2.service.model.VerificationCodeModel;
-import tbank.copy2.service.repository.VerificationCodeModelRepository;
+import tbank.copy2.infrastructure.persistence.repository.VerificationCodeRepository;
+import tbank.copy2.domain.model.VerificationCodeModel;
+import tbank.copy2.domain.repository.VerificationCodeModelRepository;
 
 @Repository
 public class VerifCodeModelRepoImpl implements VerificationCodeModelRepository {

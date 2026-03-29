@@ -1,10 +1,10 @@
 package tbank.copy2.web.mapper;
 
 import org.springframework.stereotype.Component;
-import tbank.copy2.service.model.TestSessionAnswerModel;
-import tbank.copy2.service.model.TestSessionModel;
-import tbank.copy2.service.model.TestSessionResponseModel;
-import tbank.copy2.service.service.TestSessionService;
+import tbank.copy2.domain.model.TestSessionAnswerModel;
+import tbank.copy2.domain.model.TestSessionModel;
+import tbank.copy2.domain.model.TestSessionResponseModel;
+import tbank.copy2.domain.service.TestSessionService;
 import tbank.copy2.web.dto.testSession.*;
 
 import java.time.LocalDateTime;

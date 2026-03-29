@@ -2,35 +2,34 @@ package tbank.copy2.DAO.mapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import tbank.copy2.repository.entity.NotificationSettings;
-import tbank.copy2.repository.repository.UserRepository;
-import tbank.copy2.service.model.NotificationSettingsModel;
+import tbank.copy2.domain.model.NotificationSettingsModel;
+import tbank.copy2.infrastructure.persistence.entity.NotificationSettings;
+import tbank.copy2.infrastructure.persistence.repository.TestRepository;
+import tbank.copy2.infrastructure.persistence.repository.UserRepository;
 
 @Component
 public class NotificationSettingsModelMapper {
     @Autowired
+    private TestRepository testRepository;
+    @Autowired
     private UserRepository userRepository;
 
-    public NotificationSettings toEntity(NotificationSettingsModel model){
-        NotificationSettings settings = new NotificationSettings();
-        settings.setId(model.getUserId());
-        settings.setUser(userRepository.findById(model.getUserId()).orElse(null));
-        settings.setStep1(model.getStep1());
-        settings.setStep2(model.getStep2());
-        settings.setStep3(model.getStep3());
-        settings.setStep4(model.getStep4());
-        settings.setStep5(model.getStep5());
-        return settings;
+    public NotificationSettingsModel toModel(NotificationSettings entity) {
+        NotificationSettingsModel model = new NotificationSettingsModel();
+        model.setId(entity.getId());
+        model.setType(entity.getType());
+        model.setTestName(testRepository.findById(entity.getTest().getId()).get().getName());
+        model.setTestId(entity.getTest().getId());
+        model.setUserId(entity.getUser().getId());
+        return model;
     }
 
-    public NotificationSettingsModel toModel(NotificationSettings entity){
-        NotificationSettingsModel model = new NotificationSettingsModel();
-        model.setUserId(entity.getUser().getId());
-        model.setStep1(entity.getStep1());
-        model.setStep2(entity.getStep2());
-        model.setStep3(entity.getStep3());
-        model.setStep4(entity.getStep4());
-        model.setStep5(entity.getStep5());
-        return model;
+    public NotificationSettings toEntity(NotificationSettingsModel model) {
+        NotificationSettings entity = new NotificationSettings();
+        entity.setId(model.getId());
+        entity.setType(model.getType());
+        entity.setUser(userRepository.findById(model.getUserId()).orElse(null));
+        entity.setTest(testRepository.findById(model.getTestId()).orElse(null));
+        return entity;
     }
 }

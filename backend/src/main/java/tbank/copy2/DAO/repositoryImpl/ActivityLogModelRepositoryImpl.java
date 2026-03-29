@@ -3,9 +3,9 @@ package tbank.copy2.DAO.repositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import tbank.copy2.DAO.mapper.ActivityLogModelMapper;
-import tbank.copy2.repository.repository.ActivityLogRepository;
-import tbank.copy2.service.model.ActivityLogModel;
-import tbank.copy2.service.repository.ActivityLogModelRepository;
+import tbank.copy2.infrastructure.persistence.repository.ActivityLogRepository;
+import tbank.copy2.domain.model.ActivityLogModel;
+import tbank.copy2.domain.repository.ActivityLogModelRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;

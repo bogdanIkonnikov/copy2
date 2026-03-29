@@ -13,18 +13,15 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import tbank.copy2.service.model.QuestionModel;
-import tbank.copy2.service.model.TestFileModel;
-import tbank.copy2.service.model.TestModel;
-import tbank.copy2.service.model.TestsPageModel;
+import tbank.copy2.domain.model.QuestionModel;
+import tbank.copy2.domain.model.TestFileModel;
+import tbank.copy2.domain.model.TestModel;
+import tbank.copy2.domain.model.TestsPageModel;
 import tbank.copy2.web.dto.question.QuestionLightResponse;
 import tbank.copy2.web.dto.question.QuestionWithAnswersResponse;
-import tbank.copy2.web.dto.test.AddTestRequest;
-import tbank.copy2.web.dto.test.TestPageResponse;
-import tbank.copy2.web.dto.test.TestResponse;
-import tbank.copy2.service.service.QuestionService;
-import tbank.copy2.service.service.TestService;
-import tbank.copy2.web.dto.test.UpdateTestRequest;
+import tbank.copy2.web.dto.test.*;
+import tbank.copy2.domain.service.QuestionService;
+import tbank.copy2.domain.service.TestService;
 import tbank.copy2.web.dto.user.CurrentUser;
 import tbank.copy2.web.mapper.QuestionMapper;
 import tbank.copy2.web.mapper.TestMapper;
@@ -152,5 +149,26 @@ public class TestController {
     ){
         TestsPageModel model = testService.searchTest(keyWord, page, size);
         return mapper.toTestPageResponse(model, page, size);
+    }
+
+    @PostMapping(value = "/upload/ai", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public TestResponse addFromFileAI(@RequestParam("name")
+                                    @NotBlank(message = "Имя обязательно")
+                                    String name,
+                                    @RequestParam("description")
+                                    String description,
+                                    @RequestParam("file")
+                                    @NotNull(message = "Файл обязателен")
+                                    MultipartFile file,
+                                    @AuthenticationPrincipal CurrentUser user){
+        TestFileModel model = mapper.toModel(name, description, file, user.getUserId());
+
+        return mapper.toTestResponse(testService.addTestAI(model));
+    }
+
+    @GetMapping("/short")
+    @Operation(description = "Получить список всех тестов текущего пользователя в кратком формате")
+    public List<ShortTestResponse> getShortTests(@AuthenticationPrincipal CurrentUser user) {
+        return mapper.toShortResponses(testService.getAllByUserId(user.getUserId()));
     }
 }

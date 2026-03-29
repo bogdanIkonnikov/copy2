@@ -2,9 +2,9 @@ package tbank.copy2.DAO.mapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import tbank.copy2.repository.entity.UserStatistic;
-import tbank.copy2.repository.repository.UserRepository;
-import tbank.copy2.service.model.UserStatisticModel;
+import tbank.copy2.infrastructure.persistence.entity.UserStatistic;
+import tbank.copy2.infrastructure.persistence.repository.UserRepository;
+import tbank.copy2.domain.model.UserStatisticModel;
 
 @Component
 public class UserStatisticModelMapper {

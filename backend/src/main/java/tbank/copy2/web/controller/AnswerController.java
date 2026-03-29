@@ -8,10 +8,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import tbank.copy2.service.model.AnswerModel;
+import tbank.copy2.domain.model.AnswerModel;
 import tbank.copy2.web.dto.answer.AddAnswerRequest;
 import tbank.copy2.web.dto.answer.AnswerResponse;
-import tbank.copy2.service.service.AnswerService;
+import tbank.copy2.domain.service.AnswerService;
 import tbank.copy2.web.mapper.AnswerMapper;
 
 import java.util.List;

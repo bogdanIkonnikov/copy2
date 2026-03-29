@@ -2,10 +2,10 @@ package tbank.copy2.DAO.mapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import tbank.copy2.repository.entity.UserAnswer;
-import tbank.copy2.repository.repository.QuestionRepository;
-import tbank.copy2.repository.repository.TestSessionRepository;
-import tbank.copy2.service.model.UserAnswerModel;
+import tbank.copy2.infrastructure.persistence.entity.UserAnswer;
+import tbank.copy2.infrastructure.persistence.repository.QuestionRepository;
+import tbank.copy2.infrastructure.persistence.repository.TestSessionRepository;
+import tbank.copy2.domain.model.UserAnswerModel;
 
 @Component
 public class UserAnswerModelMapper {

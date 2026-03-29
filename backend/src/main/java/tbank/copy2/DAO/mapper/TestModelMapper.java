@@ -3,9 +3,9 @@ package tbank.copy2.DAO.mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
-import tbank.copy2.repository.entity.Test;
-import tbank.copy2.repository.repository.UserRepository;
-import tbank.copy2.service.model.TestModel;
+import tbank.copy2.infrastructure.persistence.entity.Test;
+import tbank.copy2.infrastructure.persistence.repository.UserRepository;
+import tbank.copy2.domain.model.TestModel;
 
 import java.util.stream.Collectors;
 

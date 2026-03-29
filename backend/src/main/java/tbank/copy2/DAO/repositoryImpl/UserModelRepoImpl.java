@@ -3,10 +3,10 @@ package tbank.copy2.DAO.repositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import tbank.copy2.DAO.mapper.UserModelMapper;
-import tbank.copy2.repository.entity.User;
-import tbank.copy2.repository.repository.UserRepository;
-import tbank.copy2.service.model.UserModel;
-import tbank.copy2.service.repository.UserModelRepository;
+import tbank.copy2.infrastructure.persistence.entity.User;
+import tbank.copy2.infrastructure.persistence.repository.UserRepository;
+import tbank.copy2.domain.model.UserModel;
+import tbank.copy2.domain.repository.UserModelRepository;
 
 @Repository
 public class UserModelRepoImpl implements UserModelRepository {
