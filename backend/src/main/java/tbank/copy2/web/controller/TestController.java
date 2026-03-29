@@ -150,7 +150,7 @@ public class TestController {
         TestsPageModel model = testService.searchTest(keyWord, page, size);
         return mapper.toTestPageResponse(model, page, size);
     }
-
+/*
     @PostMapping(value = "/upload/ai", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public TestResponse addFromFileAI(@RequestParam("name")
                                     @NotBlank(message = "Имя обязательно")
@@ -165,6 +165,8 @@ public class TestController {
 
         return mapper.toTestResponse(testService.addTestAI(model));
     }
+
+ */
 
     @GetMapping("/short")
     @Operation(description = "Получить список всех тестов текущего пользователя в кратком формате")
