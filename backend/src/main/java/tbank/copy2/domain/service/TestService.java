@@ -4,9 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import tbank.copy2.domain.ai.AiService;
 import tbank.copy2.exception.FileParseException;
 import tbank.copy2.exception.InvalidFileFormatException;
 import tbank.copy2.domain.repository.AnswerModelRepository;
@@ -32,6 +34,8 @@ public class TestService {
     private TestModelRepository repository;
     @Autowired
     private QuestionModelRepository questionRepository;
+    @Autowired
+    private AiService aiService;
 
 
     public TestsPageModel getTests(int pageNumber, int pageSize, Long userId) {
@@ -330,7 +334,47 @@ public class TestService {
 
     }
 
+    private MultipartFile parseAIFile(MultipartFile file) {
+        if (file.isEmpty()) {
+            throw new InvalidFileFormatException("Файл пуст");
+        }
 
+        StringBuilder sb = new StringBuilder("");
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        String rawText = sb.toString();
+
+        String structuredText = aiService.structureText(rawText);
+
+        System.out.println(structuredText);
+
+        MultipartFile aiProcessedFile = new MockMultipartFile(
+                "file",
+                "aiParsed.txt",
+                "text/plain",
+                structuredText.getBytes(StandardCharsets.UTF_8)
+        );
+
+        return aiProcessedFile;
+    }
+
+    @Transactional
+    public TestModel addTestAI(TestFileModel model) {
+        TestModel testModel = new TestModel();
+        testModel.setName(model.getName());
+        testModel.setDescription(model.getDescription());
+        testModel.setUserId(model.getUserId());
+        TestModel savedModel = repository.save(testModel);
+        savedModel.setQuestions(parseQuestions(parseAIFile(model.getFile()), savedModel.getId()));
+        return savedModel;
+    }
 
     public List<TestModel> getAllByUserId(Long userId) {
         return repository.findAllByUserId(userId);

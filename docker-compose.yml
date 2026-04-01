@@ -32,10 +32,13 @@ services:
       SPRING_MAIL_PASSWORD: ${MAIL_PASSWORD}
       SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH: "true"
       SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: "true"
+      YANDEX_API_KEY: ${YANDEX_API_KEY}
+      SYNONYM_SERVICE_URL: http://synonym-checker:8000
     ports:
-        - "8080:8080"
+      - "8080:8080"
     depends_on:
       - postgres
+      - synonym-checker
     networks:
       - app-network
 
@@ -45,6 +48,17 @@ services:
       dockerfile: Dockerfile
     ports:
         - "3000:80"
+    networks:
+      - app-network
+
+  synonym-checker:
+    build: ./synonym-checker
+    ports:
+      - '8000:8000'
+    healthcheck:
+      test: [ 'CMD', 'curl', '-f', 'http://localhost:8000/docs' ]
+      interval: 30s
+      retries: 3
     networks:
       - app-network
 networks:

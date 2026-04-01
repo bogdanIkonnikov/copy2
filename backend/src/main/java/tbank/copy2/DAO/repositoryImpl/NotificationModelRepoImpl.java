@@ -31,7 +31,7 @@ public class NotificationModelRepoImpl implements NotificationModelRepository {
 
     @Override
     public List<NotificationModel> findAllBySentAtBeforeAndSent(LocalDateTime now, boolean b) {
-        return repository.findAllBySentAndSentAtBefore(now, b);
+        return repository.findAllBySentAndSentAtBefore(now, b).stream().map(n -> mapper.toModel(n)).collect(Collectors.toList());
     }
 
     @Override
