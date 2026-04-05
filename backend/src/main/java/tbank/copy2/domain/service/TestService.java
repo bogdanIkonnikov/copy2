@@ -97,9 +97,6 @@ public class TestService {
                 for (String word : words) {
                     switch (word) {
                         case ("ВОПРОС:"):
-                            if (qCount > 0 && answers.isEmpty()) {
-                                throw new InvalidFileFormatException("У вопроса №" + qCount + " нет вариантов ответа");
-                            }
 
                             if (answersCount - answers.size() == 1) {
                                 answerModel.setContent(answerName.toString());
@@ -114,6 +111,9 @@ public class TestService {
                                 questionModel = questionRepository.save(questionModel);
 
                                 Long questionId = questionModel.getId();
+                                if (answers.isEmpty()) {
+                                    throw new InvalidFileFormatException("У вопроса №" + qCount + " нет вариантов ответа");
+                                }
                                 answers = answers.stream()
                                         .filter(a -> !a.getContent().isEmpty())
                                         .limit(5).collect(Collectors.toList());
