@@ -15,12 +15,8 @@ public class MailService {
 
 
     @Async
-    public void send(String email, String subject, String text) {
-        SimpleMailMessage message = new SimpleMailMessage();
+    public void send(SimpleMailMessage message) {
         message.setFrom("krefature@mail.ru");
-        message.setTo(email);
-        message.setSubject(subject);
-        message.setText(text);
         mailSender.send(message);
     }
 }
