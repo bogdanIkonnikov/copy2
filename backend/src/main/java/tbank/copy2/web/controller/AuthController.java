@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.*;
 import tbank.copy2.domain.service.AuthenticationService;
 import tbank.copy2.domain.service.VerificationService;
@@ -29,6 +30,8 @@ public class AuthController {
     private UserMapper mapper;
     @Autowired
     private VerificationService verificationService;
+    @Autowired
+    private JavaMailSender mailSender;
 
     @Operation(summary = "Регистрация нового пользователя")
     @PostMapping("/sign-up")
