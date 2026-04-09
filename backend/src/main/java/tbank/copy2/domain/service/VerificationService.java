@@ -1,8 +1,9 @@
 package tbank.copy2.domain.service;
 
-import org.springframework.mail.SimpleMailMessage;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tbank.copy2.domain.model.EmailNotificationModel;
 import tbank.copy2.exception.VerificationCodeExpiredException;
 import tbank.copy2.domain.model.VerificationCodeModel;
 import tbank.copy2.domain.repository.VerificationCodeModelRepository;
@@ -12,10 +13,10 @@ import java.time.LocalDateTime;
 @Service
 public class VerificationService {
     private final VerificationCodeModelRepository repository;
-    private final MailService mailService;
+    private final KafkaTemplate<String, EmailNotificationModel> kafkaTemplate;
 
-    public VerificationService(MailService mailService, VerificationCodeModelRepository repository) {
-        this.mailService = mailService;
+    public VerificationService(KafkaTemplate<String, EmailNotificationModel> kafkaTemplate, VerificationCodeModelRepository repository) {
+        this.kafkaTemplate = kafkaTemplate;
         this.repository = repository;
     }
 
@@ -31,11 +32,11 @@ public class VerificationService {
     @Transactional
     public void sendVerificationCode(String email) {
         String code = generateCode(email);
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(email);
+        EmailNotificationModel message = new EmailNotificationModel();
+        message.setTo(new String[]{email});
         message.setSubject("Код подтверждения регистрации");
         message.setText("Ваш код для входа: " + code);
-        mailService.send(message);
+        kafkaTemplate.send("notification-topic", message);
     }
 
     private String generateCode(String email) {

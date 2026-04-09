@@ -14,8 +14,6 @@ import java.util.List;
 public class NotificationService {
     @Autowired
     private NotificationModelRepository repository;
-    @Autowired
-    private UserService userService;
 
     public List<NotificationModel> addNotification(List<LocalDateTime> reminders, NotificationSettingsModel settings) {
         List<NotificationModel> result = new ArrayList<>();

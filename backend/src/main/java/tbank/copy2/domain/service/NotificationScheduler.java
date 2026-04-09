@@ -36,7 +36,7 @@ public class NotificationScheduler {
             EmailNotificationModel message = new EmailNotificationModel();
             message.setSubject("Напоминание пройти тест: " + n.getTestName());
             message.setText("Пришло время повторить тест: " + n.getTestName());
-            message.setTo(new String[] {n.getEmail()});
+            message.setTo(new String[]{n.getEmail()});
             kafkaTemplate.send("notification-topic", message);
             n.setSent(true);
         }
