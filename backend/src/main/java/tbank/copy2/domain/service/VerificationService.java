@@ -1,5 +1,6 @@
 package tbank.copy2.domain.service;
 
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tbank.copy2.exception.VerificationCodeExpiredException;
@@ -30,7 +31,11 @@ public class VerificationService {
     @Transactional
     public void sendVerificationCode(String email) {
         String code = generateCode(email);
-        mailService.send(email, "Код подтверждения регистрации", "Ваш код для входа: " + code);
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(email);
+        message.setSubject("Код подтверждения регистрации");
+        message.setText("Ваш код для входа: " + code);
+        mailService.send(message);
     }
 
     private String generateCode(String email) {
