@@ -28,6 +28,9 @@ public class User implements UserDetails {
     @Column(unique = true, nullable = false)
     private String email;
 
+    @OneToMany(mappedBy = "user", orphanRemoval = true)
+    private List<TestAccess> accesses;
+
     @Column(nullable = false)
     private String password_hash;
 
