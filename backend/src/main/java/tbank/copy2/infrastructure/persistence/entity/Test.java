@@ -28,6 +28,9 @@ public class Test {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @OneToMany(mappedBy = "test", orphanRemoval = true)
+    private List<TestAccess> accesses = new ArrayList<>();
+
     @Column
     private String description;
 
@@ -37,6 +40,9 @@ public class Test {
 
     @Column(nullable = false)
     private Boolean visible = true;
+
+    @Column(name = "is_public", nullable = false)
+    private Boolean isPublic = false;
 
     @CreationTimestamp
     @Column(nullable = false)
@@ -52,7 +58,7 @@ public class Test {
                 "id=" + id +
                 ", testName='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", userId=" + (user != null ? user.getId() : null) +
+                ", ownerId=" + (user != null ? user.getId() : null) +
                 ", createdAt=" + created_at +
                 ", updatedAt=" + updated_at +
                 '}';
