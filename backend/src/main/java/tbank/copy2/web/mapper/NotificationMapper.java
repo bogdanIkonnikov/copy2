@@ -24,7 +24,7 @@ public class NotificationMapper {
     public NotificationSmallResponse toSmallResponse(NotificationModel model) {
         NotificationSmallResponse response = new NotificationSmallResponse();
         response.setId(model.getId());
-        response.setDatetime(model.getSent_at().toString());
+        response.setDatetime(model.getSent_at().toString() + "Z");
         return response;
     }
 
