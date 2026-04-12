@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import tbank.copy2.domain.model.EmailNotificationModel;
 import tbank.copy2.domain.model.NotificationModel;
 import tbank.copy2.domain.repository.NotificationModelRepository;
+import tbank.copy2.domain.repository.NotificationSettingsModelRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,7 +18,9 @@ import java.util.List;
 @EnableScheduling
 public class NotificationScheduler {
     @Autowired
-    private MailService service;
+    private NotificationModelRepository notificationRepository;
+    @Autowired
+    private NotificationSettingsModelRepository notificationSettingsRepository;
     @Autowired
     private NotificationModelRepository repository;
 
@@ -40,7 +43,12 @@ public class NotificationScheduler {
             kafkaTemplate.send("notification-topic", message);
             n.setSent(true);
         }
-
         repository.saveAll(notifications);
+
+        List<Long> emptySettingsIds = notificationSettingsRepository.findSettingsIdsWhereAllSent();
+        for (Long id : emptySettingsIds) {
+            notificationRepository.deleteBySettingsId(id);
+            notificationSettingsRepository.deleteById(id);
+        }
     }
 }

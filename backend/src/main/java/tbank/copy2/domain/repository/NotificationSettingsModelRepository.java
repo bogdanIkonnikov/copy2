@@ -11,4 +11,8 @@ public interface NotificationSettingsModelRepository {
     boolean existsByUserIdAndTestId(Long userId, Long testId);
 
     void deleteByUserIdAndTestId(Long userId, Long testId);
+
+    List<Long> findSettingsIdsWhereAllSent();
+
+    void deleteById(Long id);
 }

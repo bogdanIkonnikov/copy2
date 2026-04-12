@@ -18,4 +18,5 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
             @Param("time") LocalDateTime time,
             @Param("sent") boolean sent);
 
+    void deleteBySettingsId(Long id);
 }
