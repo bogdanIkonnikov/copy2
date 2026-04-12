@@ -39,4 +39,8 @@ public class NotificationModelRepoImpl implements NotificationModelRepository {
         repository.saveAll(notifications.stream().map(n -> mapper.toEntity(n)).collect(Collectors.toList()));
     }
 
+    @Override
+    public void deleteBySettingsId(Long id) {
+        repository.deleteBySettingsId(id);
+    }
 }

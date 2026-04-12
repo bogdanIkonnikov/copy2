@@ -13,4 +13,6 @@ public interface NotificationModelRepository {
     List<NotificationModel> findAllBySentAtBeforeAndSent(LocalDateTime now, boolean b);
 
     void saveAll(List<NotificationModel> notifications);
+
+    void deleteBySettingsId(Long id);
 }

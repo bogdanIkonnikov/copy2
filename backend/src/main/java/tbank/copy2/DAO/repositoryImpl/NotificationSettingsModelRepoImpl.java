@@ -37,4 +37,14 @@ public class NotificationSettingsModelRepoImpl implements NotificationSettingsMo
     public void deleteByUserIdAndTestId(Long userId, Long testId) {
         repository.deleteByUserIdAndTestId(userId, testId);
     }
+
+    @Override
+    public List<Long> findSettingsIdsWhereAllSent() {
+        return repository.findSettingsIdsWhereAllSent();
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        repository.deleteById(id);
+    }
 }
