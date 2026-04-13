@@ -1,5 +1,8 @@
 package tbank.copy2.web.security;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -40,27 +43,45 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         jwt = authHeader.substring(7);
-        username = jwtService.extractEmail(jwt);
+        try {
 
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-            if (jwtService.isTokenValid(jwt, userDetails)) {
-                Long userId = ((tbank.copy2.domain.model.UserModel) userDetails).getId();
 
-                CurrentUser currentUser = new CurrentUser();
-                currentUser.setUserId(userId);
-                currentUser.setUsername(userDetails.getUsername());
-                currentUser.setAuthorities(userDetails.getAuthorities());
+            username = jwtService.extractEmail(jwt);
 
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        currentUser, null, userDetails.getAuthorities()
-                );
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+                if (jwtService.isTokenValid(jwt, userDetails)) {
+                    Long userId = ((tbank.copy2.domain.model.UserModel) userDetails).getId();
+
+                    CurrentUser currentUser = new CurrentUser();
+                    currentUser.setUserId(userId);
+                    currentUser.setUsername(userDetails.getUsername());
+                    currentUser.setAuthorities(userDetails.getAuthorities());
+
+                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                            currentUser, null, userDetails.getAuthorities()
+                    );
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                }
             }
+            filterChain.doFilter(request, response);
+        } catch (ExpiredJwtException e){
+            sendErrorResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "Token expired", e.getMessage());
+        } catch (MalformedJwtException | UnsupportedJwtException | IllegalArgumentException e) {
+            sendErrorResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "Invalid token", e.getMessage());
+        } catch (Exception e) {
+            sendErrorResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "Authentication error", e.getMessage());
         }
-        filterChain.doFilter(request, response);
     }
+
+    private void sendErrorResponse(HttpServletResponse response, int status, String error, String message) throws IOException {
+        response.setStatus(status);
+        response.setContentType("application/json");
+        response.getWriter().write(String.format("{\"error\": \"%s\", \"message\": \"%s\"}", error, message));
+    }
+
+
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getServletPath();
