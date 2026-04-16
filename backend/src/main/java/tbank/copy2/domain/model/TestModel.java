@@ -21,7 +21,11 @@ public class TestModel {
 
     private List<QuestionModel> questions = new ArrayList<>();
 
+    private List<TestAccessModel> accesses;
+
     private Boolean visible = true;
+
+    private boolean isPublic = false;
 
     private LocalDateTime created_at;
 

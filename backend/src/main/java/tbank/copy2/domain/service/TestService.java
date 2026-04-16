@@ -8,7 +8,10 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import tbank.copy2.common.enums.AccessLevel;
 import tbank.copy2.domain.ai.AiService;
+import tbank.copy2.domain.repository.TestAccessModelRepository;
+import tbank.copy2.exception.AccessDeniedException;
 import tbank.copy2.exception.FileParseException;
 import tbank.copy2.exception.InvalidFileFormatException;
 import tbank.copy2.domain.repository.AnswerModelRepository;
@@ -21,6 +24,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,6 +40,8 @@ public class TestService {
     private QuestionModelRepository questionRepository;
     @Autowired
     private AiService aiService;
+    @Autowired
+    private TestAccessModelRepository accessRepository;
 
 
     public TestsPageModel getTests(int pageNumber, int pageSize, Long userId) {
@@ -50,7 +56,18 @@ public class TestService {
     }
 
     public TestModel addTest(TestModel model) {
-        return repository.save(model);
+        TestModel savedModel = repository.save(model);
+
+        TestAccessModel access = new TestAccessModel();
+        access.setAccessLevel(AccessLevel.WRITE);
+        access.setTestId(savedModel.getId());
+        access.setSharedAt(LocalDateTime.now());
+        access.setUserId(model.getUserId());
+        accessRepository.save(access);
+
+        savedModel.setAccesses(List.of(access));
+
+        return repository.save(savedModel);
     }
 
     @Transactional
@@ -60,6 +77,16 @@ public class TestService {
         testModel.setDescription(model.getDescription());
         testModel.setUserId(model.getUserId());
         TestModel savedModel = repository.save(testModel);
+
+        TestAccessModel access = new TestAccessModel();
+        access.setAccessLevel(AccessLevel.WRITE);
+        access.setTestId(savedModel.getId());
+        access.setSharedAt(LocalDateTime.now());
+        access.setUserId(model.getUserId());
+        accessRepository.save(access);
+
+        savedModel.setAccesses(List.of(access));
+
         savedModel.setQuestions(parseQuestions(model.getFile(), savedModel.getId()));
         return savedModel;
     }
@@ -241,7 +268,8 @@ public class TestService {
     }
 
     @Transactional
-    public boolean updateTest(TestModel uModel, Long testId) {
+    public boolean updateTest(TestModel uModel, Long userId, Long testId) {
+        if (!repository.hasEditAccess(userId, testId)) throw new AccessDeniedException("У вас нет прав на редактирование этого теста!");
         TestModel model = repository.findById(testId);
 
         model.setName(uModel.getName());
@@ -284,14 +312,15 @@ public class TestService {
         return true;
     }
 
-    public Long deleteById(Long id) {
+    public Long deleteById(Long id, Long userId) {
+        if (!(repository.findById(id).getUserId() == userId)) throw new AccessDeniedException("У вас нет прав на удаление этого теста, удалить тест может только его создатель!");
         return repository.deleteById(id);
     }
 
-    public TestsPageModel searchTest(String keyword, int page, int size) {
+    public TestsPageModel searchTest(Long userId, String keyword, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
 
-        Page<TestModel> testPage = repository.findByNameContainingIgnoreCase(keyword, pageable);
+        Page<TestModel> testPage = repository.findByNameContainingIgnoreCase(keyword, userId, pageable);
 
 
         List<TestModel> tests = new ArrayList<>(testPage.getContent());
@@ -372,6 +401,16 @@ public class TestService {
         testModel.setDescription(model.getDescription());
         testModel.setUserId(model.getUserId());
         TestModel savedModel = repository.save(testModel);
+
+        TestAccessModel access = new TestAccessModel();
+        access.setAccessLevel(AccessLevel.WRITE);
+        access.setTestId(savedModel.getId());
+        access.setSharedAt(LocalDateTime.now());
+        access.setUserId(model.getUserId());
+        accessRepository.save(access);
+
+        savedModel.setAccesses(List.of(access));
+
         savedModel.setQuestions(parseQuestions(parseAIFile(model.getFile()), savedModel.getId()));
         return savedModel;
     }

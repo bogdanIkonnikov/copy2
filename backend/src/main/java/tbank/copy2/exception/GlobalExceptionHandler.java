@@ -66,4 +66,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleIncorrectEmailOrPassException(IncorrectEmailOrPassException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<String> handleAccessDenyException(AccessDeniedException ex){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
 }

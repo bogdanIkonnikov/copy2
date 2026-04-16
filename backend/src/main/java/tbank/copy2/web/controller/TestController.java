@@ -77,8 +77,9 @@ public class TestController {
 
     @Operation(summary = "Удалить тест по его id")
     @DeleteMapping("/{id}")
-    public Long deleteById(@Parameter(description = "Идентификатор теста", example = "1") @PathVariable Long id) {
-        return testService.deleteById(id);
+    public Long deleteById(@Parameter(description = "Идентификатор теста", example = "1") @PathVariable Long id,
+                           @AuthenticationPrincipal CurrentUser user) {
+        return testService.deleteById(id, user.getUserId());
     }
 
     @Operation(
@@ -121,9 +122,11 @@ public class TestController {
     }
 
     @PutMapping("/{id}")
-    public boolean updateTestById(@PathVariable Long id, @RequestBody @Valid UpdateTestRequest request) {
+    public boolean updateTestById(@PathVariable Long id,
+                                  @RequestBody @Valid UpdateTestRequest request,
+                                  @AuthenticationPrincipal CurrentUser user) {
         TestModel model = mapper.toModel(request, id);
-        return testService.updateTest(model, id);
+        return testService.updateTest(model, user.getUserId(), id);
     }
 
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -145,9 +148,10 @@ public class TestController {
     public TestPageResponse searchTests(
             @RequestParam("keyWord") String keyWord,
             @RequestParam("page") int page,
-            @RequestParam("size") int size
+            @RequestParam("size") int size,
+            @AuthenticationPrincipal CurrentUser user
     ){
-        TestsPageModel model = testService.searchTest(keyWord, page, size);
+        TestsPageModel model = testService.searchTest(user.getUserId(), keyWord, page, size);
         return mapper.toTestPageResponse(model, page, size);
     }
 
