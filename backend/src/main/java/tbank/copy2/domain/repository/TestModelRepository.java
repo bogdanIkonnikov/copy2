@@ -19,7 +19,9 @@ public interface TestModelRepository {
 
     Long deleteById(Long id);
 
-    Page<TestModel> findByNameContainingIgnoreCase(String name, Pageable pageable);
+    Page<TestModel> findByNameContainingIgnoreCase(String name, Long userId, Pageable pageable);
 
     void deleteByUserIdAndVisible(Long id, boolean visible);
+
+    boolean hasEditAccess(Long userId, Long testId);
 }

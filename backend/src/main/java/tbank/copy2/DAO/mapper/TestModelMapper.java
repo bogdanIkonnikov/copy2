@@ -15,6 +15,8 @@ public class TestModelMapper {
     QuestionModelMapper qMapper;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private TestAccessModelMapper accessMapper;
 
     public Test toEntity(TestModel testModel) {
         Test test = new Test();
@@ -24,6 +26,7 @@ public class TestModelMapper {
         test.setCreated_at(testModel.getCreated_at());
         test.setUpdated_at(testModel.getUpdated_at());
         test.setDescription(testModel.getDescription());
+        if (testModel.getAccesses() != null) test.setAccesses(testModel.getAccesses().stream().map(accessMapper::toEntity).toList());
         test.setQuestions(testModel.getQuestions().stream().map(q -> qMapper.toEntity(q)).collect(Collectors.toList()));
         test.setUser(userRepository.findById(testModel.getUserId()).orElse(null));
         return test;
@@ -37,6 +40,7 @@ public class TestModelMapper {
         model.setCreated_at(test.getCreated_at());
         model.setUpdated_at(test.getUpdated_at());
         model.setDescription(test.getDescription());
+        model.setAccesses(test.getAccesses().stream().map(accessMapper::toModel).collect(Collectors.toList()));
         model.setUserId(test.getUser().getId());
         model.setQuestions(test.getQuestions().stream().map(q -> qMapper.toModel(q)).collect(Collectors.toList()));
         return model;

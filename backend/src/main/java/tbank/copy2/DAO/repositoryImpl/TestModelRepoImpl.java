@@ -22,14 +22,14 @@ public class TestModelRepoImpl implements TestModelRepository {
 
     @Override
     public List<TestModel> findAllByUserId(Pageable pageable, Long userId) {
-        List<TestModel> models = testRepository.findAllByUserId(pageable, userId).stream()
+        List<TestModel> models = testRepository.findAllTestsByUserAccess(pageable, userId).stream()
                 .map(t -> mapper.toModel(t)).collect(Collectors.toList());
         return models;
     }
 
     @Override
     public List<TestModel> findAllByUserId(Long userId) {
-        return testRepository.findAllByUserId(userId).stream().map(t -> mapper.toModel(t)).collect(Collectors.toList());
+        return testRepository.findAllTestsByUserAccess(userId).stream().map(t -> mapper.toModel(t)).collect(Collectors.toList());
     }
 
     @Override
@@ -58,8 +58,8 @@ public class TestModelRepoImpl implements TestModelRepository {
     }
 
     @Override
-    public Page<TestModel> findByNameContainingIgnoreCase(String name, Pageable pageable) {
-        Page<Test> tests = testRepository.findByNameContainingIgnoreCase(name, pageable);
+    public Page<TestModel> findByNameContainingIgnoreCase(String name, Long userId, Pageable pageable) {
+        Page<Test> tests = testRepository.findByNameContainingIgnoreCase(name, userId ,pageable);
         return mapper.toPageModel(tests);
     }
 
@@ -68,4 +68,8 @@ public class TestModelRepoImpl implements TestModelRepository {
         testRepository.deleteAllByVisibleAndUser_Id(visible, id);
     }
 
+    @Override
+    public boolean hasEditAccess(Long userId, Long testId) {
+        return testRepository.hasEditAccess(userId, testId);
+    }
 }
