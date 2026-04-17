@@ -35,6 +35,12 @@ public class Test {
     @OneToMany(mappedBy = "test", fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.REFRESH}, orphanRemoval = true)
     private List<Question> questions = new ArrayList<>();
 
+    @OneToMany(mappedBy = "test", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<TestSession> sessions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "test", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<ActivityLog> activityLogs = new ArrayList<>();
+
     @Column(nullable = false)
     private Boolean visible = true;
 
