@@ -45,7 +45,8 @@ public class VerificationService {
         VerificationCodeModel codeModel = new VerificationCodeModel();
         codeModel.setEmail(email);
         codeModel.setExpiryDate(LocalDateTime.now().plusMinutes(10));
-        codeModel.setCode(Math.round((Math.random() * 1000000)) + "");
+        int num = 100000 + (int) (Math.random() * 900000);
+        codeModel.setCode(String.valueOf(num));
         repository.save(codeModel);
         return codeModel.getCode();
     }
