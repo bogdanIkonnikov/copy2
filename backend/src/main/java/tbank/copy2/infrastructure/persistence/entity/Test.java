@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import tbank.copy2.common.enums.AccessMode;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -41,8 +42,11 @@ public class Test {
     @Column(nullable = false)
     private Boolean visible = true;
 
-    @Column(name = "is_public", nullable = false)
-    private Boolean isPublic = false;
+    @Column(name = "access_mode", nullable = false)
+    private AccessMode accessMode = AccessMode.PRIVATE;
+
+    @Column(name = "share_token", unique = true)
+    private String shareToken;
 
     @CreationTimestamp
     @Column(nullable = false)

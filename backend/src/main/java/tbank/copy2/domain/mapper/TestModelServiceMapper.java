@@ -24,6 +24,7 @@ public class TestModelServiceMapper {
         TestModel model = new TestModel();
         model.setName(oldModel.getName());
         model.setDescription(oldModel.getDescription());
+        model.setAccessMode(oldModel.getAccessMode());
         model.setUserId(oldModel.getUserId());
         model.setVisible(false);
         List<Long> questionIds = service.getAllCorrectIdsBySessionId(sessionId);

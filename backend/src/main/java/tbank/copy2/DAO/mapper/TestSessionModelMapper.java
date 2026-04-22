@@ -19,7 +19,8 @@ public class TestSessionModelMapper {
         if (model == null) return null;
         TestSession testSession = new TestSession();
         testSession.setId(model.getId());
-        testSession.setUser(userRepository.findById(model.getUserId()).orElse(null));
+        if (model.getUserId() != null) testSession.setUser(userRepository.findById(model.getUserId()).orElse(null));
+        else testSession.setUser(null);
         testSession.setTest(testRepository.findById(model.getTestId()).orElse(null));
         testSession.setCorrectCount(model.getCorrectCount());
         testSession.setFinished_at(model.getFinished_at());
@@ -38,6 +39,8 @@ public class TestSessionModelMapper {
         }
         if (session.getUser() != null) {
             model.setUserId(session.getUser().getId());
+        } else {
+            model.setUserId(null);
         }
         model.setCorrectCount(session.getCorrectCount());
         model.setFinished_at(session.getFinished_at());

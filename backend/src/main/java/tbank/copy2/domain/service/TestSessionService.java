@@ -32,10 +32,11 @@ public class TestSessionService {
 
 
     public TestSessionModel startSession(TestSessionModel model) {
-        System.out.println(model);
-        TestSessionModel oldModel = repository.getTestSessionByTestIdAndUserId(model.getTestId(), model.getUserId());
-        System.out.println(oldModel);
-        if (oldModel != null) repository.deleteById(oldModel.getId());
+        if (model.getUserId() != null) {
+            TestSessionModel oldModel = repository.getTestSessionByTestIdAndUserId(model.getTestId(), model.getUserId());
+            if (oldModel != null) repository.deleteById(oldModel.getId());
+        }
+
         return repository.save(model);
     }
 
@@ -60,9 +61,10 @@ public class TestSessionService {
             model.setCorrectCount(model.getCorrectCount() + 1);
             repository.save(model);
         }
-
-        userAnswerService.addAnswer(sessionId, aModel.getQuestionId(), isCorrect);
-        userService.addAnswer(isCorrect, model.getUserId());
+        if(model.getUserId() != null){
+            userAnswerService.addAnswer(sessionId, aModel.getQuestionId(), isCorrect);
+            userService.addAnswer(isCorrect, model.getUserId());
+        }
 
         saved = true;
         TestSessionResponseModel response = new TestSessionResponseModel();
@@ -80,7 +82,9 @@ public class TestSessionService {
         TestSessionModel model = repository.getTestSessionById(sessionId);
 
         model.setFinished_at(LocalDateTime.now());
-        userService.addActivity(model.getUserId(), model.getTestId(), model.getTestName(), (int) model.getTotalCount(), (int) model.getCorrectCount());
+        if (model.getUserId() != null){
+            userService.addActivity(model.getUserId(), model.getTestId(), model.getTestName(), (int) model.getTotalCount(), (int) model.getCorrectCount());
+        }
         return repository.save(model);
     }
 

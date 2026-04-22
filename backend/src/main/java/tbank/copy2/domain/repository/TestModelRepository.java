@@ -24,4 +24,11 @@ public interface TestModelRepository {
     void deleteByUserIdAndVisible(Long id, boolean visible);
 
     boolean hasEditAccess(Long userId, Long testId);
+
+    List<TestModel> findAllAlienPublicTests(Pageable pageable, Long userId);
+
+    List<TestModel> findAllAlienPublicTests(Long userId);
+
+    TestModel findByShareToken(String shareToken);
+
 }

@@ -11,8 +11,4 @@ public class AddTestSessionRequest {
     @Schema(description = "Идентификатор теста", example = "1")
     @NotNull
     private Long testId;
-
-    @Schema(description = "Идентификатор пользователя", example = "1")
-    private Long userId;
-
 }
