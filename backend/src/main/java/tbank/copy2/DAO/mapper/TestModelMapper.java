@@ -26,6 +26,8 @@ public class TestModelMapper {
         test.setCreated_at(testModel.getCreated_at());
         test.setUpdated_at(testModel.getUpdated_at());
         test.setDescription(testModel.getDescription());
+        test.setAccessMode(testModel.getAccessMode());
+        test.setShareToken(testModel.getShareToken());
         if (testModel.getAccesses() != null) test.setAccesses(testModel.getAccesses().stream().map(accessMapper::toEntity).toList());
         test.setQuestions(testModel.getQuestions().stream().map(q -> qMapper.toEntity(q)).collect(Collectors.toList()));
         test.setUser(userRepository.findById(testModel.getUserId()).orElse(null));
@@ -37,6 +39,8 @@ public class TestModelMapper {
         model.setId(test.getId());
         model.setName(test.getName());
         model.setVisible(test.getVisible());
+        model.setAccessMode(test.getAccessMode());
+        model.setShareToken(test.getShareToken());
         model.setCreated_at(test.getCreated_at());
         model.setUpdated_at(test.getUpdated_at());
         model.setDescription(test.getDescription());

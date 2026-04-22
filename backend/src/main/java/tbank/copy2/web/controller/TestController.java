@@ -55,6 +55,16 @@ public class TestController {
         return mapper.toTestPageResponse(model, page, size);
     }
 
+    @Operation(summary = "Получить список публичных тестов")
+    @GetMapping("/public")
+    public TestPageResponse getPublicTests(
+            @PositiveOrZero @RequestParam(defaultValue = "0") int page,
+            @Positive @RequestParam(defaultValue = "10") int size,
+            @AuthenticationPrincipal CurrentUser user) {
+        TestsPageModel model = testService.getAlienPublicTests(page, size, user.getUserId());
+        return mapper.toTestPageResponse(model, page, size);
+    }
+
     @Operation(summary = "Добавить новый тест")
     @PostMapping("")
     public TestResponse addTest(
@@ -71,8 +81,18 @@ public class TestController {
 
     @Operation(summary = "Получить тест по его id")
     @GetMapping("/{id}")
-    public TestResponse getTestById(@Parameter(description = "Идентификатор теста", example = "1") @PathVariable Long id) {
-        return mapper.toTestResponse(testService.getTestById(id));
+    public TestWithOwnerResponse getTestById(@Parameter(description = "Идентификатор теста", example = "1") @PathVariable Long id,
+                                             @AuthenticationPrincipal CurrentUser user) {
+        return mapper.toTestOwnerResponse(testService.getTestById(id), user.getUserId());
+    }
+
+    @Operation(summary = "Изменить режим доступа к тесту")
+    @PutMapping("/{id}/access")
+    public AccessResponse setAccessMode(@RequestBody @Valid AccessRequest request,
+                                        @AuthenticationPrincipal CurrentUser user,
+                                        @PathVariable Long id){
+        TestModel model = testService.changeAccessMode(user.getUserId(), request.getAccessMode(), id);
+        return mapper.toAccessResponse(model);
     }
 
     @Operation(summary = "Удалить тест по его id")
@@ -174,5 +194,11 @@ public class TestController {
     @Operation(description = "Получить список всех тестов текущего пользователя в кратком формате")
     public List<ShortTestResponse> getShortTests(@AuthenticationPrincipal CurrentUser user) {
         return mapper.toShortResponses(testService.getAllByUserId(user.getUserId()));
+    }
+
+    @GetMapping("/share/{shareToken}")
+    public TestResponse getByShareToken(@PathVariable String shareToken) {
+        TestModel model = testService.getByShareToken(shareToken);
+        return mapper.toTestResponse(model);
     }
 }
