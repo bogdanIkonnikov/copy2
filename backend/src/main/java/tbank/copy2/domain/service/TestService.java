@@ -465,4 +465,10 @@ public class TestService {
             throw new AccessDeniedException("У вас нет прав на просмотр этого теста, доступ к этому тесту по ссылке запрещён его создателем!");
         }
     }
+
+    public boolean isShareTokenValid(Long testId, String shareToken){
+        TestModel model = repository.findById(testId);
+        if (model == null) throw new EntityNotFoundException("Тест не найден");
+        return model.getShareToken().equals(shareToken);
+    }
 }

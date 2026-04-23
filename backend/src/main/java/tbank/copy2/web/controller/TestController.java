@@ -196,10 +196,4 @@ public class TestController {
     public List<ShortTestResponse> getShortTests(@AuthenticationPrincipal CurrentUser user) {
         return mapper.toShortResponses(testService.getAllByUserId(user.getUserId()));
     }
-
-    @GetMapping("/share/{shareToken}")
-    public TestResponse getByShareToken(@PathVariable String shareToken) {
-        TestModel model = testService.getByShareToken(shareToken);
-        return mapper.toTestResponse(model);
-    }
 }
