@@ -18,7 +18,7 @@ import tbank.copy2.web.mapper.TestSessionMapper;
 
 @RestController
 @RequestMapping("/api/test-sessions/anonymous")
-@Tag(name = "Сессия", description = "Операции, связанные с сессиями тестов. Для неавторизованных пользователей!")
+@Tag(name = "Сессия (non-authorized)", description = "Операции, связанные с сессиями тестов. Для неавторизованных пользователей!")
 public class TestSessionNoAuthController {
     @Autowired
     private TestSessionService service;
