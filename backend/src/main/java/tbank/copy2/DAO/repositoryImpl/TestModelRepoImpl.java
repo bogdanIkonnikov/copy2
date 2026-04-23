@@ -89,4 +89,10 @@ public class TestModelRepoImpl implements TestModelRepository {
     public TestModel findByShareToken(String shareToken) {
         return mapper.toModel(testRepository.findByShareToken(shareToken).orElse(null));
     }
+
+    @Override
+    public List<TestModel> findByNameAlienPublicTests(String keyword, Long userId, Pageable pageable) {
+        return testRepository.findByNameAlienPublicTests(keyword, userId, pageable, AccessMode.PUBLIC)
+                .stream().map(t -> mapper.toModel(t)).collect(Collectors.toList());
+    }
 }

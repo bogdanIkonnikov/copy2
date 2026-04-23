@@ -57,9 +57,14 @@ public class TestService {
         return model;
     }
 
-    public TestsPageModel getAlienPublicTests(int pageNumber, int pageSize, Long userId) {
+    public TestsPageModel getAlienPublicTests(int pageNumber, int pageSize, Long userId, String keyword) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        List<TestModel> models = repository.findAllAlienPublicTests(pageable, userId);
+        List<TestModel> models;
+        if (keyword == null) {
+            models = repository.findAllAlienPublicTests(pageable, userId);
+        } else {
+            models = repository.findByNameAlienPublicTests(keyword, userId, pageable);
+        }
         TestsPageModel model = new TestsPageModel();
         model.setModels(models);
         model.setTotalModels(repository.findAllAlienPublicTests(userId).size());
