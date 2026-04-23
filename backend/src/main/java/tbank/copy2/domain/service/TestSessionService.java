@@ -29,6 +29,8 @@ public class TestSessionService {
     private UserService userService;
     @Autowired
     private TestSessionModelServiceMapper sessionMapper;
+    @Autowired
+    private TestService testService;
 
 
     public TestSessionModel startSession(TestSessionModel model) {
@@ -40,7 +42,35 @@ public class TestSessionService {
         return repository.save(model);
     }
 
+    public TestSessionModel startSession(TestSessionModel model, String shareToken) {
+        if (model.getUserId() != null) {
+            TestSessionModel oldModel = repository.getTestSessionByTestIdAndUserId(model.getTestId(), model.getUserId());
+            if (oldModel != null) repository.deleteById(oldModel.getId());
+            return repository.save(model);
+        } else {
+            if (testService.isShareTokenValid(model.getTestId(), shareToken)) {
+                return repository.save(model);
+            } else {
+                throw new IllegalArgumentException("Неверный токен доступа к тесту");
+            }
+        }
+    }
+
     public TestSessionModel startWrongSession(Long sessionId) {
+        TestSessionModel oldSession = repository.getTestSessionById(sessionId);
+        System.out.println("oldSession = " + oldSession);
+        TestModel newTest = mapper.toModel(testModelRepository.findById(oldSession.getTestId()), sessionId);
+        System.out.println("newTest = " + newTest);
+        Long userId = oldSession.getUserId();
+        repository.deleteById(sessionId);
+        newTest = testModelRepository.save(newTest);
+        return repository.save(sessionMapper.toSession(newTest, userId));
+    }
+
+    public TestSessionModel startWrongSession(Long sessionId, String shareToken) {
+        if (!testService.isShareTokenValid(repository.getTestSessionById(sessionId).getTestId(), shareToken)) {
+            throw new IllegalArgumentException("Неверный токен доступа к тесту");
+        }
         TestSessionModel oldSession = repository.getTestSessionById(sessionId);
         System.out.println("oldSession = " + oldSession);
         TestModel newTest = mapper.toModel(testModelRepository.findById(oldSession.getTestId()), sessionId);
@@ -74,11 +104,50 @@ public class TestSessionService {
         return response;
     }
 
+    public TestSessionResponseModel answerSession(TestSessionAnswerModel aModel, Long sessionId, String shareToken) {
+        if (!testService.isShareTokenValid(repository.getTestSessionById(sessionId).getTestId(), shareToken)) {
+            throw new IllegalArgumentException("Неверный токен доступа к тесту");
+        }
+
+        Boolean saved;
+        Boolean isCorrect;
+        TestSessionModel model =  repository.getTestSessionById(sessionId);
+        CheckedAnswerModel answer = answerTypeChecker.check(aModel.getQuestionId()).checkAnswer(aModel.getQuestionId(), aModel.getUserAnswer());
+        isCorrect = answer.isTrue();
+        if (isCorrect) {
+            model.setCorrectCount(model.getCorrectCount() + 1);
+            repository.save(model);
+        }
+        if(model.getUserId() != null){
+            userAnswerService.addAnswer(sessionId, aModel.getQuestionId(), isCorrect);
+            userService.addAnswer(isCorrect, model.getUserId());
+        }
+
+        saved = true;
+        TestSessionResponseModel response = new TestSessionResponseModel();
+        response.setCorrectAnswer(answer.getRightAnswers());
+        response.setSaved(saved);
+        response.setIsCorrect(isCorrect);
+        return response;
+    }
+
     public TestSessionModel getTestSessionStatus(Long sessionId) {
         return repository.getTestSessionById(sessionId);
     }
 
     public TestSessionModel finishSession(Long sessionId) {
+        TestSessionModel model = repository.getTestSessionById(sessionId);
+
+        model.setFinished_at(LocalDateTime.now());
+        if (model.getUserId() != null){
+            userService.addActivity(model.getUserId(), model.getTestId(), model.getTestName(), (int) model.getTotalCount(), (int) model.getCorrectCount());
+        }
+        return repository.save(model);
+    }
+    public TestSessionModel finishSession(Long sessionId, String shareToken) {
+        if (!testService.isShareTokenValid(repository.getTestSessionById(sessionId).getTestId(), shareToken)) {
+            throw new IllegalArgumentException("Неверный токен доступа к тесту");
+        }
         TestSessionModel model = repository.getTestSessionById(sessionId);
 
         model.setFinished_at(LocalDateTime.now());
