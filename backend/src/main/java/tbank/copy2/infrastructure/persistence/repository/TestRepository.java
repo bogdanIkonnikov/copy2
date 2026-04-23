@@ -54,4 +54,13 @@ public interface TestRepository extends JpaRepository<Test, Long> {
             "WHERE t.user.id != :userId " +
             "AND t.accessMode = :accessMode")
     List<Test> findAllAlienPublicTests(Long userId, AccessMode accessMode);
+
+    @Query("SELECT DISTINCT t FROM Test t " +
+            "LEFT JOIN t.accesses a " +
+            "WHERE LOWER(t.name) LIKE LOWER(CONCAT('%', :name, '%')) " +
+            "AND (a.user.id != :userId AND t.accessMode = :accessMode)")
+    Page<Test> findByNameAlienPublicTests(@Param("name") String name,
+                                              @Param("userId") Long userId,
+                                              Pageable pageable,
+                                              AccessMode accessMode);
 }

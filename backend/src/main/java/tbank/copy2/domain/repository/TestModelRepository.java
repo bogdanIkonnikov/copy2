@@ -31,4 +31,5 @@ public interface TestModelRepository {
 
     TestModel findByShareToken(String shareToken);
 
+    List<TestModel> findByNameAlienPublicTests(String keyword, Long userId, Pageable pageable);
 }
