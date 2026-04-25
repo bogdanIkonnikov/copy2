@@ -1,6 +1,5 @@
 package tbank.copy2.domain.service;
 
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -17,8 +16,6 @@ import java.util.List;
 @EnableScheduling
 public class NotificationScheduler {
     @Autowired
-    private MailService service;
-    @Autowired
     private NotificationModelRepository repository;
 
     private final KafkaTemplate<String, EmailNotificationModel> kafkaTemplate;
@@ -28,19 +25,17 @@ public class NotificationScheduler {
     }
 
     @Scheduled(cron = "0 * * * * *")
-    @Transactional
     public void schedule() {
         List<NotificationModel> notifications = repository.findAllBySentAtBeforeAndSent(LocalDateTime.now(), false);
 
         for (NotificationModel n : notifications) {
-            EmailNotificationModel message = new EmailNotificationModel();
-            message.setSubject("Напоминание пройти тест: " + n.getTestName());
-            message.setText("Пришло время повторить тест: " + n.getTestName());
-            message.setTo(new String[]{n.getEmail()});
-            kafkaTemplate.send("notification-topic", message);
-            n.setSent(true);
+            if (repository.updateIfVersionMatches(n.getId(), n.getVersion())) {
+                EmailNotificationModel message = new EmailNotificationModel();
+                message.setSubject("Напоминание пройти тест: " + n.getTestName());
+                message.setText("Пришло время повторить тест: " + n.getTestName());
+                message.setTo(new String[]{n.getEmail()});
+                kafkaTemplate.send("notification-topic", message);
+            }
         }
-
-        repository.saveAll(notifications);
     }
 }

@@ -19,6 +19,8 @@ public class Notification {
     @JoinColumn(name = "notification_settings_id")
     private NotificationSettings settings;
 
+    private int version = 0;
+
     @Column(nullable = false, name = "sent_at")
     private LocalDateTime sent_at;
 

@@ -12,5 +12,5 @@ public interface NotificationModelRepository {
 
     List<NotificationModel> findAllBySentAtBeforeAndSent(LocalDateTime now, boolean b);
 
-    void saveAll(List<NotificationModel> notifications);
+    boolean updateIfVersionMatches(Long id, int version);
 }
