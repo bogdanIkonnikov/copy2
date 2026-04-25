@@ -35,8 +35,7 @@ public class NotificationModelRepoImpl implements NotificationModelRepository {
     }
 
     @Override
-    public void saveAll(List<NotificationModel> notifications) {
-        repository.saveAll(notifications.stream().map(n -> mapper.toEntity(n)).collect(Collectors.toList()));
+    public boolean updateIfVersionMatches(Long id, int version) {
+        return repository.updateIfVersionMatches(id, version) > 0;
     }
-
 }

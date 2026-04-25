@@ -15,6 +15,7 @@ public class NotificationModelMapper {
         entity.setId(model.getId());
         entity.setSettings(settingsModelMapper.toEntity(model.getSettings()));
         entity.setSent(model.isSent());
+        entity.setVersion(model.getVersion());
         entity.setSent_at(model.getSent_at());
         return entity;
     }
@@ -25,6 +26,7 @@ public class NotificationModelMapper {
         model.setSent(entity.isSent());
         model.setTestId(entity.getSettings().getTest().getId());
         model.setSent_at(entity.getSent_at());
+        model.setVersion(entity.getVersion());
         model.setEmail(entity.getSettings().getUser().getEmail());
         model.setTestName(entity.getSettings().getTest().getName());
         model.setSettings(settingsModelMapper.toModel(entity.getSettings()));

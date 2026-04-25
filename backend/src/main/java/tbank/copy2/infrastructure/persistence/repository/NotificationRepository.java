@@ -1,6 +1,7 @@
 package tbank.copy2.infrastructure.persistence.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -18,4 +19,8 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
             @Param("time") LocalDateTime time,
             @Param("sent") boolean sent);
 
+    @Modifying
+    @Query("UPDATE Notification n SET n.isSent = true, n.version = n.version + 1 " +
+            "WHERE n.id = :id AND n.version = :version")
+    int updateIfVersionMatches(@Param("id") Long id, @Param("version") int version);
 }

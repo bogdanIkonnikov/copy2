@@ -16,6 +16,8 @@ public class NotificationModel {
 
     private String email;
 
+    private int version;
+
     private NotificationSettingsModel settings;
 
     private LocalDateTime sent_at;
