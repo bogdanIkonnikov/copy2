@@ -16,19 +16,17 @@ import java.util.Optional;
 
 @Repository
 public interface TestRepository extends JpaRepository<Test, Long> {
-    @Query("SELECT DISTINCT t FROM Test t " +
-            "JOIN t.accesses a " +
-            "WHERE a.user.id = :userId")
-    List<Test> findAllTestsByUserAccess(Long userId);
+    @Query("SELECT t FROM Test t " +
+            "WHERE t.user.id = :userId")
+    List<Test> findAllTestsByUserId(Long userId);
+    @Query("SELECT t FROM Test t " +
+            "WHERE t.user.id = :userId")
+    Page<Test> findAllTestsByUserId(Pageable pageable, @Param("userId") Long userId);
+
     @Query("SELECT DISTINCT t FROM Test t " +
             "WHERE t.user.id = :userId " +
             "OR t.accessMode = :accessMode")
-    Page<Test> findAllTestsByUserAccess(Pageable pageable, @Param("userId") Long userId, AccessMode accessMode);
-
-    @Query("SELECT DISTINCT t FROM Test t " +
-            "WHERE t.user.id != :userId " +
-            "AND t.accessMode = :accessMode")
-    Page<Test> findAllAlienPublicTests(Pageable pageable, @Param("userId") Long userId, AccessMode accessMode);
+    Page<Test> findAllPublicTests(Pageable pageable, @Param("userId") Long userId, AccessMode accessMode);
 
     @EntityGraph(attributePaths = {"questions", "questions.answers"})
     Optional<Test> findById(Long testId);
@@ -51,9 +49,9 @@ public interface TestRepository extends JpaRepository<Test, Long> {
     Optional<Test> findByShareToken(String shareToken);
 
     @Query("SELECT DISTINCT t FROM Test t " +
-            "WHERE t.user.id != :userId " +
-            "AND t.accessMode = :accessMode")
-    List<Test> findAllAlienPublicTests(Long userId, AccessMode accessMode);
+            "WHERE t.user.id = :userId " +
+            "OR t.accessMode = :accessMode")
+    List<Test> findAllPublicTests(Long userId, AccessMode accessMode);
 
     @Query("SELECT DISTINCT t FROM Test t " +
             "LEFT JOIN t.accesses a " +

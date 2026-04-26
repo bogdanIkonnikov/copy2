@@ -62,7 +62,7 @@ public class TestController {
             @Positive @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String keyword,
             @AuthenticationPrincipal CurrentUser user) {
-        TestsPageModel model = testService.getAlienPublicTests(page, size, user.getUserId(), keyword);
+        TestsPageModel model = testService.getPublicTests(page, size, user.getUserId(), keyword);
         return mapper.toTestPageResponse(model, page, size);
     }
 

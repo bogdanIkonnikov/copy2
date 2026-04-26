@@ -24,14 +24,14 @@ public class TestModelRepoImpl implements TestModelRepository {
 
     @Override
     public List<TestModel> findAllByUserId(Pageable pageable, Long userId) {
-        List<TestModel> models = testRepository.findAllTestsByUserAccess(pageable, userId, AccessMode.PUBLIC).stream()
+        List<TestModel> models = testRepository.findAllTestsByUserId(pageable, userId).stream()
                 .map(t -> mapper.toModel(t)).collect(Collectors.toList());
         return models;
     }
 
     @Override
     public List<TestModel> findAllByUserId(Long userId) {
-        return testRepository.findAllTestsByUserAccess(userId).stream().map(t -> mapper.toModel(t)).collect(Collectors.toList());
+        return testRepository.findAllTestsByUserId(userId).stream().map(t -> mapper.toModel(t)).collect(Collectors.toList());
     }
 
     @Override
@@ -76,13 +76,13 @@ public class TestModelRepoImpl implements TestModelRepository {
     }
 
     @Override
-    public List<TestModel> findAllAlienPublicTests(Pageable pageable, Long userId) {
-        return testRepository.findAllAlienPublicTests(pageable, userId, AccessMode.PUBLIC).stream().map(t -> mapper.toModel(t)).collect(Collectors.toList());
+    public List<TestModel> findAllPublicTests(Pageable pageable, Long userId) {
+        return testRepository.findAllPublicTests(pageable, userId, AccessMode.PUBLIC).stream().map(t -> mapper.toModel(t)).collect(Collectors.toList());
     }
 
     @Override
-    public List<TestModel> findAllAlienPublicTests(Long userId) {
-        return testRepository.findAllAlienPublicTests(userId, AccessMode.PUBLIC).stream().map(t -> mapper.toModel(t)).collect(Collectors.toList());
+    public List<TestModel> findAllPublicTests(Long userId) {
+        return testRepository.findAllPublicTests(userId, AccessMode.PUBLIC).stream().map(t -> mapper.toModel(t)).collect(Collectors.toList());
     }
 
     @Override
@@ -91,7 +91,7 @@ public class TestModelRepoImpl implements TestModelRepository {
     }
 
     @Override
-    public List<TestModel> findByNameAlienPublicTests(String keyword, Long userId, Pageable pageable) {
+    public List<TestModel> findByNamePublicTests(String keyword, Long userId, Pageable pageable) {
         return testRepository.findByNameAlienPublicTests(keyword, userId, pageable, AccessMode.PUBLIC)
                 .stream().map(t -> mapper.toModel(t)).collect(Collectors.toList());
     }

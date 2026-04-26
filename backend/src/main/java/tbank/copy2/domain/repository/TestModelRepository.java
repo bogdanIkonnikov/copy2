@@ -25,11 +25,11 @@ public interface TestModelRepository {
 
     boolean hasEditAccess(Long userId, Long testId);
 
-    List<TestModel> findAllAlienPublicTests(Pageable pageable, Long userId);
+    List<TestModel> findAllPublicTests(Pageable pageable, Long userId);
 
-    List<TestModel> findAllAlienPublicTests(Long userId);
+    List<TestModel> findAllPublicTests(Long userId);
 
     TestModel findByShareToken(String shareToken);
 
-    List<TestModel> findByNameAlienPublicTests(String keyword, Long userId, Pageable pageable);
+    List<TestModel> findByNamePublicTests(String keyword, Long userId, Pageable pageable);
 }
