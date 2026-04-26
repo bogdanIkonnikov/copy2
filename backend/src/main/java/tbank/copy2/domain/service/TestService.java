@@ -51,23 +51,23 @@ public class TestService {
         List<TestModel> models = repository.findAllByUserId(pageable, userId);
         TestsPageModel model = new TestsPageModel();
         model.setModels(models);
-        model.setTotalModels(repository.findAll().size());
+        model.setTotalModels(repository.findAllByUserId(userId).size());
         model.setTotalPages((int) Math.ceil(model.getTotalModels() / (double) pageSize));
         repository.deleteByUserIdAndVisible(userId, false);
         return model;
     }
 
-    public TestsPageModel getAlienPublicTests(int pageNumber, int pageSize, Long userId, String keyword) {
+    public TestsPageModel getPublicTests(int pageNumber, int pageSize, Long userId, String keyword) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         List<TestModel> models;
         if (keyword == null) {
-            models = repository.findAllAlienPublicTests(pageable, userId);
+            models = repository.findAllPublicTests(pageable, userId);
         } else {
-            models = repository.findByNameAlienPublicTests(keyword, userId, pageable);
+            models = repository.findByNamePublicTests(keyword, userId, pageable);
         }
         TestsPageModel model = new TestsPageModel();
         model.setModels(models);
-        model.setTotalModels(repository.findAllAlienPublicTests(userId).size());
+        model.setTotalModels(repository.findAllPublicTests(userId).size());
         model.setTotalPages((int) Math.ceil(model.getTotalModels() / (double) pageSize));
         repository.deleteByUserIdAndVisible(userId, false);
         return model;
