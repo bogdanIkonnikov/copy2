@@ -60,7 +60,7 @@ public class UserMapper {
             return response;
         }
         response.setCount(model.getCount());
-        response.setDate(model.getDate());
+        response.setDate(model.getDate() + "");
         return response;
     }
 
@@ -68,7 +68,7 @@ public class UserMapper {
         List<UserAttemptResponse> responses = new ArrayList<>();
         for (ActivityLogModel model : models) {
             UserAttemptResponse response = new UserAttemptResponse();
-            response.setDate(model.getAttemptDate());
+            response.setDate(model.getAttemptDate() + "Z");
             response.setTotal(model.getTotal());
             response.setScore(model.getScore());
             response.setTestId(model.getTestId());
