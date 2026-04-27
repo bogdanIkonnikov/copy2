@@ -24,9 +24,8 @@ public interface TestRepository extends JpaRepository<Test, Long> {
     Page<Test> findAllTestsByUserId(Pageable pageable, @Param("userId") Long userId);
 
     @Query("SELECT DISTINCT t FROM Test t " +
-            "WHERE t.user.id = :userId " +
-            "OR t.accessMode = :accessMode")
-    Page<Test> findAllPublicTests(Pageable pageable, @Param("userId") Long userId, AccessMode accessMode);
+            "WHERE t.accessMode = :accessMode")
+    Page<Test> findAllPublicTests(Pageable pageable, AccessMode accessMode);
 
     @EntityGraph(attributePaths = {"questions", "questions.answers"})
     Optional<Test> findById(Long testId);
@@ -49,9 +48,8 @@ public interface TestRepository extends JpaRepository<Test, Long> {
     Optional<Test> findByShareToken(String shareToken);
 
     @Query("SELECT DISTINCT t FROM Test t " +
-            "WHERE t.user.id = :userId " +
-            "OR t.accessMode = :accessMode")
-    List<Test> findAllPublicTests(Long userId, AccessMode accessMode);
+            "WHERE t.accessMode = :accessMode")
+    List<Test> findAllPublicTests(AccessMode accessMode);
 
     @Query("SELECT DISTINCT t FROM Test t " +
             "LEFT JOIN t.accesses a " +

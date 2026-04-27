@@ -76,13 +76,13 @@ public class TestModelRepoImpl implements TestModelRepository {
     }
 
     @Override
-    public List<TestModel> findAllPublicTests(Pageable pageable, Long userId) {
-        return testRepository.findAllPublicTests(pageable, userId, AccessMode.PUBLIC).stream().map(t -> mapper.toModel(t)).collect(Collectors.toList());
+    public List<TestModel> findAllPublicTests(Pageable pageable) {
+        return testRepository.findAllPublicTests(pageable, AccessMode.PUBLIC).stream().map(t -> mapper.toModel(t)).collect(Collectors.toList());
     }
 
     @Override
-    public List<TestModel> findAllPublicTests(Long userId) {
-        return testRepository.findAllPublicTests(userId, AccessMode.PUBLIC).stream().map(t -> mapper.toModel(t)).collect(Collectors.toList());
+    public List<TestModel> findAllPublicTests() {
+        return testRepository.findAllPublicTests(AccessMode.PUBLIC).stream().map(t -> mapper.toModel(t)).collect(Collectors.toList());
     }
 
     @Override

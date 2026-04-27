@@ -61,13 +61,13 @@ public class TestService {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         List<TestModel> models;
         if (keyword == null) {
-            models = repository.findAllPublicTests(pageable, userId);
+            models = repository.findAllPublicTests(pageable);
         } else {
             models = repository.findByNamePublicTests(keyword, userId, pageable);
         }
         TestsPageModel model = new TestsPageModel();
         model.setModels(models);
-        model.setTotalModels(repository.findAllPublicTests(userId).size());
+        model.setTotalModels(repository.findAllPublicTests().size());
         model.setTotalPages((int) Math.ceil(model.getTotalModels() / (double) pageSize));
         repository.deleteByUserIdAndVisible(userId, false);
         return model;
