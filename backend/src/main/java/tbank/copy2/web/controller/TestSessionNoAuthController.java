@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import org.antlr.v4.runtime.misc.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import tbank.copy2.domain.model.TestSessionAnswerModel;
@@ -53,8 +54,8 @@ public class TestSessionNoAuthController {
             @Parameter(description = "Токен теста")
             @NotNull(message = "Токен теста не может быть null")
             @PathVariable String shareToken) {
-        TestSessionModel saved = service.startWrongSession(id, shareToken);
-        return mapper.toSessionResponse(saved);
+        Pair<TestSessionModel, String> saved = service.startWrongSession(id, shareToken);
+        return mapper.toNoAuthResponse(saved.a, saved.b);
     }
 
     @Operation(summary = "Отправить ответ на вопрос")
