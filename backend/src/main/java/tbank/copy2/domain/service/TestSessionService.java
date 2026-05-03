@@ -1,6 +1,7 @@
 package tbank.copy2.domain.service;
 
 import jakarta.validation.constraints.NotNull;
+import org.antlr.v4.runtime.misc.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -67,7 +68,7 @@ public class TestSessionService {
         return repository.save(sessionMapper.toSession(newTest, userId));
     }
 
-    public TestSessionModel startWrongSession(Long sessionId, String shareToken) {
+    public Pair<TestSessionModel, String> startWrongSession(Long sessionId, String shareToken) {
         if (!testService.isShareTokenValid(repository.getTestSessionById(sessionId).getTestId(), shareToken)) {
             throw new IllegalArgumentException("Неверный токен доступа к тесту");
         }
@@ -78,7 +79,7 @@ public class TestSessionService {
         Long userId = oldSession.getUserId();
         repository.deleteById(sessionId);
         newTest = testModelRepository.save(newTest);
-        return repository.save(sessionMapper.toSession(newTest, userId));
+        return new Pair<>(repository.save(sessionMapper.toSession(newTest, userId)), newTest.getShareToken());
     }
 
     public TestSessionResponseModel answerSession(TestSessionAnswerModel aModel, Long sessionId) {
