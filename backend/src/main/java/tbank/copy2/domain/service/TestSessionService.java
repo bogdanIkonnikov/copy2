@@ -73,9 +73,7 @@ public class TestSessionService {
             throw new IllegalArgumentException("Неверный токен доступа к тесту");
         }
         TestSessionModel oldSession = repository.getTestSessionById(sessionId);
-        System.out.println("oldSession = " + oldSession);
         TestModel newTest = mapper.toModel(testModelRepository.findById(oldSession.getTestId()), sessionId);
-        System.out.println("newTest = " + newTest);
         Long userId = oldSession.getUserId();
         repository.deleteById(sessionId);
         newTest = testModelRepository.save(newTest);
