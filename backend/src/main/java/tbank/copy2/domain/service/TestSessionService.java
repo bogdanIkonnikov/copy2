@@ -136,9 +136,10 @@ public class TestSessionService {
 
     public TestSessionModel finishSession(Long sessionId) {
         TestSessionModel model = repository.getTestSessionById(sessionId);
+        boolean testVisible = testModelRepository.findById(model.getTestId()).getVisible();
 
         model.setFinished_at(LocalDateTime.now());
-        if (model.getUserId() != null){
+        if (model.getUserId() != null && testVisible){
             userService.addActivity(model.getUserId(), model.getTestId(), model.getTestName(), (int) model.getTotalCount(), (int) model.getCorrectCount());
         }
         return repository.save(model);
