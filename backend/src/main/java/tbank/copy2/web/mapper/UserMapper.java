@@ -50,7 +50,8 @@ public class UserMapper {
         response.setLongestStreak(model.getLongestStreak());
         response.setCurrentStreak(model.getCurrentStreak());
         response.setTestsCompleted(testsCount);
-        response.setAvgScore((int) (model.getCorrectAnswers() / model.getTotalAnswers()*100));
+        System.out.println("correct: " + model.getCorrectAnswers() + ", total: " + model.getTotalAnswers());
+        response.setAvgScore((int) ((int) (model.getCorrectAnswers() * 100) / model.getTotalAnswers()));
         return response;
     }
 
