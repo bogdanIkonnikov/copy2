@@ -29,6 +29,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Transactional
@@ -448,7 +449,7 @@ public class TestService {
 
     public TestModel changeAccessMode(Long userId, AccessMode accessMode, Long id) {
         TestModel model = repository.findById(id);
-        if (userId == model.getUserId()) {
+        if (Objects.equals(userId, model.getUserId())) {
             model.setAccessMode(accessMode);
             return repository.save(model);
         } else {

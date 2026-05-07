@@ -29,10 +29,10 @@ public class Test {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "test", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "test", cascade = CascadeType.REMOVE)
     private List<TestSession> sessions;
 
-    @OneToMany(mappedBy = "test", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "test", cascade = CascadeType.REMOVE)
     private List<TestAccess> accesses = new ArrayList<>();
 
     @Column
