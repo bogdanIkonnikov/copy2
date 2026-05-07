@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import tbank.copy2.domain.model.QuestionModel;
 import tbank.copy2.domain.model.TestModel;
@@ -13,6 +14,7 @@ import tbank.copy2.domain.service.TestService;
 import tbank.copy2.web.dto.question.QuestionLightResponse;
 import tbank.copy2.web.dto.question.QuestionWithAnswersResponse;
 import tbank.copy2.web.dto.test.TestResponse;
+import tbank.copy2.web.dto.user.CurrentUser;
 import tbank.copy2.web.mapper.QuestionMapper;
 import tbank.copy2.web.mapper.TestMapper;
 
@@ -35,9 +37,9 @@ public class TestShareController {
 
     @Operation(summary = "Получить тест по токену")
     @GetMapping("/{shareToken}")
-    public TestResponse getByShareToken(@PathVariable String shareToken) {
+    public TestResponse getByShareToken(@PathVariable String shareToken, @AuthenticationPrincipal CurrentUser user) {
         TestModel model = testService.getByShareToken(shareToken);
-        return mapper.toTestResponse(model);
+        return mapper.toTestResponse(model, user == null ? null : user.getUserId());
     }
     @Operation(summary = "Получить вопросы теста")
     @GetMapping("/{shareToken}/questions")

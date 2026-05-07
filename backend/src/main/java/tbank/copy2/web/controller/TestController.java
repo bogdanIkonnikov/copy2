@@ -52,7 +52,7 @@ public class TestController {
             @Positive @RequestParam(defaultValue = "10") int size,
             @AuthenticationPrincipal CurrentUser user) {
         TestsPageModel model = testService.getTests(page, size, user.getUserId());
-        return mapper.toTestPageResponse(model, page, size);
+        return mapper.toTestPageResponse(model, page, size, user.getUserId());
     }
 
     @Operation(summary = "Получить список публичных тестов")
@@ -63,7 +63,7 @@ public class TestController {
             @RequestParam(required = false) String keyword,
             @AuthenticationPrincipal CurrentUser user) {
         TestsPageModel model = testService.getPublicTests(page, size, user.getUserId(), keyword);
-        return mapper.toTestPageResponse(model, page, size);
+        return mapper.toTestPageResponse(model, page, size, user.getUserId());
     }
 
     @Operation(summary = "Добавить новый тест")
@@ -77,7 +77,7 @@ public class TestController {
             @RequestBody @Valid AddTestRequest request,
     @AuthenticationPrincipal CurrentUser user) {
         TestModel model = testService.addTest(mapper.toModel(request, user.getUserId()));
-        return mapper.toTestResponse(model);
+        return mapper.toTestResponse(model, user.getUserId());
     }
 
     @Operation(summary = "Получить тест по его id")
@@ -162,7 +162,7 @@ public class TestController {
                                     @AuthenticationPrincipal CurrentUser user){
         TestFileModel model = mapper.toModel(name, description, file, user.getUserId());
 
-        return mapper.toTestResponse(testService.addTest(model));
+        return mapper.toTestResponse(testService.addTest(model), user.getUserId());
     }
 
     @GetMapping("/search")
@@ -173,7 +173,7 @@ public class TestController {
             @AuthenticationPrincipal CurrentUser user
     ){
         TestsPageModel model = testService.searchTest(user.getUserId(), keyWord, page, size);
-        return mapper.toTestPageResponse(model, page, size);
+        return mapper.toTestPageResponse(model, page, size, user.getUserId());
     }
 
     @PostMapping(value = "/upload/ai", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -188,7 +188,7 @@ public class TestController {
                                     @AuthenticationPrincipal CurrentUser user){
         TestFileModel model = mapper.toModel(name, description, file, user.getUserId());
 
-        return mapper.toTestResponse(testService.addTestAI(model));
+        return mapper.toTestResponse(testService.addTestAI(model), user.getUserId());
     }
 
     @GetMapping("/short")
