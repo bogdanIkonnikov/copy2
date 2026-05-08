@@ -1,7 +1,9 @@
 package tbank.copy2.domain.model;
 
+import jakarta.persistence.Column;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import tbank.copy2.common.enums.NotificationStatus;
 
 import java.time.LocalDateTime;
 
@@ -22,5 +24,7 @@ public class NotificationModel {
 
     private LocalDateTime sent_at;
 
-    private boolean isSent;
+    private NotificationStatus status;
+
+    private String errorMessage;
 }

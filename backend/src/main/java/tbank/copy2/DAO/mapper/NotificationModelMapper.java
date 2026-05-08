@@ -14,7 +14,8 @@ public class NotificationModelMapper {
         Notification entity = new Notification();
         entity.setId(model.getId());
         entity.setSettings(settingsModelMapper.toEntity(model.getSettings()));
-        entity.setSent(model.isSent());
+        entity.setErrorMessage(model.getErrorMessage());
+        entity.setStatus(model.getStatus());
         entity.setVersion(model.getVersion());
         entity.setSent_at(model.getSent_at());
         return entity;
@@ -23,7 +24,8 @@ public class NotificationModelMapper {
     public NotificationModel toModel(Notification entity) {
         NotificationModel model = new NotificationModel();
         model.setId(entity.getId());
-        model.setSent(entity.isSent());
+        model.setStatus(entity.getStatus());
+        model.setErrorMessage(entity.getErrorMessage());
         model.setTestId(entity.getSettings().getTest().getId());
         model.setSent_at(entity.getSent_at());
         model.setVersion(entity.getVersion());
