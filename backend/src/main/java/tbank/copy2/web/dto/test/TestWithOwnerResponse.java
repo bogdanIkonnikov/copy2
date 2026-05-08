@@ -1,4 +1,5 @@
 package tbank.copy2.web.dto.test;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,7 +10,7 @@ import tbank.copy2.common.enums.AccessMode;
 @AllArgsConstructor
 @NoArgsConstructor
 @Schema(description = "Ответ с информацией о тесте")
-public class TestResponse {
+public class TestWithOwnerResponse {
     @Schema(description = "Id теста", example = "1")
     private Long id;
 
@@ -31,7 +32,9 @@ public class TestResponse {
     @Schema(description = "Токен теста для создания ссылки на него", example = "21894tdoqs9012")
     private String shareToken;
 
+    @Schema(description = "Является ли текущий пользователь владельцем теста", example = "true")
+    private boolean isOwner;
+
     @Schema(description = "Количество правильных ответов в последнем прохождении", example = "14")
     private int progress;
 }
-

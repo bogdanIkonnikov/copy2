@@ -2,6 +2,7 @@ package tbank.copy2.domain.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tbank.copy2.common.enums.NotificationStatus;
 import tbank.copy2.domain.model.NotificationModel;
 import tbank.copy2.domain.model.NotificationSettingsModel;
 import tbank.copy2.domain.repository.NotificationModelRepository;
@@ -21,7 +22,7 @@ public class NotificationService {
             NotificationModel notificationModel = new NotificationModel();
             notificationModel.setSent_at(reminder);
             notificationModel.setTestId(settings.getTestId());
-            notificationModel.setSent(false);
+            notificationModel.setStatus(NotificationStatus.PENDING);
             notificationModel.setSettings(settings);
             result.add(repository.save(notificationModel));
         }

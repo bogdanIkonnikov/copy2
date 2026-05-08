@@ -1,5 +1,6 @@
 package tbank.copy2.domain.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -8,7 +9,11 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import tbank.copy2.common.enums.AccessLevel;
+import tbank.copy2.common.enums.AccessMode;
 import tbank.copy2.domain.ai.AiService;
+import tbank.copy2.domain.repository.TestAccessModelRepository;
+import tbank.copy2.exception.AccessDeniedException;
 import tbank.copy2.exception.FileParseException;
 import tbank.copy2.exception.InvalidFileFormatException;
 import tbank.copy2.domain.repository.AnswerModelRepository;
@@ -21,6 +26,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,6 +42,8 @@ public class TestService {
     private QuestionModelRepository questionRepository;
     @Autowired
     private AiService aiService;
+    @Autowired
+    private TestAccessModelRepository accessRepository;
 
 
     public TestsPageModel getTests(int pageNumber, int pageSize, Long userId) {
@@ -49,17 +57,60 @@ public class TestService {
         return model;
     }
 
+    public TestsPageModel getAlienPublicTests(int pageNumber, int pageSize, Long userId, String keyword) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        List<TestModel> models;
+        if (keyword == null) {
+            models = repository.findAllAlienPublicTests(pageable, userId);
+        } else {
+            models = repository.findByNameAlienPublicTests(keyword, userId, pageable);
+        }
+        TestsPageModel model = new TestsPageModel();
+        model.setModels(models);
+        model.setTotalModels(repository.findAllAlienPublicTests(userId).size());
+        model.setTotalPages((int) Math.ceil(model.getTotalModels() / (double) pageSize));
+        repository.deleteByUserIdAndVisible(userId, false);
+        return model;
+    }
+
+    @Transactional
     public TestModel addTest(TestModel model) {
-        return repository.save(model);
+        TestModel savedModel = repository.save(model);
+
+        TestAccessModel access = new TestAccessModel();
+        access.setAccessLevel(AccessLevel.WRITE);
+        access.setTestId(savedModel.getId());
+        access.setSharedAt(LocalDateTime.now());
+        access.setUserId(model.getUserId());
+
+        savedModel.setAccesses(List.of(access));
+
+        accessRepository.save(access);
+
+
+
+        return savedModel;
     }
 
     @Transactional
     public TestModel addTest(TestFileModel model) {
         TestModel testModel = new TestModel();
         testModel.setName(model.getName());
+        testModel.setAccessMode(AccessMode.PRIVATE);
+        testModel.setShareToken(java.util.UUID.randomUUID().toString().substring(0, 20));
         testModel.setDescription(model.getDescription());
         testModel.setUserId(model.getUserId());
         TestModel savedModel = repository.save(testModel);
+
+        TestAccessModel access = new TestAccessModel();
+        access.setAccessLevel(AccessLevel.WRITE);
+        access.setTestId(savedModel.getId());
+        access.setSharedAt(LocalDateTime.now());
+        access.setUserId(model.getUserId());
+        accessRepository.save(access);
+
+        savedModel.setAccesses(List.of(access));
+
         savedModel.setQuestions(parseQuestions(model.getFile(), savedModel.getId()));
         return savedModel;
     }
@@ -241,7 +292,8 @@ public class TestService {
     }
 
     @Transactional
-    public boolean updateTest(TestModel uModel, Long testId) {
+    public boolean updateTest(TestModel uModel, Long userId, Long testId) {
+        if (!repository.hasEditAccess(userId, testId)) throw new AccessDeniedException("У вас нет прав на редактирование этого теста!");
         TestModel model = repository.findById(testId);
 
         model.setName(uModel.getName());
@@ -284,14 +336,15 @@ public class TestService {
         return true;
     }
 
-    public Long deleteById(Long id) {
+    public Long deleteById(Long id, Long userId) {
+        if (!(repository.findById(id).getUserId() == userId)) throw new AccessDeniedException("У вас нет прав на удаление этого теста, удалить тест может только его создатель!");
         return repository.deleteById(id);
     }
 
-    public TestsPageModel searchTest(String keyword, int page, int size) {
+    public TestsPageModel searchTest(Long userId, String keyword, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
 
-        Page<TestModel> testPage = repository.findByNameContainingIgnoreCase(keyword, pageable);
+        Page<TestModel> testPage = repository.findByNameContainingIgnoreCase(keyword, userId, pageable);
 
 
         List<TestModel> tests = new ArrayList<>(testPage.getContent());
@@ -370,13 +423,52 @@ public class TestService {
         TestModel testModel = new TestModel();
         testModel.setName(model.getName());
         testModel.setDescription(model.getDescription());
+        testModel.setAccessMode(AccessMode.PRIVATE);
+        testModel.setShareToken(java.util.UUID.randomUUID().toString().substring(0, 20));
+        System.out.println(testModel.getShareToken());
         testModel.setUserId(model.getUserId());
         TestModel savedModel = repository.save(testModel);
+
+        TestAccessModel access = new TestAccessModel();
+        access.setAccessLevel(AccessLevel.WRITE);
+        access.setTestId(savedModel.getId());
+        access.setSharedAt(LocalDateTime.now());
+        access.setUserId(model.getUserId());
+        accessRepository.save(access);
+
+        savedModel.setAccesses(List.of(access));
+
         savedModel.setQuestions(parseQuestions(parseAIFile(model.getFile()), savedModel.getId()));
         return savedModel;
     }
 
     public List<TestModel> getAllByUserId(Long userId) {
         return repository.findAllByUserId(userId);
+    }
+
+    public TestModel changeAccessMode(Long userId, AccessMode accessMode, Long id) {
+        TestModel model = repository.findById(id);
+        if (userId == model.getUserId()) {
+            model.setAccessMode(accessMode);
+            return repository.save(model);
+        } else {
+            throw new AccessDeniedException("У вас нет прав на изменение доступа этого теста, изменить доступ может только его создатель!");
+        }
+    }
+
+    public TestModel getByShareToken(String shareToken) {
+        TestModel model = repository.findByShareToken(shareToken);
+        if (model == null) throw new EntityNotFoundException("Тест не найден");
+        if (model.getAccessMode().equals(AccessMode.LINK)){
+            return model;
+        } else {
+            throw new AccessDeniedException("У вас нет прав на просмотр этого теста, доступ к этому тесту по ссылке запрещён его создателем!");
+        }
+    }
+
+    public boolean isShareTokenValid(Long testId, String shareToken){
+        TestModel model = repository.findById(testId);
+        if (model == null) throw new EntityNotFoundException("Тест не найден");
+        return model.getShareToken().equals(shareToken);
     }
 }

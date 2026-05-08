@@ -19,7 +19,17 @@ public interface TestModelRepository {
 
     Long deleteById(Long id);
 
-    Page<TestModel> findByNameContainingIgnoreCase(String name, Pageable pageable);
+    Page<TestModel> findByNameContainingIgnoreCase(String name, Long userId, Pageable pageable);
 
     void deleteByUserIdAndVisible(Long id, boolean visible);
+
+    boolean hasEditAccess(Long userId, Long testId);
+
+    List<TestModel> findAllAlienPublicTests(Pageable pageable, Long userId);
+
+    List<TestModel> findAllAlienPublicTests(Long userId);
+
+    TestModel findByShareToken(String shareToken);
+
+    List<TestModel> findByNameAlienPublicTests(String keyword, Long userId, Pageable pageable);
 }
