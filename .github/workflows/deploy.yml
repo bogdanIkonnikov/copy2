@@ -5,18 +5,25 @@ on:
     branches:
       - main
 
-env:
-  IMAGE: ghcr.io/${{ github.repository }}:main-${{ github.sha }}-${{ github.run_number }}
-
 jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
+    outputs:
+      image_tag: ${{ steps.prep.outputs.image }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Prepare Image Tag
+        id: prep
+        run: |
+          REPO="${{ github.repository }}"
+          IMAGE_NAME="ghcr.io/${REPO,,}" # ,, в bash переводит в нижний регистр
+          TAG="${IMAGE_NAME}:main-${{ github.sha }}-${{ github.run_number }}"
+          echo "image=${TAG}" >> $GITHUB_OUTPUT
 
       - name: Log in to GHCR
         uses: docker/login-action@v3
@@ -30,7 +37,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ env.IMAGE }}
+          tags: ${{ steps.prep.outputs.image }}
 
   deploy:
     runs-on: ubuntu-latest
@@ -38,26 +45,8 @@ jobs:
     env:
       DOCKER_HOST: ${{ vars.MAIN_DOCKER_HOST }}
       CONTAINER_NAME: money-tracker-bot
+      IMAGE: ${{ needs.build.outputs.image_tag }}
     steps:
-      - name: Install docker-rollout
-        run: |
-          mkdir -p ~/.docker/cli-plugins
-          wget https://raw.githubusercontent.com/wowu/docker-rollout/main/docker-rollout \
-            -P ~/.docker/cli-plugins/
-          chmod +x ~/.docker/cli-plugins/docker-rollout
-
-      - name: Configure SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          eval $(ssh-agent -s)
-          ssh-add ~/.ssh/id_rsa
-          echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
-
-      - name: Write env file
-        run: echo "${{ secrets.MAIN_ENV_FILE }}" > .env
-
       - name: Log in to GHCR
         uses: docker/login-action@v3
         with:
@@ -70,10 +59,3 @@ jobs:
 
       - name: Rollout
         run: docker rollout --env-file .env -t 10 ${{ env.CONTAINER_NAME }}
-
-      - name: Upload compose log
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: compose-log
-          path: compose.log
