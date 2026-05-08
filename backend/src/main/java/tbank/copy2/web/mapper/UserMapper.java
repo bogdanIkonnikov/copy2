@@ -3,6 +3,7 @@ package tbank.copy2.web.mapper;
 import org.springframework.stereotype.Component;
 import tbank.copy2.common.enums.Role;
 import tbank.copy2.domain.model.*;
+import tbank.copy2.domain.service.JwtService;
 import tbank.copy2.web.dto.user.*;
 
 import java.util.ArrayList;
@@ -27,9 +28,10 @@ public class UserMapper {
         return signInCommand;
     }
 
-    public JwtAuthenticationResponse toAuthenticationResponse(String token) {
+    public JwtAuthenticationResponse toAuthenticationResponse(JwtService.TokenPair pair) {
         JwtAuthenticationResponse jwtAuthenticationResponse = new JwtAuthenticationResponse();
-        jwtAuthenticationResponse.setToken(token);
+        jwtAuthenticationResponse.setAccessToken(pair.accessToken());
+        jwtAuthenticationResponse.setRefreshToken(pair.refreshToken());
         return jwtAuthenticationResponse;
     }
 

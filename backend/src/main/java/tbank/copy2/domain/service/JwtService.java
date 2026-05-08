@@ -17,8 +17,10 @@ import java.util.function.Function;
 
 @Service
 public class JwtService {
-    private static final String SECRET_KEY = "9a4f2c8d3b7a1ebogdanikonnikovsupersecretmegakey213neeo1n2ejknsd6f45c8a0b3f267d8b1d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9";
-    private static final long EXPIRATION_TIME = 1000 * 60 * 60 * 10;
+    private static final String ACCESS_SECRET_KEY = "9a4f2c8d3b7a1ebogdanikonnikovsupersecretmegakey213neeo1n2ejknsd6f45c8a0b3f267d8b1d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9";
+    private static final String REFRESH_SECRET_KEY = "1234f4v8d3b7a1ebogdanikonnikovsupersecretmegakey213neeo1n2ejknsd6f45c8a0b3f267d8b1d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9";
+    private static final long ACCESS_EXPIRATION_TIME = 1000 * 60 * 60 * 10;
+    private static final long REFRESH_EXPIRATION_TIME = 1000 * 60 * 60 * 24 * 7;
 
     public String generateToken(UserDetails userDetails) {
         return generateToken(new HashMap<>(), userDetails);
@@ -30,7 +32,7 @@ public class JwtService {
                 .setClaims(extraClaims)
                 .setSubject(email)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .setExpiration(new Date(System.currentTimeMillis() + ACCESS_EXPIRATION_TIME))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS512)
                 .compact();
     }
@@ -62,7 +64,65 @@ public class JwtService {
     }
 
     private Key getSigningKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+        byte[] keyBytes = Decoders.BASE64.decode(ACCESS_SECRET_KEY);
         return Keys.hmacShaKeyFor(keyBytes);
     }
+
+    public String generateRefreshToken(UserDetails userDetails) {
+        String email = ((UserModel) userDetails).getEmail();
+        return Jwts.builder()
+                .setSubject(email)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + REFRESH_EXPIRATION_TIME))
+                .signWith(getRefreshSigningKey(), SignatureAlgorithm.HS512)
+                .compact();
+    }
+
+    public boolean isRefreshTokenValid(String refreshToken) {
+        try {
+            Jwts.parserBuilder()
+                    .setSigningKey(getRefreshSigningKey())
+                    .build()
+                    .parseClaimsJws(refreshToken);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public String extractEmailFromRefreshToken(String refreshToken) {
+        return Jwts.parserBuilder()
+                .setSigningKey(getRefreshSigningKey())
+                .build()
+                .parseClaimsJws(refreshToken)
+                .getBody()
+                .getSubject();
+    }
+
+    public boolean isRefreshTokenExpired(String refreshToken) {
+        try {
+            Date expiration = Jwts.parserBuilder()
+                    .setSigningKey(getRefreshSigningKey())
+                    .build()
+                    .parseClaimsJws(refreshToken)
+                    .getBody()
+                    .getExpiration();
+            return expiration.before(new Date());
+        } catch (Exception e) {
+            return true;
+        }
+    }
+
+    private Key getRefreshSigningKey() {
+        byte[] keyBytes = Decoders.BASE64.decode(REFRESH_SECRET_KEY);
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
+
+    public TokenPair generateTokenPair(UserDetails userDetails) {
+        String accessToken = generateToken(userDetails);
+        String refreshToken = generateRefreshToken(userDetails);
+        return new TokenPair(accessToken, refreshToken);
+    }
+
+    public record TokenPair(String accessToken, String refreshToken) {}
 }

@@ -16,14 +16,14 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
-    public String signUp(UserModel user) {
+    public JwtService.TokenPair signUp(UserModel user) {
         user.setPassword_hash(passwordEncoder.encode(user.getPassword()));
         userService.createUser(user);
 
-        return jwtService.generateToken(user);
+        return jwtService.generateTokenPair(user);
     }
 
-    public String signIn(SignInCommand command) {
+    public JwtService.TokenPair signIn(SignInCommand command) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 command.getEmail(),
                 command.getPassword()
@@ -31,6 +31,6 @@ public class AuthenticationService {
 
         var user = userService.getByEmail(command.getEmail());
 
-        return jwtService.generateToken(user);
+        return jwtService.generateTokenPair(user);
     }
 }
