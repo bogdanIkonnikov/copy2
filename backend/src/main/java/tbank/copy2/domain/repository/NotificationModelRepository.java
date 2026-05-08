@@ -1,5 +1,6 @@
 package tbank.copy2.domain.repository;
 
+import tbank.copy2.common.enums.NotificationStatus;
 import tbank.copy2.domain.model.NotificationModel;
 
 import java.time.LocalDateTime;
@@ -13,4 +14,10 @@ public interface NotificationModelRepository {
     List<NotificationModel> findAllBySentAtBeforeAndSent(LocalDateTime now, boolean b);
 
     boolean updateIfVersionMatches(Long id, int version);
+
+    List<NotificationModel> findAllToProcess(LocalDateTime now);
+
+    int updateStatus(Long id, int version, NotificationStatus notificationStatus);
+
+    void updateStatusFinal(Long id, NotificationStatus notificationStatus, String err);
 }
