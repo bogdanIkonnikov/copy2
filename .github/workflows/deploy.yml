@@ -25,13 +25,11 @@ jobs:
         id: meta
         run: |
           REPO="${{ github.repository }}"
-          # Приводим к нижнему регистру для Docker
           LOWER_REPO="${REPO,,}"
           IMAGE_TAG="main-${{ github.sha }}-${{ github.run_number }}"
           FULL_IMAGE="ghcr.io/${LOWER_REPO}/${{ matrix.service }}:${IMAGE_TAG}"
           
           echo "image=${FULL_IMAGE}" >> $GITHUB_OUTPUT
-          # Сохраняем специфичный выход для деплоя
           echo "${{ matrix.service }}_image=${FULL_IMAGE}" >> $GITHUB_OUTPUT
 
       - name: Log in to GHCR
@@ -44,7 +42,7 @@ jobs:
       - name: Build and push image
         uses: docker/build-push-action@v6
         with:
-          context: ./${{ matrix.service }}
+          context: .
           file: ./${{ matrix.service }}/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.image }}
