@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import tbank.copy2.domain.service.JwtService;
 import tbank.copy2.domain.service.UserService;
 import tbank.copy2.web.dto.user.*;
 import tbank.copy2.web.mapper.UserMapper;
@@ -36,14 +37,14 @@ public class UserController {
     @Operation(description = "Изменить имя пользователя и email текущего пользователя")
     @PatchMapping("/me")
     public JwtAuthenticationResponse editProfile(@RequestBody EditUsernameEmailRequest request, @AuthenticationPrincipal CurrentUser user) {
-        String token = service.updateUserEmailAndUsername(user.getUserId(), request.getEmail(), request.getUsername());
-        return mapper.toAuthenticationResponse(token);
+        JwtService.TokenPair pair = service.updateUserEmailAndUsername(user.getUserId(), request.getEmail(), request.getUsername());
+        return mapper.toAuthenticationResponse(pair);
     }
 
     @Operation(description = "Изменить пароль текущего пользователя")
     @PostMapping("/me/change-password")
     public JwtAuthenticationResponse changePassword(@AuthenticationPrincipal CurrentUser user, @RequestBody ChangePasswordRequest request) {
-        String token = service.changePassword(user.getUserId(), request.getCurrentPassword(), request.getNewPassword());
-        return mapper.toAuthenticationResponse(token);
+        JwtService.TokenPair pair = service.changePassword(user.getUserId(), request.getCurrentPassword(), request.getNewPassword());
+        return mapper.toAuthenticationResponse(pair);
     }
 }

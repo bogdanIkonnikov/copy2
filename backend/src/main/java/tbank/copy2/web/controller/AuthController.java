@@ -9,10 +9,13 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import tbank.copy2.domain.service.AuthenticationService;
+import tbank.copy2.domain.service.JwtService;
+import tbank.copy2.domain.service.UserService;
 import tbank.copy2.domain.service.VerificationService;
+import tbank.copy2.web.dto.auth.RefreshRequest;
 import tbank.copy2.web.dto.user.JwtAuthenticationResponse;
 import tbank.copy2.web.dto.user.SignInRequest;
 import tbank.copy2.web.dto.user.SignUpRequest;
@@ -31,7 +34,9 @@ public class AuthController {
     @Autowired
     private VerificationService verificationService;
     @Autowired
-    private JavaMailSender mailSender;
+    private JwtService jwtService;
+    @Autowired
+    private UserService userDetailsService;
 
     @Operation(summary = "Регистрация нового пользователя")
     @PostMapping("/sign-up")
@@ -42,8 +47,8 @@ public class AuthController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = SignUpRequest.class))
             )
             @RequestBody @Valid SignUpRequest request) {
-        String token = service.signUp(mapper.toModel(request));
-        return mapper.toAuthenticationResponse(token);
+        JwtService.TokenPair pair = service.signUp(mapper.toModel(request));
+        return mapper.toAuthenticationResponse(pair);
     }
 
     @Operation(summary = "Вход пользователя")
@@ -55,8 +60,8 @@ public class AuthController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = SignInRequest.class))
             )
             @RequestBody @Valid SignInRequest request) {
-        String token = service.signIn(mapper.toCommand(request));
-        return mapper.toAuthenticationResponse(token);
+        JwtService.TokenPair pair = service.signIn(mapper.toCommand(request));
+        return mapper.toAuthenticationResponse(pair);
     }
 
     @Operation(summary = "Подтверждение почты")
@@ -81,5 +86,25 @@ public class AuthController {
     public ResponseEntity<?> sendVerificationCode(@Parameter(name = "Почта пользователя") @RequestParam String email) {
         verificationService.sendVerificationCode(email);
         return ResponseEntity.ok("Код подтверждения отправлен на почту");
+    }
+
+    @Operation(summary = "Обновление токенов")
+    @PostMapping("/refresh")
+    public JwtAuthenticationResponse refreshToken(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Данные для подтверждения почты пользователя",
+                    required = true,
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = RefreshRequest.class))
+            )
+            @RequestBody RefreshRequest request) {
+        String refreshToken = request.refreshToken();
+
+        String email = jwtService.extractEmailFromRefreshToken(refreshToken);
+
+        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+
+        JwtService.TokenPair pair = jwtService.generateTokenPair(userDetails);
+
+        return mapper.toAuthenticationResponse(pair);
     }
 }
