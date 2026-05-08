@@ -1,6 +1,17 @@
-FROM openjdk:26-ea-jdk-trixie
+FROM gradle:8.7-jdk17-alpine AS build
 WORKDIR /app
-COPY /build/libs/copy2-0.0.1-SNAPSHOT.jar /app/copy2.jar
 
-EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "copy2.jar"]
+COPY build.gradle settings.gradle ./
+COPY gradlew ./
+COPY gradle ./gradle
+
+COPY src ./src
+
+RUN chmod +x gradlew && ./gradlew bootJar -x test --no-daemon
+
+FROM eclipse-temurin:17-jre-alpine
+WORKDIR /app
+
+COPY --from=build /app/build/libs/*SNAPSHOT.jar app.jar
+
+ENTRYPOINT ["java", "-Xmx512m", "-Xms256m", "-jar", "app.jar"]
