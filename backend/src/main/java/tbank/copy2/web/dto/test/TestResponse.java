@@ -3,6 +3,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import tbank.copy2.common.enums.AccessMode;
 
 @Data
 @AllArgsConstructor
@@ -23,6 +24,12 @@ public class TestResponse {
 
     @Schema(description = "Количество вопросов в тесте", example = "10")
     private int questionsCount;
+
+    @Schema(description = "Режим доступа к тесту", example = "PUBLIC")
+    private AccessMode accessMode;
+
+    @Schema(description = "Токен теста для создания ссылки на него", example = "21894tdoqs9012")
+    private String shareToken;
 
     @Schema(description = "Количество правильных ответов в последнем прохождении", example = "14")
     private int progress;

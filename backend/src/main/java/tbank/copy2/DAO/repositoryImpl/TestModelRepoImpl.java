@@ -5,6 +5,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import tbank.copy2.DAO.mapper.TestModelMapper;
+import tbank.copy2.common.enums.AccessLevel;
+import tbank.copy2.common.enums.AccessMode;
 import tbank.copy2.domain.repository.TestModelRepository;
 import tbank.copy2.infrastructure.persistence.entity.Test;
 import tbank.copy2.infrastructure.persistence.repository.TestRepository;
@@ -22,14 +24,14 @@ public class TestModelRepoImpl implements TestModelRepository {
 
     @Override
     public List<TestModel> findAllByUserId(Pageable pageable, Long userId) {
-        List<TestModel> models = testRepository.findAllByUserId(pageable, userId).stream()
+        List<TestModel> models = testRepository.findAllTestsByUserAccess(pageable, userId, AccessMode.PUBLIC).stream()
                 .map(t -> mapper.toModel(t)).collect(Collectors.toList());
         return models;
     }
 
     @Override
     public List<TestModel> findAllByUserId(Long userId) {
-        return testRepository.findAllByUserId(userId).stream().map(t -> mapper.toModel(t)).collect(Collectors.toList());
+        return testRepository.findAllTestsByUserAccess(userId).stream().map(t -> mapper.toModel(t)).collect(Collectors.toList());
     }
 
     @Override
@@ -58,8 +60,8 @@ public class TestModelRepoImpl implements TestModelRepository {
     }
 
     @Override
-    public Page<TestModel> findByNameContainingIgnoreCase(String name, Pageable pageable) {
-        Page<Test> tests = testRepository.findByNameContainingIgnoreCase(name, pageable);
+    public Page<TestModel> findByNameContainingIgnoreCase(String name, Long userId, Pageable pageable) {
+        Page<Test> tests = testRepository.findByNameContainingIgnoreCase(name, userId ,pageable, AccessMode.PUBLIC);
         return mapper.toPageModel(tests);
     }
 
@@ -68,4 +70,29 @@ public class TestModelRepoImpl implements TestModelRepository {
         testRepository.deleteAllByVisibleAndUser_Id(visible, id);
     }
 
+    @Override
+    public boolean hasEditAccess(Long userId, Long testId) {
+        return testRepository.hasEditAccess(userId, testId, AccessLevel.WRITE);
+    }
+
+    @Override
+    public List<TestModel> findAllAlienPublicTests(Pageable pageable, Long userId) {
+        return testRepository.findAllAlienPublicTests(pageable, userId, AccessMode.PUBLIC).stream().map(t -> mapper.toModel(t)).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<TestModel> findAllAlienPublicTests(Long userId) {
+        return testRepository.findAllAlienPublicTests(userId, AccessMode.PUBLIC).stream().map(t -> mapper.toModel(t)).collect(Collectors.toList());
+    }
+
+    @Override
+    public TestModel findByShareToken(String shareToken) {
+        return mapper.toModel(testRepository.findByShareToken(shareToken).orElse(null));
+    }
+
+    @Override
+    public List<TestModel> findByNameAlienPublicTests(String keyword, Long userId, Pageable pageable) {
+        return testRepository.findByNameAlienPublicTests(keyword, userId, pageable, AccessMode.PUBLIC)
+                .stream().map(t -> mapper.toModel(t)).collect(Collectors.toList());
+    }
 }

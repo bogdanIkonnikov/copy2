@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import tbank.copy2.common.enums.AccessMode;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -28,6 +29,9 @@ public class Test {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @OneToMany(mappedBy = "test", orphanRemoval = true)
+    private List<TestAccess> accesses = new ArrayList<>();
+
     @Column
     private String description;
 
@@ -44,6 +48,12 @@ public class Test {
     @Column(nullable = false)
     private Boolean visible = true;
 
+    @Column(name = "access_mode", nullable = false)
+    private AccessMode accessMode = AccessMode.PRIVATE;
+
+    @Column(name = "share_token", unique = true)
+    private String shareToken;
+
     @CreationTimestamp
     @Column(nullable = false)
     private LocalDateTime created_at;
@@ -58,7 +68,7 @@ public class Test {
                 "id=" + id +
                 ", testName='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", userId=" + (user != null ? user.getId() : null) +
+                ", ownerId=" + (user != null ? user.getId() : null) +
                 ", createdAt=" + created_at +
                 ", updatedAt=" + updated_at +
                 '}';

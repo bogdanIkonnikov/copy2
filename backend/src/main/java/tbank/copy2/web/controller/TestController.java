@@ -55,6 +55,17 @@ public class TestController {
         return mapper.toTestPageResponse(model, page, size);
     }
 
+    @Operation(summary = "Получить список публичных тестов")
+    @GetMapping("/public")
+    public TestPageResponse getPublicTests(
+            @PositiveOrZero @RequestParam(defaultValue = "0") int page,
+            @Positive @RequestParam(defaultValue = "10") int size,
+            @RequestParam String keyword,
+            @AuthenticationPrincipal CurrentUser user) {
+        TestsPageModel model = testService.getAlienPublicTests(page, size, user.getUserId(), keyword);
+        return mapper.toTestPageResponse(model, page, size);
+    }
+
     @Operation(summary = "Добавить новый тест")
     @PostMapping("")
     public TestResponse addTest(
@@ -71,14 +82,25 @@ public class TestController {
 
     @Operation(summary = "Получить тест по его id")
     @GetMapping("/{id}")
-    public TestResponse getTestById(@Parameter(description = "Идентификатор теста", example = "1") @PathVariable Long id) {
-        return mapper.toTestResponse(testService.getTestById(id));
+    public TestWithOwnerResponse getTestById(@Parameter(description = "Идентификатор теста", example = "1") @PathVariable Long id,
+                                             @AuthenticationPrincipal CurrentUser user) {
+        return mapper.toTestOwnerResponse(testService.getTestById(id), user.getUserId());
+    }
+
+    @Operation(summary = "Изменить режим доступа к тесту")
+    @PutMapping("/{id}/access")
+    public AccessResponse setAccessMode(@RequestBody @Valid AccessRequest request,
+                                        @AuthenticationPrincipal CurrentUser user,
+                                        @PathVariable Long id){
+        TestModel model = testService.changeAccessMode(user.getUserId(), request.getAccessMode(), id);
+        return mapper.toAccessResponse(model);
     }
 
     @Operation(summary = "Удалить тест по его id")
     @DeleteMapping("/{id}")
-    public Long deleteById(@Parameter(description = "Идентификатор теста", example = "1") @PathVariable Long id) {
-        return testService.deleteById(id);
+    public Long deleteById(@Parameter(description = "Идентификатор теста", example = "1") @PathVariable Long id,
+                           @AuthenticationPrincipal CurrentUser user) {
+        return testService.deleteById(id, user.getUserId());
     }
 
     @Operation(
@@ -121,9 +143,11 @@ public class TestController {
     }
 
     @PutMapping("/{id}")
-    public boolean updateTestById(@PathVariable Long id, @RequestBody @Valid UpdateTestRequest request) {
+    public boolean updateTestById(@PathVariable Long id,
+                                  @RequestBody @Valid UpdateTestRequest request,
+                                  @AuthenticationPrincipal CurrentUser user) {
         TestModel model = mapper.toModel(request, id);
-        return testService.updateTest(model, id);
+        return testService.updateTest(model, user.getUserId(), id);
     }
 
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -145,9 +169,10 @@ public class TestController {
     public TestPageResponse searchTests(
             @RequestParam("keyWord") String keyWord,
             @RequestParam("page") int page,
-            @RequestParam("size") int size
+            @RequestParam("size") int size,
+            @AuthenticationPrincipal CurrentUser user
     ){
-        TestsPageModel model = testService.searchTest(keyWord, page, size);
+        TestsPageModel model = testService.searchTest(user.getUserId(), keyWord, page, size);
         return mapper.toTestPageResponse(model, page, size);
     }
 

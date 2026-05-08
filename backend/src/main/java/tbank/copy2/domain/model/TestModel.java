@@ -2,6 +2,7 @@ package tbank.copy2.domain.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import tbank.copy2.common.enums.AccessMode;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -21,7 +22,13 @@ public class TestModel {
 
     private List<QuestionModel> questions = new ArrayList<>();
 
+    private List<TestAccessModel> accesses;
+
     private Boolean visible = true;
+
+    private AccessMode accessMode = AccessMode.PRIVATE;
+
+    private String shareToken;
 
     private LocalDateTime created_at;
 

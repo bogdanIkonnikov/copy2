@@ -3,6 +3,7 @@ package tbank.copy2.DAO.repositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import tbank.copy2.DAO.mapper.NotificationModelMapper;
+import tbank.copy2.common.enums.NotificationStatus;
 import tbank.copy2.infrastructure.persistence.repository.NotificationRepository;
 import tbank.copy2.domain.model.NotificationModel;
 import tbank.copy2.domain.repository.NotificationModelRepository;
@@ -19,28 +20,37 @@ public class NotificationModelRepoImpl implements NotificationModelRepository {
     private NotificationModelMapper mapper;
 
     @Override
-    public List<NotificationModel> findAllByUserId(Long userId) {
-        return repository.findAllByUserId(userId).stream()
-                .map(n -> mapper.toModel(n)).collect(Collectors.toList());
-    }
-
-    @Override
     public NotificationModel save(NotificationModel model) {
         return mapper.toModel(repository.save(mapper.toEntity(model)));
     }
 
     @Override
+    public List<NotificationModel> findAllByUserId(Long userId) {
+        return List.of();
+    }
+
+    @Override
     public List<NotificationModel> findAllBySentAtBeforeAndSent(LocalDateTime now, boolean b) {
-        return repository.findAllBySentAndSentAtBefore(now, b).stream().map(n -> mapper.toModel(n)).collect(Collectors.toList());
+        return List.of();
     }
 
     @Override
-    public void saveAll(List<NotificationModel> notifications) {
-        repository.saveAll(notifications.stream().map(n -> mapper.toEntity(n)).collect(Collectors.toList()));
+    public boolean updateIfVersionMatches(Long id, int version) {
+        return false;
     }
 
     @Override
-    public void deleteBySettingsId(Long id) {
-        repository.deleteBySettingsId(id);
+    public List<NotificationModel> findAllToProcess(LocalDateTime now) {
+        return repository.findAllToProcess(now).stream().map(mapper::toModel).collect(Collectors.toList());
+    }
+
+    @Override
+    public int updateStatus(Long id, int version, NotificationStatus notificationStatus) {
+        return repository.updateStatus(id, version, notificationStatus);
+    }
+
+    @Override
+    public void updateStatusFinal(Long id, NotificationStatus notificationStatus, String err) {
+        repository.updateStatusFinal(id, notificationStatus, err);
     }
 }
