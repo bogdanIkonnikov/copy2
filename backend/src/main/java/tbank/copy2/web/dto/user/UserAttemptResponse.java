@@ -3,8 +3,6 @@ package tbank.copy2.web.dto.user;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Data
 @NoArgsConstructor
 public class UserAttemptResponse {
@@ -12,5 +10,5 @@ public class UserAttemptResponse {
     private String testName;
     private int score;
     private int total;
-    private LocalDateTime date;
+    private String date;
 }

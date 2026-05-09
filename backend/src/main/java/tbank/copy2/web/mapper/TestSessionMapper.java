@@ -60,4 +60,14 @@ public class TestSessionMapper {
         testSessionStatusResponse.setSessionId(testSession.getId());
         return testSessionStatusResponse;
     }
+
+    public TestSessionStatusNoAuthResponse toNoAuthResponse(TestSessionModel testSession, String shareToken){
+        TestSessionStatusNoAuthResponse testSessionStatusResponse = new TestSessionStatusNoAuthResponse();
+        testSessionStatusResponse.setTestId(testSession.getTestId());
+        testSessionStatusResponse.setShareToken(shareToken);
+        testSessionStatusResponse.setTestName(testSession.getTestName());
+        testSessionStatusResponse.setStarted_at(testSession.getStarted_at().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        testSessionStatusResponse.setSessionId(testSession.getId());
+        return testSessionStatusResponse;
+    }
 }

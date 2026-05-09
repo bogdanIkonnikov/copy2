@@ -16,26 +16,27 @@ import java.util.Optional;
 
 @Repository
 public interface TestRepository extends JpaRepository<Test, Long> {
-    @Query("SELECT DISTINCT t FROM Test t " +
-            "JOIN t.accesses a " +
-            "WHERE a.user.id = :userId")
-    List<Test> findAllTestsByUserAccess(Long userId);
-    @Query("SELECT DISTINCT t FROM Test t " +
+    @Query("SELECT t FROM Test t " +
             "WHERE t.user.id = :userId " +
-            "OR t.accessMode = :accessMode")
-    Page<Test> findAllTestsByUserAccess(Pageable pageable, @Param("userId") Long userId, AccessMode accessMode);
+            "AND t.visible = true")
+    List<Test> findAllTestsByUserId(Long userId);
+    @Query("SELECT t FROM Test t " +
+            "WHERE t.user.id = :userId " +
+            "AND t.visible = true")
+    Page<Test> findAllTestsByUserId(Pageable pageable, @Param("userId") Long userId);
 
     @Query("SELECT DISTINCT t FROM Test t " +
-            "WHERE t.user.id != :userId " +
-            "AND t.accessMode = :accessMode")
-    Page<Test> findAllAlienPublicTests(Pageable pageable, @Param("userId") Long userId, AccessMode accessMode);
+            "WHERE t.accessMode = :accessMode " +
+            "AND t.visible = true")
+    Page<Test> findAllPublicTests(Pageable pageable, AccessMode accessMode);
 
     @EntityGraph(attributePaths = {"questions", "questions.answers"})
     Optional<Test> findById(Long testId);
     @Query("SELECT DISTINCT t FROM Test t " +
             "LEFT JOIN t.accesses a " +
             "WHERE LOWER(t.name) LIKE LOWER(CONCAT('%', :name, '%')) " +
-            "AND (a.user.id = :userId OR t.accessMode = :accessMode)")
+            "AND (a.user.id = :userId OR t.accessMode = :accessMode) " +
+            "AND t.visible = true")
     Page<Test> findByNameContainingIgnoreCase(@Param("name") String name,
                                               @Param("userId") Long userId,
                                               Pageable pageable,
@@ -51,14 +52,15 @@ public interface TestRepository extends JpaRepository<Test, Long> {
     Optional<Test> findByShareToken(String shareToken);
 
     @Query("SELECT DISTINCT t FROM Test t " +
-            "WHERE t.user.id != :userId " +
-            "AND t.accessMode = :accessMode")
-    List<Test> findAllAlienPublicTests(Long userId, AccessMode accessMode);
+            "WHERE t.accessMode = :accessMode " +
+            "AND t.visible = true")
+    List<Test> findAllPublicTests(AccessMode accessMode);
 
     @Query("SELECT DISTINCT t FROM Test t " +
             "LEFT JOIN t.accesses a " +
             "WHERE LOWER(t.name) LIKE LOWER(CONCAT('%', :name, '%')) " +
-            "AND (a.user.id != :userId AND t.accessMode = :accessMode)")
+            "AND (a.user.id != :userId AND t.accessMode = :accessMode) " +
+            "AND t.visible = true")
     Page<Test> findByNameAlienPublicTests(@Param("name") String name,
                                               @Param("userId") Long userId,
                                               Pageable pageable,

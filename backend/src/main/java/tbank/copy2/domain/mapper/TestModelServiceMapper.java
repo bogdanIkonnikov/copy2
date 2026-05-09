@@ -26,6 +26,7 @@ public class TestModelServiceMapper {
         model.setDescription(oldModel.getDescription());
         model.setAccessMode(oldModel.getAccessMode());
         model.setUserId(oldModel.getUserId());
+        model.setShareToken(java.util.UUID.randomUUID().toString().substring(0, 20));
         model.setVisible(false);
         List<Long> questionIds = service.getAllCorrectIdsBySessionId(sessionId);
 

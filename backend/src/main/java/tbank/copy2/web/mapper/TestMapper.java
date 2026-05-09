@@ -22,8 +22,8 @@ public class TestMapper {
     @Autowired
     private TestSessionService testSessionService;
 
-    public TestResponse toTestResponse(TestModel model) {
-        TestSessionModel session = testSessionService.getSessionByTestIdAndUserId(model.getId(), model.getUserId());
+    public TestResponse toTestResponse(TestModel model, Long userId) {
+        TestSessionModel session = testSessionService.getSessionByTestIdAndUserId(model.getId(), userId);
         TestResponse testResponse = new TestResponse();
         testResponse.setId(model.getId());
         testResponse.setName(model.getName());
@@ -63,13 +63,13 @@ public class TestMapper {
         return testResponse;
     }
 
-    public TestPageResponse toTestPageResponse(TestsPageModel model, int page, int size) {
+    public TestPageResponse toTestPageResponse(TestsPageModel model, int page, int size, Long userId) {
         TestPageResponse response = new TestPageResponse();
         response.setPage(page);
         response.setSize(size);
         response.setTotalPages(model.getTotalPages());
         response.setTotalItems(model.getTotalModels());
-        List<TestResponse> items = model.getModels().stream().map(this::toTestResponse).collect(Collectors.toList());
+        List<TestResponse> items = model.getModels().stream().map(t -> toTestResponse(t, userId)).collect(Collectors.toList());
         response.setItems(items);
         return response;
     }
