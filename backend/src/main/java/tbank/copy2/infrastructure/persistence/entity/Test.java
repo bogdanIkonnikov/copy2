@@ -43,9 +43,6 @@ public class Test {
     private List<Question> questions = new ArrayList<>();
 
     @OneToMany(mappedBy = "test", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<TestSession> sessions = new ArrayList<>();
-
-    @OneToMany(mappedBy = "test", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<ActivityLog> activityLogs = new ArrayList<>();
 
     @Column(nullable = false)
