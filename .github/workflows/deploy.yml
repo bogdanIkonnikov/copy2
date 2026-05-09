@@ -47,8 +47,11 @@ jobs:
     env:
       IMAGE: ${{ needs.build.outputs.image_name }}
       DOCKER_HOST: ${{ vars.MAIN_DOCKER_HOST }}
-      CONTAINER_NAME: backend-server
+      CONTAINER_NAME: backend
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Install docker-rollout
         run: |
           mkdir -p ~/.docker/cli-plugins
