@@ -1,12 +1,9 @@
-name: Build and Deploy
+name: Build and Deploy Backend
 
 on:
   push:
     branches:
       - main
-
-env:
-  IMAGE: ghcr.io/${{ github.repository }}:main-${{ github.sha }}-${{ github.run_number }}
 
 jobs:
   build:
@@ -14,9 +11,21 @@ jobs:
     permissions:
       contents: read
       packages: write
+    outputs:
+      image_name: ${{ steps.prep.outputs.image }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Prepare Image Tag
+        id: prep
+        run: |
+          REPO="${{ github.repository }}"
+          LOWER_REPO="${REPO,,}"
+          IMAGE="ghcr.io/${LOWER_REPO}/backend:latest"
+          echo "image=${IMAGE}" >> $GITHUB_OUTPUT
 
       - name: Log in to GHCR
         uses: docker/login-action@v3
@@ -25,38 +34,38 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push image
+      - name: Build and push
         uses: docker/build-push-action@v6
         with:
           context: ./backend
           push: true
-          tags: ${{ env.IMAGE }}
+          tags: ${{ steps.prep.outputs.image }}
 
   deploy:
     runs-on: ubuntu-latest
     needs: build
     env:
+      IMAGE: ${{ needs.build.outputs.image_name }}
       DOCKER_HOST: ${{ vars.MAIN_DOCKER_HOST }}
-      CONTAINER_NAME: money-tracker-bot
+      CONTAINER_NAME: backend-server
     steps:
       - name: Install docker-rollout
         run: |
           mkdir -p ~/.docker/cli-plugins
-          wget https://raw.githubusercontent.com/wowu/docker-rollout/main/docker-rollout \
-            -P ~/.docker/cli-plugins/
+          wget https://raw.githubusercontent.com/wowu/docker-rollout/main/docker-rollout -P ~/.docker/cli-plugins/
           chmod +x ~/.docker/cli-plugins/docker-rollout
 
       - name: Configure SSH
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           eval $(ssh-agent -s)
           ssh-add ~/.ssh/id_rsa
           echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
 
       - name: Write env file
-        run: echo "${{ secrets.MAIN_ENV_FILE }}" > .env
+        run: echo "${{ secrets.ENV_FILE }}" > .env
 
       - name: Log in to GHCR
         uses: docker/login-action@v3
@@ -65,15 +74,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Pull image
-        run: docker pull "${{ env.IMAGE }}"
-
-      - name: Rollout
-        run: docker rollout --env-file .env -t 10 ${{ env.CONTAINER_NAME }}
-
-      - name: Upload compose log
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: compose-log
-          path: compose.log
+      - name: Pull and Rollout
+        run: |
+          docker pull "${{ env.IMAGE }}"
+          docker rollout --env-file .env -t 60 ${{ env.CONTAINER_NAME }}
