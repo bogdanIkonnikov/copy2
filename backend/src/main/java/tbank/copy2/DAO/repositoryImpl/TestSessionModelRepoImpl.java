@@ -29,7 +29,7 @@ public class TestSessionModelRepoImpl implements TestSessionModelRepository {
 
     @Override
     public TestSessionModel getTestSessionByTestIdAndUserId(Long id, Long userId) {
-        TestSession session = repository.findByTestIdAndUserId(id, userId);
+        TestSession session = repository.findLatestSession(id, userId).orElse(null);
         return mapper.toModel(session);
     }
 

@@ -29,6 +29,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Transactional
@@ -51,23 +52,23 @@ public class TestService {
         List<TestModel> models = repository.findAllByUserId(pageable, userId);
         TestsPageModel model = new TestsPageModel();
         model.setModels(models);
-        model.setTotalModels(repository.findAll().size());
+        model.setTotalModels(repository.findAllByUserId(userId).size());
         model.setTotalPages((int) Math.ceil(model.getTotalModels() / (double) pageSize));
         repository.deleteByUserIdAndVisible(userId, false);
         return model;
     }
 
-    public TestsPageModel getAlienPublicTests(int pageNumber, int pageSize, Long userId, String keyword) {
+    public TestsPageModel getPublicTests(int pageNumber, int pageSize, Long userId, String keyword) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         List<TestModel> models;
         if (keyword == null) {
-            models = repository.findAllAlienPublicTests(pageable, userId);
+            models = repository.findAllPublicTests(pageable);
         } else {
-            models = repository.findByNameAlienPublicTests(keyword, userId, pageable);
+            models = repository.findByNamePublicTests(keyword, userId, pageable);
         }
         TestsPageModel model = new TestsPageModel();
         model.setModels(models);
-        model.setTotalModels(repository.findAllAlienPublicTests(userId).size());
+        model.setTotalModels(repository.findAllPublicTests().size());
         model.setTotalPages((int) Math.ceil(model.getTotalModels() / (double) pageSize));
         repository.deleteByUserIdAndVisible(userId, false);
         return model;
@@ -448,7 +449,7 @@ public class TestService {
 
     public TestModel changeAccessMode(Long userId, AccessMode accessMode, Long id) {
         TestModel model = repository.findById(id);
-        if (userId == model.getUserId()) {
+        if (Objects.equals(userId, model.getUserId())) {
             model.setAccessMode(accessMode);
             return repository.save(model);
         } else {

@@ -19,6 +19,7 @@ public class ActivityLogModelMapper {
         model.setId(entity.getId());
         model.setAttemptDate(entity.getAttemptDate());
         model.setScore(entity.getScore());
+        model.setTotal(entity.getTotal());
         model.setTestId(entity.getTest().getId());
         model.setTestName(entity.getTest().getName());
         model.setUserId(entity.getUser().getId());
@@ -29,7 +30,7 @@ public class ActivityLogModelMapper {
         entity.setAttemptDate(model.getAttemptDate());
         entity.setId(model.getId());
         entity.setScore(model.getScore());
-        entity.setTotal(model.getScore());
+        entity.setTotal(model.getTotal());
         entity.setTest(testRepository.getById(model.getTestId()));
         entity.setUser(userRepository.findById(model.getUserId()).orElse(null));
         return entity;
