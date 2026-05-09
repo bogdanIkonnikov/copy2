@@ -18,7 +18,7 @@ public interface NotificationSettingsRepository extends JpaRepository<Notificati
         WHERE n.settings.id NOT IN (
             SELECT DISTINCT n2.settings.id
             FROM Notification n2
-            WHERE n2.isSent = false
+            WHERE n2.status = tbank.copy2.common.enums.NotificationStatus.SENT
         )
     """)
     List<Long> findSettingsIdsWhereAllSent();

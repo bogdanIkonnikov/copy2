@@ -11,10 +11,6 @@ public interface NotificationModelRepository {
 
     NotificationModel save(NotificationModel model);
 
-    List<NotificationModel> findAllBySentAtBeforeAndSent(LocalDateTime now, boolean b);
-
-    boolean updateIfVersionMatches(Long id, int version);
-
     List<NotificationModel> findAllToProcess(LocalDateTime now);
 
     int updateStatus(Long id, int version, NotificationStatus notificationStatus);
