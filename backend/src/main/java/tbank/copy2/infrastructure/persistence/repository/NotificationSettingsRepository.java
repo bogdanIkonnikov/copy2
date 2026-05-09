@@ -12,14 +12,4 @@ public interface NotificationSettingsRepository extends JpaRepository<Notificati
     List<NotificationSettings> findAllByUserId(Long userId);
     boolean existsByUserIdAndTestId(Long userId, Long testId);
     void deleteByUserIdAndTestId(Long userId, Long testId);
-    @Query("""
-        SELECT DISTINCT n.settings.id
-        FROM Notification n
-        WHERE n.settings.id NOT IN (
-            SELECT DISTINCT n2.settings.id
-            FROM Notification n2
-            WHERE n2.status = tbank.copy2.common.enums.NotificationStatus.SENT
-        )
-    """)
-    List<Long> findSettingsIdsWhereAllSent();
 }
