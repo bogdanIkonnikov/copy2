@@ -30,16 +30,6 @@ public class NotificationModelRepoImpl implements NotificationModelRepository {
     }
 
     @Override
-    public List<NotificationModel> findAllBySentAtBeforeAndSent(LocalDateTime now, boolean b) {
-        return List.of();
-    }
-
-    @Override
-    public boolean updateIfVersionMatches(Long id, int version) {
-        return false;
-    }
-
-    @Override
     public List<NotificationModel> findAllToProcess(LocalDateTime now) {
         return repository.findAllToProcess(now).stream().map(mapper::toModel).collect(Collectors.toList());
     }
