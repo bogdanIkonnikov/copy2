@@ -25,7 +25,7 @@ public class NotificationScheduler {
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    @Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "0 */10 * * * *")
     public void schedule() {
         List<NotificationModel> notifications = repository.findAllToProcess(LocalDateTime.now());
 
