@@ -60,6 +60,11 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        - VITE_API_BASE_URL=${VITE_API_BASE_URL}
+    image: ${FRONTEND_IMAGE:-ghcr.io/vkorniushina/tprep-frontend/frontend:latest}
+    env_file:
+      - .env
     ports:
         - "3000:80"
     networks:
