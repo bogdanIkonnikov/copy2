@@ -1,5 +1,6 @@
 package tbank.copy2.infrastructure.persistence.repository;
 
+import org.apache.logging.log4j.simple.internal.SimpleProvider;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -32,4 +33,9 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     @Query("UPDATE Notification n SET n.status = :status, n.errorMessage = :err " +
             "WHERE n.id = :id")
     void updateStatusFinal(@Param("id") Long id, @Param("status") NotificationStatus status, @Param("err") String err);
+
+    @Query("SELECT n FROM Notification n " +
+            "LEFT JOIN FETCH n.settings s " +
+            "WHERE s.user.id = :userId")
+    List<Notification> findAllByUserId(Long userId);
 }
