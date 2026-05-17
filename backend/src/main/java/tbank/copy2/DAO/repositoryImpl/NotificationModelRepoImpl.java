@@ -26,7 +26,7 @@ public class NotificationModelRepoImpl implements NotificationModelRepository {
 
     @Override
     public List<NotificationModel> findAllByUserId(Long userId) {
-        return List.of();
+        return repository.findAllByUserId(userId).stream().map(n -> mapper.toModel(n)).collect(Collectors.toList());
     }
 
     @Override
