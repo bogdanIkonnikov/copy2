@@ -88,7 +88,7 @@ public class UserService implements UserDetailsService {
             model.setNew(false);
             model.setTotalAnswers(model.getTotalAnswers() + 1);
             if (isCorrect) {
-                model.setCorrectAnswers(((model.getCorrectAnswers() == null) ? 0 : model.getCorrectAnswers()) + 1);
+                model.setCorrectAnswers(model.getCorrectAnswers() + 1);
             }
         } else {
             model = new UserStatisticModel();
@@ -101,6 +101,8 @@ public class UserService implements UserDetailsService {
             model.setLastTestDate(LocalDate.now());
             if (isCorrect) {
                 model.setCorrectAnswers(1L);
+            } else {
+                model.setCorrectAnswers(0L);
             }
         }
         statsRepository.save(model);
