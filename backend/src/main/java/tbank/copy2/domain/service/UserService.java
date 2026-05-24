@@ -89,7 +89,7 @@ public class UserService implements UserDetailsService {
             model.setTotalAnswers(model.getTotalAnswers() + 1);
             if (isCorrect) {
                 model.setCorrectAnswers(model.getCorrectAnswers() + 1);
-            }
+            } //
         } else {
             model = new UserStatisticModel();
             model.setNew(true);
