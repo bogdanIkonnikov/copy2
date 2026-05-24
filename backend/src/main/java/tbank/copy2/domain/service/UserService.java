@@ -87,23 +87,19 @@ public class UserService implements UserDetailsService {
         if (model != null) {
             model.setNew(false);
             model.setTotalAnswers(model.getTotalAnswers() + 1);
-            if (isCorrect) {
-                model.setCorrectAnswers(model.getCorrectAnswers() + 1);
-            } //
         } else {
             model = new UserStatisticModel();
             model.setNew(true);
             model.setUserId(userId);
-            model.setLongestStreak(0);
+            model.setLongestStreak(1);
             model.setTotalAnswers(1L);
             model.setId(userId);
-            model.setCurrentStreak(0);
+            model.setCurrentStreak(1);
             model.setLastTestDate(LocalDate.now());
-            if (isCorrect) {
-                model.setCorrectAnswers(1L);
-            } else {
-                model.setCorrectAnswers(0L);
-            }
+            model.setCorrectAnswers(0L);
+        }
+        if (isCorrect) {
+            model.setCorrectAnswers(model.getCorrectAnswers() + 1);
         }
         statsRepository.save(model);
     }
