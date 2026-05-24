@@ -101,7 +101,6 @@ public class UserService implements UserDetailsService {
             model.setLastTestDate(LocalDate.now());
             if (isCorrect) {
                 model.setCorrectAnswers(1L);
-                model.setCorrectAnswers(0L);
             }
         }
         statsRepository.save(model);
