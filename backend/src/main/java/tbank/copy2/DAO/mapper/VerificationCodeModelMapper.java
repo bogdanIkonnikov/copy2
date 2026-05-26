@@ -14,6 +14,7 @@ public class VerificationCodeModelMapper {
         model.setEmail(entity.getEmail());
         model.setExpiryDate(entity.getExpiryDate());
         return model;
+
     }
 
     public VerificationCode toEntity(VerificationCodeModel model) {
