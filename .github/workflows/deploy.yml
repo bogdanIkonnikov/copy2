@@ -82,5 +82,4 @@ jobs:
       - name: Pull and Rollout
         run: |
           docker pull "${{ env.IMAGE }}"
-          docker rollout -f docker-compose.yml --env-file .env -t 60 ${{ env.SERVICE_NAME }} || \
-          docker compose --env-file .env up -d
+          docker compose --env-file .env up -d --force-recreate backend
